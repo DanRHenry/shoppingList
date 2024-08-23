@@ -1,0 +1,125 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#applicationContaner{
+    /* align-items: center; */
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(182, 182, 182);
+    height: 60vh;
+    width: 90vw;
+    border-radius: 1em;
+    border: .5em solid gray;
+}
+
+#recipesContainer{
+display: flex;
+flex-direction: column;
+height: 60vh;
+width: 90vw;
+/* border-radius: 1em; */
+/* border: .5em solid gray; */
+}
+
+#recipeContent, #selections {
+    background-color: rgb(182, 182, 182);
+    border-radius: 1em;
+    border: .5em solid gray;
+    overflow-y: auto;
+    padding-left: .5em;
+    padding-right: 1em;
+    padding-top: .5em;
+
+    overflow-x: hidden;
+}
+
+#selections {
+    /* block-size: fit-content; */
+    min-width: fit-content;
+}
+
+#recipeContent {
+    margin-left: 1em;
+    padding-left: 1em;
+    padding-top: 1em;
+}
+
+#recipesContainer {
+    height: 20em;
+}
+
+#headers {
+    margin-top: 1em;
+}
+
+#checkboxHeader {
+    width: 5.5em;
+}
+
+.check {
+    height: 1em;
+    margin-top: 1em;
+}
+
+.mainContent {
+    text-align: center;
+    padding-left: 10em;
+    margin-left: 10em;
+    background-color: rgb(211, 211, 211);
+}
+
+.mainContent:nth-child(even) {
+    background-color: white;
+}
+
+#removeSelectedItems{
+    user-select: none;
+    background-color: whitesmoke;
+    border: 2px solid gray;
+    border-radius: .5em;
+    text-align: center;
+}
+
+#addItem:hover {
+    background-color: gray;
+    color: white;
+}
+
+#addItem:active {
+    background-color: black;
+}
+
+
+#recipesContainer {
+    display: flex;
+    flex-direction: row;
+    /* align-items: center; */
+}
+
+#recipeContent {
+    width: 100%;
+    /* background-color: red; */
+}
+
+.ingredient {
+    width: 100%;
+    text-align: left;
+    padding-left: 1em;
+}
+
+#itemInput, #costInput {
+    width: 80%;
+}
+
+#addRecipeContainer {
+    padding-top: 1em;
+    text-align: center;
+}
+
+#addRecipeBtn {
+    border: 2px solid black;
+    border-radius: .5em;
+}
