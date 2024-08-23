@@ -1,0 +1,57 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#applicationContaner {
+    /* align-items: center; */
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(182, 182, 182);
+    height: 90vh;
+    width: 90vw;
+    border-radius: 1em;
+    border: .5em solid gray;
+}
+
+#headers {
+    margin-top: 1em;
+}
+
+#checkboxHeader {
+    width: 5.5em;
+}
+
+.check {
+    height: 1em;
+    margin-top: 1em;
+}
+
+.mainContent {
+    text-align: center;
+    padding-left: 10em;
+    margin-left: 10em;
+    background-color: rgb(211, 211, 211);
+}
+
+.mainContent:nth-child(even) {
+    background-color: white;
+}
+
+#addItem{
+    user-select: none;
+    background-color: whitesmoke;
+    border: 2px solid gray;
+    border-radius: .5em;
+    text-align: center;
+}
+
+#addItem:hover {
+    background-color: gray;
+    color: white;
+}
+
+#addItem:active {
+    background-color: black;
+}
