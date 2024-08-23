@@ -7,6 +7,19 @@
     <link rel="stylesheet" href="./styles/style.css" />
   </head>
   <body>
+    <form id="login-form" class="form-signin">
+    <!-- <form id="login-form" class="form-signin" method="post" action="http://127.0.0.1:3498/user/signup"> -->
+
+      <!-- <h3 class="form-signin-heading">Log in</h3> -->
+       <div>
+      <input id="email" type="text" required name="email" placeholder="Email">
+      <input id="password" type="password" required name="password" placeholder="Password">
+      <input id="family" type="text" required name="family" placeholder="Family">
+      <button id="login-Btn" type="submit">Submit</button>
+    </div>
+  </form>
+  <button id="signup">Signup?</button>
+    <br>
     <div id="applicationContaner">
         <table>
             <tr id="headers">
@@ -94,5 +107,6 @@
                   </div>
               </div>
         </div>
+        <script src="./scripts/index.js"></script>
   </body>
 </html>
