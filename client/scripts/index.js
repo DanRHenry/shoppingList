@@ -62,19 +62,25 @@ function loadPageContents() {
     // Recipe Table Headers
     const trHeaders = document.createElement("tr");
     trHeaders.id = "recipeHeaders";
-    const checkHeading = document.createElement("th");
-    checkHeading.className = "check";
-    checkHeading.id = "checkboxHeader";
-    checkHeading.innerText = "Select";
+    // const checkHeading = document.createElement("th");
+    // checkHeading.className = "check";
+    // checkHeading.id = "checkboxHeader";
+    // checkHeading.innerText = "Select";
+
+    const newRecipeNameHeading = document.createElement("th")
+    newRecipeNameHeading.className = "ingredient";
+    newRecipeNameHeading.id = "newRecipeNameHeading";
+    newRecipeNameHeading.innerText = "Recipe Name"
 
     const ingredientHeading = document.createElement("th");
     ingredientHeading.className = "ingredient";
     ingredientHeading.id = "itemHeader";
-    ingredientHeading.innerText = "Name";
+    ingredientHeading.innerText = "Ingredient";
 
     recipeTableBody.innerHTML = "";
     recipeTableBody.append(trHeaders);
-    recipeTableBody.append(checkHeading);
+    recipeTableBody.append(newRecipeNameHeading);
+    // recipeTableBody.append(checkHeading);
     recipeTableBody.append(ingredientHeading);
 
     // New Recipe Item Input
@@ -84,15 +90,16 @@ function loadPageContents() {
     recipeTableBody.append(mainContent);
 
     // CheckBox and Item Entry Field
-    const check = document.createElement("td");
-    check.className = "check";
-    mainContent.append(check);
+    // const check = document.createElement("td");
+    // check.className = "check";
+    // mainContent.append(check);
 
-    const checkInput = document.createElement("input");
-    checkInput.type = "checkbox";
-    checkInput.setAttribute("checked", true);
+ 
+    // const checkInput = document.createElement("input");
+    // checkInput.type = "checkbox";
+    // checkInput.setAttribute("checked", true);
 
-    check.append(checkInput);
+    // check.append(checkInput);
 
     const ingredient = document.createElement("td");
 
@@ -100,17 +107,28 @@ function loadPageContents() {
 
     const ingredientInputForm = document.createElement("form");
     ingredientInputForm.id = "ingredientInputForm";
+
+    const newRecipeNameInput = document.createElement("input")
+    newRecipeNameInput.type = "text";
+    newRecipeNameInput.id = "newRecipeNameInput"
+    newRecipeNameInput.required = true
+
     const ingredientInput = document.createElement("input");
     ingredientInput.type = "text";
     ingredientInput.class = "ingredient";
     ingredientInput.id = "ingredientInput";
-    ingredientInputForm.addEventListener(
+    ingredientInput.required = true;
+
+    ingredientInputForm.append(newRecipeNameInput, ingredientInput)
+    // ingredientInputForm.append(ingredientInput);
+    
+    ingredient.append(ingredientInputForm);
+
+    console.log(document.getElementById("ingredientInputForm"))
+    document.getElementById("ingredientInputForm").addEventListener(
       "submit",
       handleNewRecipeIngredientSubmit
     );
-
-    ingredient.append(ingredientInputForm);
-    ingredientInputForm.append(ingredientInput);
   }
 
   document
@@ -123,6 +141,7 @@ function loadPageContents() {
 
 async function handleNewRecipeIngredientSubmit(e) {
   await e.preventDefault();
+  document.getElementById("newRecipeNameInput").value = "";
   document.getElementById("ingredientInput").value = "";
   console.log("submitted");
 
@@ -235,6 +254,7 @@ async function checkForExistingRecipe(item) {
   }
 }
 
+
 function checkForToken() {
   if (sessionStorage.token) {
     loginWelcomeSection.style.display = `none`;
@@ -334,3 +354,16 @@ async function fetchRecipeList() {
 switchBtn.addEventListener("click", toggleSignup);
 
 loginForm.addEventListener("submit", login);
+
+/* 
+<label for="ice-cream-choice">Choose a flavor:</label>
+<input list="ice-cream-flavors" id="ice-cream-choice" name="ice-cream-choice" />
+
+<datalist id="ice-cream-flavors">
+  <option value="Chocolate"></option>
+  <option value="Coconut"></option>
+  <option value="Mint"></option>
+  <option value="Strawberry"></option>
+  <option value="Vanilla"></option>
+</datalist>
+*/
