@@ -46,121 +46,129 @@ async function login(e) {
   }
 }
 
-
 function loadPageContents() {
-  fetchShoppingList ()
-  fetchRecipeList ()
+  fetchShoppingList();
+  fetchRecipeList();
 
-  function handleIngredientClick () {
+  function handleIngredientClick() {
     const itemInput = document.getElementById("itemInput");
-    const costInput = document.getElementById("costInput")
-    postNewIngredient(itemInput.value, costInput.value)
+    const costInput = document.getElementById("costInput");
+    postNewIngredient(itemInput.value, costInput.value);
   }
 
   function handleNewRecipeClick() {
-    const recipeTableBody = document.getElementById('recipeTableBody')
+    const recipeTableBody = document.getElementById("recipeTableBody");
 
     // Recipe Table Headers
-    const trHeaders = document.createElement("tr")
-    trHeaders.id = "recipeHeaders"
-    const checkHeading = document.createElement("th")
-    checkHeading.className = "check"
-    checkHeading.id = "checkboxHeader"
-    checkHeading.innerText = "Select"
+    const trHeaders = document.createElement("tr");
+    trHeaders.id = "recipeHeaders";
+    const checkHeading = document.createElement("th");
+    checkHeading.className = "check";
+    checkHeading.id = "checkboxHeader";
+    checkHeading.innerText = "Select";
 
+    const ingredientHeading = document.createElement("th");
+    ingredientHeading.className = "ingredient";
+    ingredientHeading.id = "itemHeader";
+    ingredientHeading.innerText = "Name";
 
-    const ingredientHeading = document.createElement("th")
-    ingredientHeading.className = "ingredient"
-    ingredientHeading.id = "itemHeader"
-    ingredientHeading.innerText = "Name"
-
-    recipeTableBody.innerHTML = ""
-    recipeTableBody.append(trHeaders)
-    recipeTableBody.append(checkHeading)
-    recipeTableBody.append(ingredientHeading)
+    recipeTableBody.innerHTML = "";
+    recipeTableBody.append(trHeaders);
+    recipeTableBody.append(checkHeading);
+    recipeTableBody.append(ingredientHeading);
 
     // New Recipe Item Input
-    const mainContent = document.createElement("tr")
-    mainContent.class = "mainContent"
+    const mainContent = document.createElement("tr");
+    mainContent.class = "mainContent";
 
-    recipeTableBody.append(mainContent)
-
+    recipeTableBody.append(mainContent);
 
     // CheckBox and Item Entry Field
-    const check = document.createElement("td")
-    check.className = "check"
-    mainContent.append(check)
+    const check = document.createElement("td");
+    check.className = "check";
+    mainContent.append(check);
 
-    const checkInput = document.createElement("input")
-    checkInput.type = "checkbox"
-    checkInput.setAttribute("checked", true)
+    const checkInput = document.createElement("input");
+    checkInput.type = "checkbox";
+    checkInput.setAttribute("checked", true);
 
-    check.append(checkInput)
+    check.append(checkInput);
 
-    const ingredient = document.createElement("td")
+    const ingredient = document.createElement("td");
 
-    mainContent.append(ingredient)
+    mainContent.append(ingredient);
 
-    const ingredientInputForm = document.createElement("form")
-    const ingredientInput = document.createElement("input")
-    ingredientInput.type = "text"
-    ingredientInput.class = "ingredient"
-    ingredientInput.id = "ingedientInput"
-    ingredientInput.addEventListener("submit", handleNewRecipeIngredientSubmit)
+    const ingredientInputForm = document.createElement("form");
+    ingredientInputForm.id = "ingredientInputForm";
+    const ingredientInput = document.createElement("input");
+    ingredientInput.type = "text";
+    ingredientInput.class = "ingredient";
+    ingredientInput.id = "ingredientInput";
+    ingredientInputForm.addEventListener(
+      "submit",
+      handleNewRecipeIngredientSubmit
+    );
 
-    ingredient.append(ingredientInputForm)
-    ingredientInputForm.append(ingredientInput)
+    ingredient.append(ingredientInputForm);
+    ingredientInputForm.append(ingredientInput);
   }
 
-  document.getElementById('addNewItem').addEventListener("click", handleIngredientClick)
-  document.getElementById("addRecipe").addEventListener("click", handleNewRecipeClick)
+  document
+    .getElementById("addNewItem")
+    .addEventListener("click", handleIngredientClick);
+  document
+    .getElementById("addRecipe")
+    .addEventListener("click", handleNewRecipeClick);
 }
 
-async function handleNewRecipeIngredientSubmit (e) {
-    await e.preventDefault()
-    alert("submitted")
-    console.log("submitted")
+async function handleNewRecipeIngredientSubmit(e) {
+  await e.preventDefault();
+  document.getElementById("ingredientInput").value = "";
+  console.log("submitted");
+
+  // push to the back end
+  // repopulate the list from the back end, appending the form at the end
 }
 
-async function postNewIngredient (item, cost) {
+async function postNewIngredient(item, cost) {
   const URL = `${serverURL}/ingredient/storeIngredient`;
 
-  if (await checkForExistingIngredient(item) === "Found!") {
-    return console.log("it's here")
+  if ((await checkForExistingIngredient(item)) === "Found!") {
+    return console.log("it's here");
   } else {
-  try {
-    const newIngredient = {
-      ingredientName: item,
-      cost: cost,
-      recipe: ""
-    }
+    try {
+      const newIngredient = {
+        ingredientName: item,
+        cost: cost,
+        recipe: "",
+      };
 
-    const res = fetch(URL, {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newIngredient),
-    });
-  } catch (error) {
-    console.log(error);
+      const res = fetch(URL, {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newIngredient),
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
-}
 
-async function postNewRecipe (item, ingredients) {
-    const URL = `${serverURL}/recipe/storeRecipe`;
-  
-    if (await checkForExistingRecipe(item) === "Found!") {
-      return console.log("it's here")
-    } else {
+async function postNewRecipe(recipeName, ingredients) {
+  const URL = `${serverURL}/recipe/storeRecipe`;
+
+  if ((await checkForExistingRecipe(item)) === "Found!") {
+    return console.log("it's here");
+  } else {
     try {
       const newRecipe = {
-        recipeName: item,
-        ingredients: ingredients
-      }
-  
+        recipeName: recipeName,
+        ingredients: ingredients,
+      };
+
       const res = fetch(URL, {
         method: "POST",
         mode: "cors",
@@ -173,14 +181,14 @@ async function postNewRecipe (item, ingredients) {
       console.log(error);
     }
   }
-  }
+}
 
-async function checkForExistingIngredient (item) {
+async function checkForExistingIngredient(item) {
   const URL = `${serverURL}/ingredient/find`;
 
   const ingredientQuery = {
     ingredientName: item,
-  }
+  };
 
   const reqOptions = {
     method: "POST",
@@ -188,60 +196,55 @@ async function checkForExistingIngredient (item) {
     headers: new Headers({
       "Content-Type": "application/json",
     }),
-    body: JSON.stringify(ingredientQuery)
-  }
+    body: JSON.stringify(ingredientQuery),
+  };
 
   try {
-    const res = await fetch(URL, reqOptions
-  );
-  const data = await res.json();
+    const res = await fetch(URL, reqOptions);
+    const data = await res.json();
     // console.log(data)
-    return data.message
+    return data.message;
   } catch (error) {
     console.log(error);
   }
 }
 
-async function checkForExistingRecipe (item) {
-    const URL = `${serverURL}/recipe/find`;
-  
-    const ingredientQuery = {
-      ingredientName: item,
-    }
-  
-    const reqOptions = {
-      method: "POST",
-      mode: "cors",
-      headers: new Headers({
-        "Content-Type": "application/json",
-      }),
-      body: JSON.stringify(ingredientQuery)
-    }
-  
-    try {
-      const res = await fetch(URL, reqOptions
-    );
-    const data = await res.json();
-      // console.log(data)
-      return data.message
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  
+async function checkForExistingRecipe(item) {
+  const URL = `${serverURL}/recipe/find`;
 
+  const ingredientQuery = {
+    ingredientName: item,
+  };
+
+  const reqOptions = {
+    method: "POST",
+    mode: "cors",
+    headers: new Headers({
+      "Content-Type": "application/json",
+    }),
+    body: JSON.stringify(ingredientQuery),
+  };
+
+  try {
+    const res = await fetch(URL, reqOptions);
+    const data = await res.json();
+    // console.log(data)
+    return data.message;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 function checkForToken() {
   if (sessionStorage.token) {
     loginWelcomeSection.style.display = `none`;
     switchBtn.style.display = "none";
     loginBtn.style.display = "none";
-    loadPageContents()
+    loadPageContents();
   } else {
     return;
   }
 }
-
 
 function displayLoginError() {
   switchBtn.textContent = "User Not Found";
@@ -292,8 +295,7 @@ function toggleSignup() {
   }
 }
 
-async function fetchShoppingList () {
-
+async function fetchShoppingList() {
   const URL = `${serverURL}/ingredient`;
 
   try {
@@ -305,31 +307,29 @@ async function fetchShoppingList () {
       },
     });
     const data = await res.json();
-    console.log(data)
+    console.log(data);
   } catch (error) {
     console.log(error);
   }
 }
 
-async function fetchRecipeList () {
+async function fetchRecipeList() {
+  const URL = `${serverURL}/recipe`;
 
-    const URL = `${serverURL}/recipe`;
-  
-    try {
-      const res = await fetch(URL, {
-        method: "GET",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-      console.log(data)
-    } catch (error) {
-      console.log(error);
-    }
+  try {
+    const res = await fetch(URL, {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await res.json();
+    console.log(data);
+  } catch (error) {
+    console.log(error);
   }
-  
+}
 
 switchBtn.addEventListener("click", toggleSignup);
 
