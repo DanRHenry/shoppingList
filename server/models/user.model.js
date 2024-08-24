@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema({
     },
     family: {
         type: String,
-        required: true
+        required: false
     },
 })
 

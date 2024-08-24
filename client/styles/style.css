@@ -15,6 +15,10 @@ body {
     border: .5em solid gray;
 }
 
+#family {
+    visibility: hidden;
+}
+
 #recipesContainer{
 display: flex;
 flex-direction: column;
@@ -112,6 +116,10 @@ width: 90vw;
 
 #itemInput, #costInput {
     width: 80%;
+}
+
+#itemInput {
+    text-align: center;
 }
 
 #addRecipeContainer {

@@ -9,6 +9,10 @@ const IngredientSchema = new mongoose.Schema({
         type: Number,
         required: false
     },
+    recipe: {
+        type: Object,
+        required: false
+    }
 })
 
 module.exports = mongoose.model("Ingredient", IngredientSchema);

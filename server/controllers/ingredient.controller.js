@@ -19,7 +19,7 @@ router.post("/storeIngredient", async (req, res) => {
 
     const newIngredientInfo = await ingredientInfo.save();
     if (newIngredientInfo) {
-      console.log("newIngredient:", newIngredientInfo);
+      // console.log("newIngredient:", newIngredientInfo);
     }
     res.status(200).json({
       ingredientInfo: newIngredientInfo,
@@ -33,13 +33,13 @@ router.post("/storeIngredient", async (req, res) => {
   }
 });
 
-// ------------------------- GET -----------------------
+// ------------------------- Find One -----------------------
 
-router.get("/find/:id", async (req, res) => {
+router.post("/find", async (req, res) => {
   try {
-    const { id } = req.params;
-    console.log("id:", id);
-    const findIngredient = await Ingredient.findOne({ _id: id });
+    const { ingredientName } = req.body;
+    console.log("IngredientName:",ingredientName)
+    const findIngredient = await Ingredient.findOne({ "ingredientName": ingredientName });
 
     findIngredient
       ? res.status(200).json({
