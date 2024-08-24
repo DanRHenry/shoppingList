@@ -12,13 +12,13 @@ const serverError = (res, error) => {
 
 router.post("/storeRecipe", async (req, res) => {
   try {
-    const recipeInfo = new Ingredient({
+    const recipeInfo = new Recipe({
       recipeName: req.body.recipeName,
-      cost: req.body.cost
+      ingredients: req.body.ingredients
     });
 
     const newRecipeInfo = await recipeInfo.save();
-    if (newIngredientInfo) {
+    if (newRecipeInfo) {
       console.log("newRecipe:", newRecipeInfo);
     }
     res.status(200).json({
@@ -33,13 +33,13 @@ router.post("/storeRecipe", async (req, res) => {
   }
 });
 
-// ------------------------- GET -----------------------
+// ------------------------- Find One -----------------------
 
-router.get("/find/:id", async (req, res) => {
+router.post("/find", async (req, res) => {
   try {
-    const { id } = req.params;
-    console.log("id:", id);
-    const findRecipe = await Recipe.findOne({ _id: id });
+    const { recipeName } = req.body;
+    console.log("RecipeName:",recipeName)
+    const findRecipe = await Recipe.findOne({ "recipeName": recipeName });
 
     findRecipe
       ? res.status(200).json({
@@ -60,7 +60,7 @@ router.get("/find/:id", async (req, res) => {
       const getAllRecipes = await Recipe.find();
       getAllRecipes
         ? res.status(200).json({
-            message: "All Ingredients:",
+            message: "All Recipes:",
             getAllRecipes,
           })
         : res.status(404).json({
