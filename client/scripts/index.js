@@ -293,6 +293,11 @@ function populateShoppingList (items) {
     checkboxHeader.addEventListener("click", handleSelectAllClick)
     headers.append(checkboxHeader)
 
+    const ingredientHeader = document.createElement("th")
+    ingredientHeader.id = "ingredientHeader"
+    ingredientHeader.textContent = "Ingredient"
+    headers.append(ingredientHeader)
+
     const qtyHeader = document.createElement("th")
     // qtyHeader.className = "qty"
     qtyHeader.id = "qtyHeader"
@@ -514,11 +519,11 @@ async function populateRecipeList() {
         ingredientInput.className = "ingredients";
         ingredientInput.id = "newIngredients"
         ingredientInput.setAttribute("list", "ingredientOptions");
-        ingredientInput.placeholder = "Add Ingredient"
+        ingredientInput.placeholder = "Ingredient"
         // ingredientInput.id = "ingredientInput";
         ingredientInput.required = true;
     
-        if (document.getElementById("newRecipeNameHeading")) {
+        if (document.getElementById("ingredientInputForm")) {
           document.getElementById("addRecipeIngredientsToShoppingListBtn")?.remove()
         }
 

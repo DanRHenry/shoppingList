@@ -32,13 +32,17 @@ width: 90vw;
     background-color: rgb(182, 182, 182);
     border-radius: 1em;
     border: .5em solid gray;
-    overflow-y: auto;
     padding-left: .5em;
     padding-right: 1em;
     padding-top: .5em;
+    /* overflow-y: auto; */
 
     overflow-x: hidden;
     /* height: 100%; */
+}
+
+#recipeItemTable{
+    overflow-y: auto;
 }
 
 #selections {
