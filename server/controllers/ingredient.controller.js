@@ -73,16 +73,18 @@ router.post("/find", async (req, res) => {
 /* 
 ----------------------------- Delete Ingredient Endpoint ------------------------
 */
-router.delete("/delete/:id", async (req, res) => {
+router.delete("/delete/", async (req, res) => {
+// router.delete("/delete/:id", async (req, res) => {
   // res.header("Access-Control-Allow-Origin", "*");
   // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   // console.log("deleting...");
   try {
     //* Pull the ingredient's info from the req
-    const {id} = req.params;
+    // const {id} = req.params;
+    const {ingredientName } = req.body;
 
-    const ingredientID = { _id: id };
-
+    const ingredientID = { ingredientName: ingredientName };
+    // const ingredientID = { _id: id };
     // const returnOption = { new: true };
 
     const deleteIngredient = await Ingredient.deleteOne(ingredientID);

@@ -127,11 +127,39 @@ width: 90vw;
     text-align: center;
 }
 
-#addRecipeBtn {
-    border: 2px solid black;
+#addRecipe {
+    margin-bottom: 1em;
+    border: 2px solid gray;
     border-radius: .5em;
 }
 
+#addRecipe:hover {
+    background-color: gray;
+}
+
+/* #addRecipeBtn {
+    border: 2px solid black;
+    border-radius: .5em;
+} */
+
+.recipeName {
+    text-align: center;
+    background-color: white;
+    border: 2px solid gray;
+    margin-bottom: 5px;
+    min-width: fit-content;
+    border-radius: .5em;
+    padding-left: .5em;
+    padding-right: .5em;
+}
+
+.recipeName:hover {
+    background-color: gray;
+}
 /* #newRecipeInputBtn {
     visibility: hidden;
 } */
+
+#applicationContaner {
+    overflow-y: auto;
+}
