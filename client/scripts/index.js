@@ -56,7 +56,7 @@ function loadPageContents() {
     postNewIngredient(itemInput.value, costInput.value);
   }
 
-  function handleNewRecipeClick() {
+  async function handleNewRecipeClick() {
     const recipeTableBody = document.getElementById("recipeTableBody");
 
     // Recipe Table Headers
@@ -67,10 +67,10 @@ function loadPageContents() {
     // checkHeading.id = "checkboxHeader";
     // checkHeading.innerText = "Select";
 
-    const newRecipeNameHeading = document.createElement("th")
+    const newRecipeNameHeading = document.createElement("th");
     newRecipeNameHeading.className = "ingredient";
     newRecipeNameHeading.id = "newRecipeNameHeading";
-    newRecipeNameHeading.innerText = "Recipe Name"
+    newRecipeNameHeading.innerText = "Recipe Name";
 
     const ingredientHeading = document.createElement("th");
     ingredientHeading.className = "ingredient";
@@ -94,7 +94,6 @@ function loadPageContents() {
     // check.className = "check";
     // mainContent.append(check);
 
- 
     // const checkInput = document.createElement("input");
     // checkInput.type = "checkbox";
     // checkInput.setAttribute("checked", true);
@@ -105,35 +104,67 @@ function loadPageContents() {
 
     mainContent.append(ingredient);
 
-    const ingredientInputForm = document.createElement("form");
+    const ingredientInputForm = document.createElement("div");
     ingredientInputForm.id = "ingredientInputForm";
 
-    const newRecipeNameInput = document.createElement("input")
+    const newRecipeNameInput = document.createElement("input");
     newRecipeNameInput.type = "text";
-    newRecipeNameInput.id = "newRecipeNameInput"
-    newRecipeNameInput.required = true
+    newRecipeNameInput.id = "newRecipeNameInput";
+    newRecipeNameInput.placeholder = "Name"
+    newRecipeNameInput.required = true;
 
     const ingredientInput = document.createElement("input");
     ingredientInput.type = "text";
-    ingredientInput.class = "ingredient";
-    ingredientInput.id = "ingredientInput";
+    ingredientInput.className = "ingredients";
+    ingredientInput.setAttribute("list", "ingredientOptions")
+    // ingredientInput.id = "ingredientInput";
     ingredientInput.required = true;
 
-    ingredientInputForm.append(newRecipeNameInput, ingredientInput)
-    // ingredientInputForm.append(ingredientInput);
-    
-    ingredient.append(ingredientInputForm);
+    function handleIngredientInputSubmit() {
+        console.log("adding new line")
+        const ingredientInput = document.createElement("input");
+        ingredientInput.type = "text";
+        ingredientInput.className = "ingredients";
+        ingredientInput.setAttribute("list", "ingredientOptions")
+        // ingredientInput.id = "ingredientInput";
+        ingredientInput.required = true;
+        ingredientInputForm.append(ingredientInput)
+    }
 
-    console.log(document.getElementById("ingredientInputForm"))
-    document.getElementById("ingredientInputForm").addEventListener(
-      "submit",
-      handleNewRecipeIngredientSubmit
-    );
+
+    const ingredientDataList = document.createElement("datalist")
+    ingredientDataList.id = "ingredientOptions"
+
+    const ingredientOption = document.createElement("option")
+    ingredientOption.value = "Lettuce" //todo - populate this with the list of ingredients from all recipes
+
+    const newIngredientFieldBtn = document.createElement("button")
+    newIngredientFieldBtn.id = "newIngredientInputFieldBtn";
+    newIngredientFieldBtn.addEventListener("click", handleIngredientInputSubmit)
+    newIngredientFieldBtn.textContent = "+"
+
+
+    const newRecipeInputBtn = document.createElement("input")
+    newRecipeInputBtn.type = "submit"
+    newRecipeInputBtn.id = "newRecipeInputBtn"
+
+    ingredientInputForm.append(newRecipeNameInput, ingredientInput, ingredientDataList);
+
+    ingredientDataList.append(ingredientOption)
+
+    const br = document.createElement("br")
+
+    ingredient.append(ingredientInputForm, newIngredientFieldBtn, br,newRecipeInputBtn);
+
+    document
+      .getElementById("newRecipeInputBtn")
+      .addEventListener("click", handleNewRecipeIngredientSubmit);
   }
 
   document
     .getElementById("addNewItem")
     .addEventListener("click", handleIngredientClick);
+
   document
     .getElementById("addRecipe")
     .addEventListener("click", handleNewRecipeClick);
@@ -141,8 +172,20 @@ function loadPageContents() {
 
 async function handleNewRecipeIngredientSubmit(e) {
   await e.preventDefault();
-  document.getElementById("newRecipeNameInput").value = "";
-  document.getElementById("ingredientInput").value = "";
+
+  const nameInput = document.getElementById("newRecipeNameInput").value;
+  const ingredients = document.getElementsByClassName("ingredients");
+
+  const ingredientValues = []
+
+  for (item of ingredients) {
+    ingredientValues.push(item.value)
+  }
+
+  postNewRecipe(nameInput, ingredientValues)
+
+  nameInput.value = ""
+  for (let item of ingredients) item.value = "";
   console.log("submitted");
 
   // push to the back end
@@ -177,9 +220,11 @@ async function postNewIngredient(item, cost) {
 }
 
 async function postNewRecipe(recipeName, ingredients) {
+    console.log("recipeName:",recipeName)
+    console.log("ingredients:",ingredients)
   const URL = `${serverURL}/recipe/storeRecipe`;
 
-  if ((await checkForExistingRecipe(item)) === "Found!") {
+  if ((await checkForExistingRecipe(recipeName)) === "Found!") {
     return console.log("it's here");
   } else {
     try {
@@ -253,7 +298,6 @@ async function checkForExistingRecipe(item) {
     console.log(error);
   }
 }
-
 
 function checkForToken() {
   if (sessionStorage.token) {
