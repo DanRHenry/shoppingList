@@ -24,39 +24,15 @@
         <table>
           <tbody id="shoppingListTableBody">
             <tr id="headers">
-              <th class="check" id="checkboxHeader">Select</th>
+              <th class="check" id="checkboxHeader">Select All</th>
               <th class="item" id="itemHeader">Name</th>
-              <th class="cost" id="costHeader">Cost</th>
+              <th class="qty" id="qtyHeader">Qty</th>
             </tr>
         <br />
-        <tr>
+        <tr id="removeSelectedItemsContainer">
             <td id="removeSelectedItems">Remove</td>
         </tr>
     <div id="mainContent">
-            <!-- <tr class="mainContent">
-              <td class="check">
-                <input type="checkbox">
-              </td>
-              <td class="item">Sushi</td>
-              <td class="cost">$4.99</td>
-            </tr>
-
-            <tr class="mainContent">
-                <td class="check">
-                  <input type="checkbox">
-                </td>
-                <td class="item">Grapes</td>
-                <td class="cost">$8.99</td>
-              </tr>
-
-              <tr class="mainContent">
-                <td class="check">
-                  <input type="checkbox">
-                </td>
-                <td class="item">Strawberries</td>
-                <td class="cost">$4.99</td>
-              </tr> -->
-
             </tbody>
             <tr class="mainContent">
               <td class="check">
@@ -67,8 +43,8 @@
                 <td class="item">
                   <input  id="itemInput" type="text" required>
                 </td>
-                <td class="cost">
-                  <input id="costInput" type="text" placeholder="$">
+                <td class="qty">
+                  <input id="qtyInput" type="text" placeholder="">
                 </td>
             </tr>
           </table>
@@ -83,27 +59,6 @@
                   <div id="recipeItem">
                     <table>
                       <tbody id="recipeTableBody">
-                        <tr id="recipeHeaders">
-                          <th class="check" id="checkboxHeader">Select</th>
-                          <th class="ingredient" id="itemHeader">Name</th>
-                        </tr>
-                    <br />
-                    <tr>
-                    </tr>
-                <div id="mainContent">
-                        <!-- <tr class="mainContent">
-                          <td class="check">
-                            <input type="checkbox" checked>
-                          </td>
-                          <td class="ingredient">Sushi</td>
-                        </tr>
-            
-                        <tr class="mainContent">
-                            <td class="check">
-                              <input type="checkbox">
-                            </td>
-                            <td class="ingredient">Grapes</td>
-                          </tr> -->
                         </tbody>
                       </table>  
                   </div>

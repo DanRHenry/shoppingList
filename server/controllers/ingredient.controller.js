@@ -38,7 +38,7 @@ router.post("/storeIngredient", async (req, res) => {
 router.post("/find", async (req, res) => {
   try {
     const { ingredientName } = req.body;
-    console.log("IngredientName:",ingredientName)
+    // console.log("IngredientName:",ingredientName)
     const findIngredient = await Ingredient.findOne({ "ingredientName": ingredientName });
 
     findIngredient

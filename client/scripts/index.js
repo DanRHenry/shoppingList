@@ -50,10 +50,13 @@ function loadPageContents() {
   fetchShoppingList();
   populateRecipeList();
 
-  function handleIngredientClick() {
+  async function handleIngredientClick() {
     const itemInput = document.getElementById("itemInput");
-    const costInput = document.getElementById("costInput");
-    postNewIngredient(itemInput.value, costInput.value);
+    const qtyInput = document.getElementById("qtyInput");
+    await postNewIngredient(itemInput.value, qtyInput.value);
+    itemInput.value = ""
+    qtyInput.value = ""
+    fetchShoppingList()
   }
 
   document
@@ -86,16 +89,16 @@ async function handleNewRecipeIngredientSubmit(e) {
   // repopulate the list from the back end, appending the form at the end
 }
 
-async function postNewIngredient(item, cost) {
+async function postNewIngredient(item, qty) {
   const URL = `${serverURL}/ingredient/storeIngredient`;
 
   if ((await checkForExistingIngredient(item)) === "Found!") {
-    return console.log("it's here");
+    return
   } else {
     try {
       const newIngredient = {
         ingredientName: item,
-        cost: cost,
+        qty: qty,
         recipe: "",
       };
 
@@ -162,10 +165,9 @@ async function checkForExistingIngredient(item) {
   try {
     const res = await fetch(URL, reqOptions);
     const data = await res.json();
-    // console.log(data)
     return data.message;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }
 
@@ -287,14 +289,9 @@ function populateShoppingList (items) {
     const checkboxHeader = document.createElement("th")
     // checkboxHeader.className = "check"
     checkboxHeader.id = "checkboxHeader"
-    checkboxHeader.textContent = "Select"
+    checkboxHeader.textContent = "Select All"
+    checkboxHeader.addEventListener("click", handleSelectAllClick)
     headers.append(checkboxHeader)
-
-    const itemHeader = document.createElement("th")
-    // itemHeader.className = "item"
-    itemHeader.id = "itemHeader"
-    itemHeader.textContent = "Name"
-    headers.append(itemHeader)
 
     const qtyHeader = document.createElement("th")
     // qtyHeader.className = "qty"
@@ -306,6 +303,8 @@ function populateShoppingList (items) {
 
     const removeSelectedItemsRow = document.createElement("tr")
     const removeSelectedItems = document.createElement("td")
+    removeSelectedItems.id = "removeSelectedItemsContainer"
+    
     const removeSelectedItemsBtn = document.createElement('button')
     removeSelectedItemsBtn.addEventListener("click", handleRemovingShoppingListItems)
     removeSelectedItemsBtn.id = "removeSelectedItems"
@@ -347,6 +346,11 @@ function populateShoppingList (items) {
     
         const itemQuantity = document.createElement("td")
         itemQuantity.className = "qty"
+        const qtyInput = document.createElement("input")
+        qtyInput.placeholder = "0"
+        qtyInput.type = "number"
+        qtyInput.min = "0"
+        itemQuantity.append(qtyInput)
         mainContent.append(itemQuantity)
 
         shoppingListTableBody.append(mainContent)
@@ -382,6 +386,13 @@ function populateShoppingList (items) {
     mainContent.append(qtyInput)
 }
 
+function handleSelectAllClick () {
+    const shoppingListCheckBoxes = document.getElementsByClassName("shoppingListCheckBoxes")
+    for (let i = 0; i < shoppingListCheckBoxes.length; i++) {
+        shoppingListCheckBoxes[i].checked = true
+    }
+}
+
 async function handleRemovingShoppingListItems () {
     const shoppingListCheckBoxes = document.getElementsByClassName("shoppingListCheckBoxes")
     const item = document.getElementsByClassName("item")
@@ -404,7 +415,7 @@ async function handleRemovingShoppingListItems () {
               });
               const data = await res.json();
               if (data.message === "The ingredient was successfully deleted!") {
-                console.log("the item was deleted")
+                // console.log("the item was deleted")
               }
             } catch (error) {
               console.log(error);
@@ -457,21 +468,20 @@ async function populateRecipeList() {
         const trHeaders = document.createElement("tr");
         trHeaders.id = "recipeHeaders";
     
-        const newRecipeNameHeading = document.createElement("th");
-        newRecipeNameHeading.className = "ingredient";
-        newRecipeNameHeading.id = "newRecipeNameHeading";
-        newRecipeNameHeading.innerText = "Recipe Name";
+        // const newRecipeNameHeading = document.createElement("th");
+        // newRecipeNameHeading.className = "ingredient";
+        // newRecipeNameHeading.id = "newRecipeNameHeading";
+        // newRecipeNameHeading.innerText = "Recipe Name";
     
-        const ingredientHeading = document.createElement("th");
-        ingredientHeading.className = "ingredient";
-        ingredientHeading.id = "itemHeader";
-        ingredientHeading.innerText = "Ingredient";
+        // const ingredientHeading = document.createElement("th");
+        // ingredientHeading.className = "ingredient";
+        // ingredientHeading.id = "itemHeader";
+        // ingredientHeading.innerText = "Ingredient";
     
         recipeTableBody.innerHTML = "";
         recipeTableBody.append(trHeaders);
-        recipeTableBody.append(newRecipeNameHeading);
+        // recipeTableBody.append(newRecipeNameHeading);
         // recipeTableBody.append(checkHeading);
-        recipeTableBody.append(ingredientHeading);
     
         // New Recipe Item Input
         const mainContent = document.createElement("tr");
@@ -492,13 +502,26 @@ async function populateRecipeList() {
         newRecipeNameInput.placeholder = "Name";
         newRecipeNameInput.required = true;
     
+        // const itemHeader = document.createElement("th")
+        // // itemHeader.className = "item"
+        // itemHeader.id = "itemHeader"
+        // itemHeader.textContent = "Name"
+        // newRecipeNameInput.append(itemHeader)
+        // recipeTableBody.append(ingredientHeading);
+
         const ingredientInput = document.createElement("input");
         ingredientInput.type = "text";
         ingredientInput.className = "ingredients";
+        ingredientInput.id = "newIngredients"
         ingredientInput.setAttribute("list", "ingredientOptions");
+        ingredientInput.placeholder = "Add Ingredient"
         // ingredientInput.id = "ingredientInput";
         ingredientInput.required = true;
     
+        if (document.getElementById("newRecipeNameHeading")) {
+          document.getElementById("addRecipeIngredientsToShoppingListBtn")?.remove()
+        }
+
         function handleIngredientInputSubmit() {
             const ingredients = document.getElementsByClassName("ingredients")
             for (let ingredient of ingredients) {
@@ -578,7 +601,7 @@ async function populateRecipeList() {
       const ingredientHeader = document.createElement("th");
       ingredientHeader.textContent = "Ingredient";
 
-      recipeHeaders.append(checkboxHeader, ingredientHeader);
+    //   recipeHeaders.append(checkboxHeader, ingredientHeader);
 
       recipeTableBody.append(recipeHeaders);
       // const recipeHeaders = document.getElementById("recipeHeaders")
@@ -603,14 +626,20 @@ async function populateRecipeList() {
         recipeTableBody.append(mainContent);
       });
 
+      const addRecipeIngredientsToShoppingListBtnContainer = document.createElement("div")
+      addRecipeIngredientsToShoppingListBtnContainer.id = "addRecipeIngredientsToShoppingListBtnContainer"
+
       const addRecipeIngredientsToShoppingListBtn = document.createElement("button")
       addRecipeIngredientsToShoppingListBtn.id = "addRecipeIngredientsToShoppingListBtn"
-      addRecipeIngredientsToShoppingListBtn.textContent = "Add Selected to Shopping List"
+      addRecipeIngredientsToShoppingListBtn.textContent = "Add to Shopping List"
       addRecipeIngredientsToShoppingListBtn.addEventListener("click", handleAddRecipeIngredientsToShoppingList)
+
       if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
           document.getElementById("addRecipeIngredientsToShoppingListBtn").remove()
+          document.getElementById("addRecipeIngredientsToShoppingListBtnContainer").remove()
       }
-      document.getElementById("recipeItem").append(addRecipeIngredientsToShoppingListBtn)
+          document.getElementById("recipeItem").append(addRecipeIngredientsToShoppingListBtnContainer)
+          document.getElementById("addRecipeIngredientsToShoppingListBtnContainer").append(addRecipeIngredientsToShoppingListBtn)
 
     }
   });
@@ -619,17 +648,16 @@ async function populateRecipeList() {
 function handleAddRecipeIngredientsToShoppingList () {
     const ingredientCollection = document.getElementsByClassName("ingredient")
     const ingredientCheck = document.getElementsByClassName("ingredientCheck")
-    console.log("ingredientCollection:",ingredientCollection)
-    console.log("ingredientCheck:",ingredientCheck)
-
 
     for (let i = 0; i < ingredientCollection.length; i++) {
-        if (ingredientCheck[i].children[0].checked === true)
-        console.log(ingredientCollection[i].textContent)
-
-        postNewIngredient(ingredientCollection[i].textContent, 0)
+        if (ingredientCheck[i].children[0].checked === true) {
+            // console.log(ingredientCollection[i].textContent)
+            postNewIngredient(ingredientCollection[i].textContent, 0)
+        }
     }
-    fetchShoppingList()
+    setTimeout(() => {
+        fetchShoppingList()
+    }, 500);
 }
 
 switchBtn.addEventListener("click", toggleSignup);

@@ -38,6 +38,7 @@ width: 90vw;
     padding-top: .5em;
 
     overflow-x: hidden;
+    /* height: 100%; */
 }
 
 #selections {
@@ -79,9 +80,13 @@ width: 90vw;
     background-color: white;
 }
 
+#removeSelectedItemsContainer{
+    text-align: center;
+}
+
 #removeSelectedItems{
     user-select: none;
-    background-color: whitesmoke;
+    /* background-color: whitesmoke; */
     border: 2px solid gray;
     border-radius: .5em;
     text-align: center;
@@ -108,13 +113,14 @@ width: 90vw;
     /* background-color: red; */
 }
 
-.ingredients {
+.ingredient {
     width: 100%;
-    text-align: left;
-    padding-left: 1em;
+    text-align: center;
+    overflow: auto;
+    /* padding-left: 1em; */
 }
 
-#itemInput, #costInput {
+#itemInput, #qtyInput, .qty > input {
     width: 80%;
 }
 
@@ -148,7 +154,7 @@ width: 90vw;
     border: 2px solid gray;
     margin-bottom: 5px;
     min-width: fit-content;
-    border-radius: .5em;
+    /* border-radius: .5em; */
     padding-left: .5em;
     padding-right: .5em;
 }
@@ -162,4 +168,20 @@ width: 90vw;
 
 #applicationContaner {
     overflow-y: auto;
+}
+
+.qty > input {
+    text-align: right;
+}
+
+
+
+#addRecipeIngredientsToShoppingListBtnContainer{
+    padding-top: .5em;
+    padding-bottom: .5em;
+    text-align: center;
+}
+
+#newRecipeNameInput, #newIngredients {
+    width: 100%;
 }
