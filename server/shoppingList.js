@@ -104,9 +104,9 @@ app.options("*", (req, res) => {
   }
 });
 
-app.use("/user", userController)
-app.use("/ingredient", ingrientController)
-app.use("/recipe", recipeController)
+app.use("/api/shoppinglist/user", userController)
+app.use("/api/shoppinglist/ingredient", ingrientController)
+app.use("/api/shoppinglist/recipe", recipeController)
 // app.use("/api/jeopardy/user", user);
 // app.use("/api/jeopardy/questions", questions);
 // app.use("/api/jeopardy/gameplay", gameplay);

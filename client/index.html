@@ -7,10 +7,7 @@
     <link rel="stylesheet" href="./styles/style.css" />
   </head>
   <body>
-    <form id="login-form" class="form-signin">
-    <!-- <form id="login-form" class="form-signin" method="post" action="http://127.0.0.1:3498/user/signup"> -->
-
-      <!-- <h3 class="form-signin-heading">Log in</h3> -->
+    <!-- <form id="login-form" class="form-signin">
        <div id="loginWelcomeSection">
       <input id="email" type="text" required name="email" placeholder="Email">
       <input id="password" type="password" required name="password" placeholder="Password">
@@ -19,7 +16,7 @@
     </div>
   </form>
   <button id="switchBtn">Signup?</button>
-    <br>
+    <br> -->
     <div id="applicationContaner">
         <table>
           <tbody id="shoppingListTableBody">
@@ -50,20 +47,24 @@
           </table>
         </div>
         <br>
+        <div id="recipeContentContainer">
+          <div id="recipeContent">
+                    <div id="recipeItem">
+                      <table id="recipeItemTable">
+                        <tbody id="recipeTableBody">
+                          </tbody>
+                        </table>  
+                    </div>
+                </div>
+              </div>
 
         <div id="recipesContainer">
             <div id="selections">
                 <!-- <div id="addRecipeContainer"><button id="addRecipe">New</button></div> -->
         </div>
-        <div id="recipeContent">
-                  <div id="recipeItem">
-                    <table id="recipeItemTable">
-                      <tbody id="recipeTableBody">
-                        </tbody>
-                      </table>  
-                  </div>
-              </div>
-        </div>
+      </div>
+
+
         <script src="./scripts/index.js"></script>
   </body>
 </html>

@@ -1,7 +1,7 @@
 // https://developers.google.com/identity/sign-in/web/sign-getElementsByName("email")
 
-const serverURL = "http://127.0.0.1:3498";
-
+// const serverURL = "http://127.0.0.1:3498";
+const serverURL = "https://www.danhenrydev.com/api/shoppinglist"
 const loginForm = document.getElementById("login-form");
 
 const loginBtn = document.getElementById("login-Btn");
@@ -45,7 +45,8 @@ async function login(e) {
     console.log(error);
   }
 }
-
+//remove this later
+loadPageContents()
 function loadPageContents() {
   fetchShoppingList();
   populateRecipeList();
@@ -79,9 +80,9 @@ async function handleNewRecipeIngredientSubmit(e) {
   }
 
   await postNewRecipe(nameInput, ingredientValues);
-  setTimeout(() => {
-      populateRecipeList()
-  }, 100);
+  // setTimeout(() => {
+     await populateRecipeList()
+  // }, 100);
   nameInput.value = "";
   for (let item of ingredients) item.value = "";
   console.log("submitted");
@@ -650,7 +651,7 @@ async function populateRecipeList() {
   });
 }
 
-function handleAddRecipeIngredientsToShoppingList () {
+async function handleAddRecipeIngredientsToShoppingList () {
     const ingredientCollection = document.getElementsByClassName("ingredient")
     const ingredientCheck = document.getElementsByClassName("ingredientCheck")
 
@@ -660,9 +661,9 @@ function handleAddRecipeIngredientsToShoppingList () {
             postNewIngredient(ingredientCollection[i].textContent, 0)
         }
     }
-    setTimeout(() => {
-        fetchShoppingList()
-    }, 500);
+    // setTimeout(() => {
+        await fetchShoppingList()
+    // }, 500);
 }
 
 switchBtn.addEventListener("click", toggleSignup);
