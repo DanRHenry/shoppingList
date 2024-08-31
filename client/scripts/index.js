@@ -353,9 +353,10 @@ function populateShoppingList (items) {
         const itemQuantity = document.createElement("td")
         itemQuantity.className = "qty"
         const qtyInput = document.createElement("input")
-        qtyInput.placeholder = "0"
+        qtyInput.placeholder = "1"
         qtyInput.type = "number"
-        qtyInput.min = "0"
+        qtyInput.min = "1"
+        qtyInput.value = 1
         itemQuantity.append(qtyInput)
         mainContent.append(itemQuantity)
 

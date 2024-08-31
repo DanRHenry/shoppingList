@@ -133,8 +133,16 @@ margin-bottom: 1em;
     /* padding-left: 1em; */
 }
 
-#itemInput, #qtyInput, .qty > input {
+#itemInput{
     width: 80%;
+}
+
+.qty {
+    width: 5.5em;
+}
+
+.qty, #qtyInput, .qty > input {
+    width: 3em;
 }
 
 #itemInput {
