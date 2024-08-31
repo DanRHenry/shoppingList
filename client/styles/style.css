@@ -169,20 +169,6 @@ margin-bottom: 1em;
     border-radius: .5em;
 } */
 
-.recipeName {
-    text-align: center;
-    background-color: white;
-    border: 2px solid gray;
-    margin-bottom: 5px;
-    min-width: fit-content;
-    /* border-radius: .5em; */
-    padding-left: .5em;
-    padding-right: .5em;
-}
-
-.recipeName:hover {
-    background-color: gray;
-}
 /* #newRecipeInputBtn {
     visibility: hidden;
 } */
@@ -205,4 +191,36 @@ margin-bottom: 1em;
 
 #newRecipeNameInput, #newIngredients {
     width: 100%;
+}
+
+.recipeName {
+    display: inline-block;
+    text-align: center;
+    background-color: white;
+    border: 2px solid gray;
+    margin-bottom: 5px;
+    min-width: fit-content;
+    /* width: 100%; */
+    /* border-radius: .5em; */
+    padding-left: .5em;
+    padding-right: .5em;
+}
+
+.recipeName:hover {
+    background-color: gray;
+}
+
+.recipeCheckbox {
+    display: inline-block;
+}
+
+.recipeGroup {
+    display: grid;
+    grid-template-columns: 1fr 6fr 1fr;
+    margin: auto;
+    min-width: fit-content;
+    text-align: center;
+    width: 100%;
+    /* background-color: red; */
+    min-width: fit-content;
 }

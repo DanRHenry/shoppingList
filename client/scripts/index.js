@@ -612,13 +612,22 @@ async function populateRecipeList() {
   }
 
   recipes.map((recipe) => {
+    const entryCheckbox = document.createElement("input")
+    entryCheckbox.type = "checkbox"
+    entryCheckbox.className = "recipeCheckbox"
+    
     const entry = document.createElement("div");
     entry.className = "recipeName";
     entry.value = recipe.recipeName;
     entry.textContent = recipe.recipeName;
     entry.addEventListener("click", handleEntryClick);
 
-    selections.append(entry);
+    const recipeGroup = document.createElement("div")
+    recipeGroup.className = "recipeGroup"
+    recipeGroup.append(entryCheckbox)
+    recipeGroup.append(entry)
+    selections.append(recipeGroup);
+
 
     function handleEntryClick() {
       const recipeTableBody = document.getElementById("recipeTableBody");
