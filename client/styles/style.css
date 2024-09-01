@@ -89,7 +89,16 @@ body {
     background-color: rgb(211, 211, 211);
 }
 
-.mainContent:nth-child(even) {
+.recipeGroup {
+    background-color: rgb(211, 211, 211);
+    /* background-color: red; */
+}
+
+.recipeGroup:nth-child(odd) {
+    background-color: white;
+}
+
+.mainContent:nth-child(odd) {
     background-color: white;
 }
 
@@ -179,27 +188,27 @@ body {
 
 #newIngredientInputFieldBtn {
     margin-right: 1em;
-    color: red;
+    /* color: red; */
 }
 
 #newIngredientInputFieldBtn, #newRecipeInputBtn {
     margin-top: 1em;
 }
 
-#newRecipeNameInput, #newIngredients {
+#newRecipeNameInput, .ingredients {
     width: 100%;
     text-align: center;
 }
 
 .recipeName {
-    background-color: white;
-    border: 2px solid gray;
+    /* background-color: white; */
+    /* border: 2px solid gray; */
     margin-bottom: 5px;
 }
 
-.recipeName:hover {
+/* .recipeName:hover {
     background-color: gray;
-}
+} */
 
 /* .recipeCheckbox {
     display: inline-block;
