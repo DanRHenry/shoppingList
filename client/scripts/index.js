@@ -1,6 +1,230 @@
 // https://developers.google.com/identity/sign-in/web/sign-getElementsByName("email")
+// https://stackoverflow.com/questions/2264072/detect-a-finger-swipe-through-javascript-on-the-iphone-and-android
+// https://github.com/john-doherty/swiped-events/blob/master/src/swiped-events.js
+/* 
+I merged a few of the answers here into a script that uses CustomEvent to fire swiped events in the DOM. Add the 0.7k swiped-events.min.js script to your page and listen for swiped events:
 
+swiped
+document.addEventListener('swiped', function(e) {
+    console.log(e.target); // the element that was swiped
+    console.log(e.detail.dir); // swiped direction
+});
+swiped-left
+document.addEventListener('swiped-left', function(e) {
+    console.log(e.target); // the element that was swiped
+});
+
+swiped-right
+document.addEventListener('swiped-right', function(e) {
+    console.log(e.target); // the element that was swiped
+});
+swiped-up
+document.addEventListener('swiped-up', function(e) {
+    console.log(e.target); // the element that was swiped
+});
+swiped-down
+document.addEventListener('swiped-down', function(e) {
+    console.log(e.target); // the element that was swiped
+});
+You can also attach directly to an element:
+
+document.getElementById('myBox').addEventListener('swiped-down', function(e) {
+    console.log(e.target); // the element that was swiped
+});
+/*
+
+
+
+/*
+Optional config
+You can specify the following attributes to tweak how swipe interaction functions in your page (these are optional).
+
+<div data-swipe-threshold="10"
+     data-swipe-timeout="1000"
+     data-swipe-ignore="false">
+      Swiper, get swiping!
+</div>
+To set defaults application wide, set config attributes on topmost element:
+
+<body data-swipe-threshold="100" data-swipe-timeout="250">
+    <div>Swipe me</div>
+    <div>or me</div>
+</body>
+Source code is available on Github
+*/
 // const serverURL = "http://127.0.0.1:3498";
+
+
+/*!
+ * swiped-events.js - v@version@
+ * Pure JavaScript swipe events
+ * https://github.com/john-doherty/swiped-events
+ * @inspiration https://stackoverflow.com/questions/16348031/disable-scrolling-when-touch-moving-certain-element
+ * @author John Doherty <www.johndoherty.info>
+ * @license MIT
+ */
+(function (window, document) {
+
+  'use strict';
+
+  // patch CustomEvent to allow constructor creation (IE/Chrome)
+  if (typeof window.CustomEvent !== 'function') {
+
+      window.CustomEvent = function (event, params) {
+
+          params = params || { bubbles: false, cancelable: false, detail: undefined };
+
+          var evt = document.createEvent('CustomEvent');
+          evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+          return evt;
+      };
+
+      window.CustomEvent.prototype = window.Event.prototype;
+  }
+
+  document.addEventListener('touchstart', handleTouchStart, false);
+  document.addEventListener('touchmove', handleTouchMove, false);
+  document.addEventListener('touchend', handleTouchEnd, false);
+
+  var xDown = null;
+  var yDown = null;
+  var xDiff = null;
+  var yDiff = null;
+  var timeDown = null;
+  var startEl = null;
+  var touchCount = 0;
+
+  /**
+   * Fires swiped event if swipe detected on touchend
+   * @param {object} e - browser event object
+   * @returns {void}
+   */
+  function handleTouchEnd(e) {
+
+      // if the user released on a different target, cancel!
+      if (startEl !== e.target) return;
+
+      var swipeThreshold = parseInt(getNearestAttribute(startEl, 'data-swipe-threshold', '20'), 10); // default 20 units
+      var swipeUnit = getNearestAttribute(startEl, 'data-swipe-unit', 'px'); // default px
+      var swipeTimeout = parseInt(getNearestAttribute(startEl, 'data-swipe-timeout', '500'), 10);    // default 500ms
+      var timeDiff = Date.now() - timeDown;
+      var eventType = '';
+      var changedTouches = e.changedTouches || e.touches || [];
+
+      if (swipeUnit === 'vh') {
+          swipeThreshold = Math.round((swipeThreshold / 100) * document.documentElement.clientHeight); // get percentage of viewport height in pixels
+      }
+      if (swipeUnit === 'vw') {
+          swipeThreshold = Math.round((swipeThreshold / 100) * document.documentElement.clientWidth); // get percentage of viewport height in pixels
+      }
+
+      if (Math.abs(xDiff) > Math.abs(yDiff)) { // most significant
+          if (Math.abs(xDiff) > swipeThreshold && timeDiff < swipeTimeout) {
+              if (xDiff > 0) {
+                  eventType = 'swiped-left';
+              }
+              else {
+                  eventType = 'swiped-right';
+              }
+          }
+      }
+      else if (Math.abs(yDiff) > swipeThreshold && timeDiff < swipeTimeout) {
+          if (yDiff > 0) {
+              eventType = 'swiped-up';
+          }
+          else {
+              eventType = 'swiped-down';
+          }
+      }
+
+      if (eventType !== '') {
+
+          var eventData = {
+              dir: eventType.replace(/swiped-/, ''),
+              touchType: (changedTouches[0] || {}).touchType || 'direct',
+              fingers: touchCount, // Number of fingers used
+              xStart: parseInt(xDown, 10),
+              xEnd: parseInt((changedTouches[0] || {}).clientX || -1, 10),
+              yStart: parseInt(yDown, 10),
+              yEnd: parseInt((changedTouches[0] || {}).clientY || -1, 10)
+          };
+
+          // fire `swiped` event event on the element that started the swipe
+          startEl.dispatchEvent(new CustomEvent('swiped', { bubbles: true, cancelable: true, detail: eventData }));
+
+          // fire `swiped-dir` event on the element that started the swipe
+          startEl.dispatchEvent(new CustomEvent(eventType, { bubbles: true, cancelable: true, detail: eventData }));
+      }
+
+      // reset values
+      xDown = null;
+      yDown = null;
+      timeDown = null;
+  }
+  /**
+   * Records current location on touchstart event
+   * @param {object} e - browser event object
+   * @returns {void}
+   */
+  function handleTouchStart(e) {
+
+      // if the element has data-swipe-ignore="true" we stop listening for swipe events
+      if (e.target.getAttribute('data-swipe-ignore') === 'true') return;
+
+      startEl = e.target;
+
+      timeDown = Date.now();
+      xDown = e.touches[0].clientX;
+      yDown = e.touches[0].clientY;
+      xDiff = 0;
+      yDiff = 0;
+      touchCount = e.touches.length;
+  }
+
+  /**
+   * Records location diff in px on touchmove event
+   * @param {object} e - browser event object
+   * @returns {void}
+   */
+  function handleTouchMove(e) {
+
+      if (!xDown || !yDown) return;
+
+      var xUp = e.touches[0].clientX;
+      var yUp = e.touches[0].clientY;
+
+      xDiff = xDown - xUp;
+      yDiff = yDown - yUp;
+  }
+
+  /**
+   * Gets attribute off HTML element or nearest parent
+   * @param {object} el - HTML element to retrieve attribute from
+   * @param {string} attributeName - name of the attribute
+   * @param {any} defaultValue - default value to return if no match found
+   * @returns {any} attribute value or defaultValue
+   */
+  function getNearestAttribute(el, attributeName, defaultValue) {
+
+      // walk up the dom tree looking for attributeName
+      while (el && el !== document.documentElement) {
+
+          var attributeValue = el.getAttribute(attributeName);
+
+          if (attributeValue) {
+              return attributeValue;
+          }
+
+          el = el.parentNode;
+      }
+
+      return defaultValue;
+  }
+
+}(window, document));
+
+
+
 const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
 const loginForm = document.getElementById("login-form");
 
@@ -60,19 +284,26 @@ async function handleNewRecipeIngredientSubmit(e) {
 
   const ingredientValues = [];
 
-  for (item of ingredients) {
+  for (let item of ingredients) {
     if (item.value.length > 0) {
       ingredientValues.push(item.value);
     }
   }
 
   await postNewRecipe(nameInput, ingredientValues);
+  console.log(nameInput)
   // setTimeout(() => {
-  await populateRecipeList();
+  // await populateRecipeList();
+  const recipeContent = document.getElementById("recipeContent")
+  // recipeContent.innerHTML = `<div>${nameInput.value} Created</div>`
+  // setTimeout(() => {
+    recipeContent.innerHTML = ""
+  // }, 3000);
   // }, 100);
-  nameInput.value = "";
+  // nameInput.value = "";
   for (let item of ingredients) item.value = "";
   console.log("submitted");
+  await populateRecipeList();
 
   // repopulate the list from the back end, appending the form at the end
 }
@@ -186,7 +417,7 @@ async function checkForExistingRecipe(item) {
     // console.log(data)
     return data.message;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }
 
@@ -329,8 +560,20 @@ function populateShoppingList(items) {
     const item = document.createElement("td");
     item.className = "item";
     item.textContent = ingredient.ingredientName;
+    item.style.textDecoration = "none"
     mainContent.append(item);
 
+    checkBox.addEventListener("click",handleShoppingListCheckboxClick)
+
+    function handleShoppingListCheckboxClick () {
+      console.log("click")
+      if (item.style.textDecoration === "line-through") {
+        item.style.textDecoration = "none"
+      }
+      else 
+      if (item.style.textDecoration === "none") {
+        item.style.textDecoration = "line-through"}
+    }
     const itemQuantity = document.createElement("td");
     itemQuantity.className = "qty";
     const qtyInput = document.createElement("input");
@@ -346,16 +589,6 @@ function populateShoppingList(items) {
 
   const mainContent = document.createElement("tr");
   mainContent.className = "mainContent";
-
-  // const check = document.createElement("td")
-  // check.className = "check"
-  // mainContent.append(check)
-
-  // const addNewItemBtn = document.createElement("button")
-  // addNewItemBtn.textContent = "Add"
-  // addNewItemBtn.id = "addNewItem"
-  // addNewItemBtn.addEventListener("click", handlePostNewItem)
-  // check.append(addNewItemBtn)
 
   const itemInput = document.createElement("input");
   itemInput.type = "text";
@@ -382,10 +615,11 @@ function addShoppingListInput() {
 
   const addNewItemBtn = document.createElement("button");
   addNewItemBtn.id = "addNewItem";
+  addNewItemBtn.className = "button"
   addNewItemBtn.textContent = "Add";
   addNewItemBtn.addEventListener("click", handlePostNewItem);
   check.append(addNewItemBtn);
-
+  
   const item = document.createElement("td");
   item.className = "item";
   const itemInput = document.createElement("input");
@@ -394,6 +628,19 @@ function addShoppingListInput() {
   itemInput.required = "true";
   itemInput.placeholder = "Enter New Item"
   item.append(itemInput);
+
+  itemInput.addEventListener("keypress", handlPostNewItemKeypress)
+  function handlPostNewItemKeypress (e) {
+      // If the user presses the "Enter" key on the keyboard
+  if (e.key === "Enter" || e.keyCode === "13" || e.keyCode === "9") {
+    // Cancel the default action, if needed
+    e.preventDefault();
+    // Trigger the button element with a click
+    handlePostNewItem()
+    // document.getElementById("myBtn").click();
+  }
+  }
+
   mainContent.append(item);
 
   const qty = document.createElement("td");
@@ -512,6 +759,7 @@ async function populateRecipeList() {
 
   const addRecipeBtn = document.createElement("button");
   addRecipeBtn.id = "addRecipe";
+  addRecipeBtn.className = "button"
   addRecipeBtn.textContent = "New Recipe";
 
   selections.append(addRecipeContainer);
@@ -520,11 +768,13 @@ async function populateRecipeList() {
 
   const deleteRecipeBtn = document.createElement("button")
   deleteRecipeBtn.id = "deleteRecipe"  
+  deleteRecipeBtn.className = "button"
   deleteRecipeBtn.textContent = "Delete Selected"
   addRecipeContainer.append(deleteRecipeBtn)
   deleteRecipeBtn.addEventListener("click", handleDeleteRecipe)
 
-  async function handleDeleteRecipe() {
+  async function handleDeleteRecipe(e) {
+    e.preventDefault()
     const recipeCheckboxes = document.getElementsByClassName("recipeCheckbox")
     const recipeName = document.getElementsByClassName("recipeName")
 
@@ -547,6 +797,7 @@ async function populateRecipeList() {
           const data = await res.json();
           if (data.message === "The recipe was successfully deleted!") {
             console.log("the recipe was deleted")
+            await populateRecipeList();
           }
         } catch (error) {
           console.log(error);
@@ -627,7 +878,7 @@ async function populateRecipeList() {
     ingredientInput.className = "ingredients";
     ingredientInput.id = "newIngredients";
     ingredientInput.setAttribute("list", "ingredientOptions");
-    ingredientInput.placeholder = "Ingredient";
+    ingredientInput.placeholder = "Add Ingredient";
     ingredientInput.required = true;
 
     if (document.getElementById("ingredientInputForm")) {
@@ -647,6 +898,7 @@ async function populateRecipeList() {
       const ingredientInput = document.createElement("input");
       ingredientInput.type = "text";
       ingredientInput.className = "ingredients";
+      ingredientInput.placeholder = "Add Ingredient";
       ingredientInput.setAttribute("list", "ingredientOptions");
       // ingredientInput.id = "ingredientInput";
       ingredientInput.required = true;
@@ -661,6 +913,7 @@ async function populateRecipeList() {
 
     const newIngredientFieldBtn = document.createElement("button");
     newIngredientFieldBtn.id = "newIngredientInputFieldBtn";
+    newIngredientFieldBtn.className = "button"
     newIngredientFieldBtn.addEventListener(
       "click",
       handleIngredientInputSubmit
@@ -670,7 +923,7 @@ async function populateRecipeList() {
     const newRecipeInputBtn = document.createElement("input");
     newRecipeInputBtn.type = "submit";
     newRecipeInputBtn.id = "newRecipeInputBtn";
-
+    newRecipeInputBtn.addEventListener("click", handleNewRecipeIngredientSubmit);
     ingredientInputForm.append(
       newRecipeNameInput,
       ingredientInput,
@@ -688,9 +941,9 @@ async function populateRecipeList() {
       newRecipeInputBtn
     );
 
-    document
-      .getElementById("newRecipeInputBtn")
-      .addEventListener("click", handleNewRecipeIngredientSubmit);
+  //   document
+  //     .getElementById("newRecipeInputBtn")
+  //     .addEventListener("click", handleNewRecipeIngredientSubmit);
   }
 
   recipes.map((recipe) => {
@@ -707,6 +960,7 @@ async function populateRecipeList() {
     entry.className = "recipeName";
     entry.value = recipe.recipeName;
     entry.textContent = recipe.recipeName;
+    entry.style.textDecoration = "none"
     entry.addEventListener("click", handleEntryClick);
 
     const recipeGroup = document.createElement("tr")
@@ -716,12 +970,24 @@ async function populateRecipeList() {
 
     recipeListTableBody.append(recipeGroup);
 
+    recipeCheckbox.addEventListener("click",handleRecipeCheckboxClick)
+
+    function handleRecipeCheckboxClick () {
+      console.log("click")
+      if (entry.style.textDecoration === "line-through") {
+        entry.style.textDecoration = "none"
+      }
+      else 
+      if (entry.style.textDecoration === "none") {
+        entry.style.textDecoration = "line-through"}
+    }
+
 
     function handleEntryClick() {
       const recipeTableBody = document.getElementById("recipeTableBody");
       recipeTableBody.innerHTML = "";
 
-      const recipeHeaders = document.createElement("tr");
+      // const recipeHeaders = document.createElement("tr");
 
       const checkboxHeader = document.createElement("th");
       checkboxHeader.textContent = "Select";
@@ -731,7 +997,7 @@ async function populateRecipeList() {
 
       //   recipeHeaders.append(checkboxHeader, ingredientHeader);
 
-      recipeTableBody.append(recipeHeaders);
+      // recipeTableBody.append(recipeHeaders);
       // const recipeHeaders = document.getElementById("recipeHeaders")
       // recipeHeaders.innerHTML = ""
 
@@ -749,9 +1015,21 @@ async function populateRecipeList() {
         const ingredient = document.createElement("td");
         ingredient.className = "ingredient";
         ingredient.textContent = item;
+        ingredient.style.textDecoration = "none"
         mainContent.append(check);
         mainContent.append(ingredient);
         recipeTableBody.append(mainContent);
+
+        checkBox.addEventListener("click",handleIngredientListCheckboxClick)
+
+        function handleIngredientListCheckboxClick () {
+          if (ingredient.style.textDecoration === "line-through") {
+            ingredient.style.textDecoration = "none"
+          }
+          else 
+          if (ingredient.style.textDecoration === "none") {
+            ingredient.style.textDecoration = "line-through"}
+        }
       });
 
       const addRecipeIngredientsToShoppingListBtnContainer =
@@ -763,6 +1041,7 @@ async function populateRecipeList() {
         document.createElement("button");
       addRecipeIngredientsToShoppingListBtn.id =
         "addRecipeIngredientsToShoppingListBtn";
+        addRecipeIngredientsToShoppingListBtn.className = "button"
       addRecipeIngredientsToShoppingListBtn.textContent =
         "Add to Shopping List";
       addRecipeIngredientsToShoppingListBtn.addEventListener(
