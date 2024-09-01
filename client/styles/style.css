@@ -2,6 +2,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin: 0;
 }
 
 #applicationContaner{
@@ -10,64 +11,63 @@ body {
     flex-direction: column;
     background-color: rgb(182, 182, 182);
     height: 60vh;
-    width: 95vw;
+    /* width: 95vw; */
+    width: 100%;
     border-radius: 1em;
     border: .5em solid gray;
 }
+
+/* #recipeContentContainer {
+    display: flex;
+    flex-direction: column;
+    min-width: 100%;
+    background-color: red;
+} */
 
 #family {
     visibility: hidden;
 }
 
-#recipesContainer, #recipeContentContainer{
-/* display: flex;
-flex-direction: column; */
-/* height: 60vh; */
-width: 95vw;
-margin-bottom: 1em;
-/* border-radius: 1em; */
-/* border: .5em solid gray; */
-}
-
-#recipeContent, #selections {
+#recipeContent, #recipesContainer {
     background-color: rgb(182, 182, 182);
     border-radius: 1em;
     border: .5em solid gray;
-    /* padding-left: .5em;
-    padding-right: 1em; */
     padding-top: .5em;
-    /* overflow-y: auto; */
-
     overflow-x: hidden;
-    /* height: 100%; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 100%;
+    margin-bottom: 1em;
 }
 
-#selections {
-    /* block-size: fit-content; */
+/* #recipesContainer {
+    background-color: rgb(182, 182, 182);
+    border-radius: 1em;
+    border: .5em solid gray;
+    padding-top: .5em;
+    overflow-x: hidden;
     min-width: fit-content;
+    width: 95vw;
     width: 100%;
-    padding-left: .5em;
-    padding-right: 1em;
-    /* margin-top: 1em; */
+    padding-bottom: 1em;
+} */
+
+#recipeItem, #selections {
+    text-align: center;
+    width: 80vw;
 }
 
 #recipeItemTable{
     overflow-y: auto;
-    margin-right: 1em;
+    width: 100%;
 }
 
 
 #recipeContent, #recipeContent {
-    /* margin-left: 1em; */
-    padding-left: 1em;
-    padding-top: 1em;
     min-height: 10em;
-    /* width: 100%; */
 }
 
-#recipesContainer {
-    height: 20em;
-}
 
 #headers, #recipeHeaders {
     margin-top: 1em;
@@ -82,7 +82,7 @@ margin-bottom: 1em;
     margin-top: 1em;
 }
 
-.mainContent {
+.mainContent, .recipeGroup{
     text-align: center;
     padding-left: 10em;
     margin-left: 10em;
@@ -92,6 +92,8 @@ margin-bottom: 1em;
 .mainContent:nth-child(even) {
     background-color: white;
 }
+
+/* checkbox, recipename, ingredientcheck, ingredient */
 
 #removeSelectedItemsContainer{
     text-align: center;
@@ -114,19 +116,7 @@ margin-bottom: 1em;
     background-color: black;
 }
 
-
-#recipesContainer {
-    display: flex;
-    flex-direction: row;
-    /* align-items: center; */
-}
-
-/* #recipeContent {
-    width: 100%;
-    background-color: red;
-} */
-
-.ingredient {
+.ingredient,.recipeName {
     width: 100%;
     text-align: center;
     overflow: auto;
@@ -181,46 +171,45 @@ margin-bottom: 1em;
     text-align: right;
 }
 
-
-
 #addRecipeIngredientsToShoppingListBtnContainer{
     padding-top: .5em;
     padding-bottom: .5em;
     text-align: center;
 }
 
+#newIngredientInputFieldBtn {
+    margin-right: 1em;
+    color: red;
+}
+
+#newIngredientInputFieldBtn, #newRecipeInputBtn {
+    margin-top: 1em;
+}
+
 #newRecipeNameInput, #newIngredients {
     width: 100%;
+    text-align: center;
 }
 
 .recipeName {
-    display: inline-block;
-    text-align: center;
     background-color: white;
     border: 2px solid gray;
     margin-bottom: 5px;
-    min-width: fit-content;
-    /* width: 100%; */
-    /* border-radius: .5em; */
-    padding-left: .5em;
-    padding-right: .5em;
 }
 
 .recipeName:hover {
     background-color: gray;
 }
 
-.recipeCheckbox {
+/* .recipeCheckbox {
     display: inline-block;
-}
+} */
 
 .recipeGroup {
-    display: grid;
-    grid-template-columns: 1fr 6fr 1fr;
-    margin: auto;
-    min-width: fit-content;
-    text-align: center;
-    width: 100%;
-    /* background-color: red; */
-    min-width: fit-content;
+    /* display: grid; */
+    /* grid-template-columns: 1fr 6fr 1fr; */
+    /* margin: auto; */
+    /* text-align: center; */
+    /* width: 100%; */
+    /* min-width: fit-content; */
 }

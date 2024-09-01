@@ -392,6 +392,7 @@ function addShoppingListInput() {
   itemInput.id = "itemInput";
   itemInput.type = "text";
   itemInput.required = "true";
+  itemInput.placeholder = "Enter New Item"
   item.append(itemInput);
   mainContent.append(item);
 
@@ -498,15 +499,96 @@ async function populateRecipeList() {
   const selections = document.getElementById("selections");
   selections.innerHTML = "";
 
+  const recipeListTable = document.createElement("table")
+  recipeListTable.id = "recipeListTable"
+  selections.append(recipeListTable)
+
+  const recipeListTableBody = document.createElement("tbody")
+  recipeListTableBody.id = "recipeListTableBody"
+  recipeListTable.append(recipeListTableBody)
+
   const addRecipeContainer = document.createElement("div");
   addRecipeContainer.id = "addRecipeContainer";
 
   const addRecipeBtn = document.createElement("button");
   addRecipeBtn.id = "addRecipe";
   addRecipeBtn.textContent = "New Recipe";
+
   selections.append(addRecipeContainer);
   addRecipeContainer.append(addRecipeBtn);
   addRecipeBtn.addEventListener("click", handleNewRecipeClick);
+
+  const deleteRecipeBtn = document.createElement("button")
+  deleteRecipeBtn.id = "deleteRecipe"  
+  deleteRecipeBtn.textContent = "Delete Selected"
+  addRecipeContainer.append(deleteRecipeBtn)
+  deleteRecipeBtn.addEventListener("click", handleDeleteRecipe)
+
+  async function handleDeleteRecipe() {
+    const recipeCheckboxes = document.getElementsByClassName("recipeCheckbox")
+    const recipeName = document.getElementsByClassName("recipeName")
+
+    for (let i = 0; i < recipeCheckboxes.length; i++) {
+      if (recipeCheckboxes[i].checked === true) {
+        console.log(recipeCheckboxes[i].checked)
+        console.log(recipeName[i].textContent)
+        const URL = `${serverURL}/recipe/delete/`
+        let delItem = {}
+        delItem.recipeName = recipeName[i].textContent
+        try {
+          const res = await fetch(URL, {
+            method: "DELETE",
+            mode: "cors",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(delItem),
+          });
+          const data = await res.json();
+          if (data.message === "The recipe was successfully deleted!") {
+            console.log("the recipe was deleted")
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+   /* 
+   async function handleRemovingShoppingListItems() {
+  const shoppingListCheckBoxes = document.getElementsByClassName(
+    "shoppingListCheckBoxes"
+  );
+  const item = document.getElementsByClassName("item");
+
+  for (let i = 0; i < shoppingListCheckBoxes.length; i++) {
+    if (shoppingListCheckBoxes[i].checked === true) {
+      const URL = `${serverURL}/ingredient/delete/`;
+
+      let delItem = {};
+      delItem.ingredientName = item[i].textContent;
+      try {
+        const res = await fetch(URL, {
+          method: "DELETE",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(delItem),
+        });
+        const data = await res.json();
+        if (data.message === "The ingredient was successfully deleted!") {
+          // console.log("the item was deleted")
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+  fetchShoppingList();
+}
+
+   */ 
+  }
 
   async function handleNewRecipeClick() {
     if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
@@ -537,7 +619,7 @@ async function populateRecipeList() {
     const newRecipeNameInput = document.createElement("input");
     newRecipeNameInput.type = "text";
     newRecipeNameInput.id = "newRecipeNameInput";
-    newRecipeNameInput.placeholder = "Name";
+    newRecipeNameInput.placeholder = "New Recipe Name";
     newRecipeNameInput.required = true;
 
     const ingredientInput = document.createElement("input");
@@ -597,12 +679,12 @@ async function populateRecipeList() {
 
     ingredientDataList.append(ingredientOption);
 
-    const br = document.createElement("br");
+    // const br = document.createElement("br");
 
     ingredient.append(
       ingredientInputForm,
       newIngredientFieldBtn,
-      br,
+      // br,
       newRecipeInputBtn
     );
 
@@ -612,21 +694,27 @@ async function populateRecipeList() {
   }
 
   recipes.map((recipe) => {
-    const entryCheckbox = document.createElement("input")
-    entryCheckbox.type = "checkbox"
-    entryCheckbox.className = "recipeCheckbox"
-    
-    const entry = document.createElement("div");
+
+    const recipeCheck = document.createElement("td")
+    recipeCheck.className = "recipeCheck"    
+
+    const recipeCheckbox = document.createElement("input")
+    recipeCheckbox.type = "checkbox"
+    recipeCheckbox.className = "recipeCheckbox"
+    recipeCheck.append(recipeCheckbox)
+
+    const entry = document.createElement("td");
     entry.className = "recipeName";
     entry.value = recipe.recipeName;
     entry.textContent = recipe.recipeName;
     entry.addEventListener("click", handleEntryClick);
 
-    const recipeGroup = document.createElement("div")
+    const recipeGroup = document.createElement("tr")
     recipeGroup.className = "recipeGroup"
-    recipeGroup.append(entryCheckbox)
+    recipeGroup.append(recipeCheck)
     recipeGroup.append(entry)
-    selections.append(recipeGroup);
+
+    recipeListTableBody.append(recipeGroup);
 
 
     function handleEntryClick() {
