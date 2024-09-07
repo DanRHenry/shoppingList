@@ -237,8 +237,10 @@ body {
     left: 3.5%;
     top: 3.5%;
     position: fixed;
-    width: 80%;
-    height: 80%;
+    /* width: 80%;
+    height: 80%; */
+    width: 80vw;
+    height: 80vw;
     background-color: gray;
     visibility: hidden;
 }
@@ -248,8 +250,10 @@ body {
     font-size: x-large;
     margin-left: auto;
     margin-right: auto;
-    padding-top: 10%;
-    max-width: 80%;
+    /* padding-top: 10%; */
+    padding-top: 10vh;
+    /* max-width: 80%; */
+    max-width: 80vw;
     /* position: static; */
 }
 
@@ -257,8 +261,10 @@ body {
     overflow-y: auto;
     /* max-height: 10em; */
     position: absolute;
-    max-height: 60%;
-    max-width: 83%;
+    /* max-height: 60%;
+    max-width: 83%; */
+    max-height: 60vh;
+    max-width: 83w;
 }
 
 #closeRecipeWindowBtn {
