@@ -670,6 +670,8 @@ function addShoppingListInput() {
   */
 }
 
+
+
 function handlePostNewItem() {
   const item = document.getElementById("itemInput").value;
   const qty = document.getElementById("qtyInput").value;
@@ -963,17 +965,39 @@ async function populateRecipeList() {
     entry.style.textDecoration = "none"
     entry.addEventListener("click", handleEntryClick);
 
+    const showRecipeBtn = document.createElement("button")
+    showRecipeBtn.className = "button"
+    showRecipeBtn.addEventListener("click", handleShowRecipeClick)
+    showRecipeBtn.textContent = "View Recipe"
+
+
+
     const recipeGroup = document.createElement("tr")
     recipeGroup.className = "recipeGroup"
     recipeGroup.append(recipeCheck)
     recipeGroup.append(entry)
+    recipeGroup.append(showRecipeBtn)
+    //append show recipe button here
 
+async function handleShowRecipeClick () {
+    const recipeWindow = document.getElementById("recipeWindow")
+    const recipeWindowContent = document.getElementById("recipeWindowContent")
+    const closeRecipeWindowBtn = document.getElementById("closeRecipeWindowBtn")
+    
+    recipeWindow.style.height = "95%"
+    recipeWindow.style.width = "95%"
+
+    recipeWindowContent.style.height = "93%"
+    recipeWindowContent.style.width = "93%"
+    recipeWindowContent.style.visibility = "visible"
+
+    closeRecipeWindowBtn.style.visibility = "visible"
+    }
     recipeListTableBody.append(recipeGroup);
 
     recipeCheckbox.addEventListener("click",handleRecipeCheckboxClick)
 
     function handleRecipeCheckboxClick () {
-      console.log("click")
       if (entry.style.textDecoration === "line-through") {
         entry.style.textDecoration = "none"
       }

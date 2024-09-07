@@ -43,7 +43,7 @@ body {
 #recipeContent {
     /* visibility: hidden; */
     /* position: absolute; */
-    background-color: red;
+    /* background-color: red; */
 }
 
 #recipeItem, #selections {
@@ -51,13 +51,14 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
+    background-color: rgb(182, 182, 182);
 }
 
 #recipeItem {
     position: relative;
     top: 0;
     align-items: center;
-    background-color: blue;
+    /* background-color: blue; */
 }
 
 #recipeItemTable{
@@ -215,4 +216,55 @@ body {
 
 .recipeName {
     margin-bottom: 5px;
+}
+
+#recipeWindow, #recipeWindowContent {
+    height: 0;
+    width: 0;
+    position: fixed;
+    margin-left: auto;
+    margin-top: auto;
+    background-color: white;
+    border: 2px solid black;
+}
+
+#recipeWindow {
+    left: 2.5%;
+    top: 2.5%;
+}
+
+#recipeWindowContent {
+    left: 3.5%;
+    top: 3.5%;
+    position: fixed;
+    width: 80%;
+    height: 80%;
+    background-color: gray;
+    visibility: hidden;
+}
+
+#recipeText {
+    color: white;
+    font-size: x-large;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 10%;
+    max-width: 80%;
+    /* position: static; */
+}
+
+#instructions {
+    overflow-y: auto;
+    /* max-height: 10em; */
+    position: absolute;
+    max-height: 60%;
+    max-width: 83%;
+}
+
+#closeRecipeWindowBtn {
+    visibility: hidden;
+    position: fixed;
+    /* background-color: red; */
+    top: 92%;
+    left: 46%;
 }
