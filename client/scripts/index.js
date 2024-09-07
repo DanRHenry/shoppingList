@@ -992,10 +992,25 @@ async function handleShowRecipeClick () {
     recipeWindowContent.style.visibility = "visible"
 
     closeRecipeWindowBtn.style.visibility = "visible"
+
+    closeRecipeWindowBtn.addEventListener("click", handleCloseRecipeWindow)
     }
     recipeListTableBody.append(recipeGroup);
 
     recipeCheckbox.addEventListener("click",handleRecipeCheckboxClick)
+
+
+    function handleCloseRecipeWindow () {
+    recipeWindow.style.height = "0"
+    recipeWindow.style.width = "0"
+
+    recipeWindowContent.style.height = "0"
+    recipeWindowContent.style.width = "0"
+    recipeWindowContent.style.visibility = "hidden"
+
+    closeRecipeWindowBtn.style.visibility = "hidden"
+      closeRecipeWindowBtn.removeEventListener("click", handleCloseRecipeWindow)
+    }
 
     function handleRecipeCheckboxClick () {
       if (entry.style.textDecoration === "line-through") {
