@@ -22,7 +22,9 @@ body {
     border-bottom: 3px solid gray;
 }
 
-#recipeContent,  #recipesContainer {}
+#recipeIngredients,  #recipesContainer {
+    overflow-y: scroll;
+}
 /* #applicationContainer {
     position: relative;
     top: 0;
@@ -33,14 +35,14 @@ body {
     visibility: hidden;
 }
 
-#recipeContent, #recipesContainer {
+#recipeIngredients, #recipesContainer {
     padding-top: .5em;
     align-items: center;
     display: flex;
     flex-direction: column;
 }
 
-#recipeContent {
+#recipeIngredients {
     /* visibility: hidden; */
     /* position: absolute; */
     /* background-color: red; */
@@ -58,16 +60,16 @@ body {
     position: relative;
     top: 0;
     align-items: center;
+    max-height: 10em;
     /* background-color: blue; */
+    overflow-y: auto;
 }
 
 #recipeItemTable{
-    overflow-y: auto;
     min-width: 100%;
 }
 
-
-#recipeContent {
+#recipeIngredients {
     overflow-y: auto;
     position: relative;
     top: 0;
@@ -201,16 +203,32 @@ body {
     text-align: center;
 }
 
-#newIngredientInputFieldBtn {
-    margin-right: 1em;
+#ingredientInputForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-#newIngredientInputFieldBtn, #newRecipeInputBtn {
+#timeAndTemp {
+    display: flex;
+    flex-direction: column;
+}
+
+#recipeCookTimeInputField, #recipeTempInputField {
+    width: 50%;
+}
+
+/* #newIngredientInputFieldBtn {
+    margin-right: 1em;
+} */
+
+/* #newIngredientInputFieldBtn,  */
+#newRecipeInputBtn {
     margin-top: 1em;
 }
 
 #newRecipeNameInput, .ingredients {
-    width: 100%;
+    width: 98%;
     text-align: center;
 }
 
@@ -225,7 +243,6 @@ body {
     margin-left: auto;
     margin-top: auto;
     background-color: white;
-    border: 2px solid black;
 }
 
 #recipeWindow {
@@ -243,6 +260,7 @@ body {
     height: 80vw;
     background-color: gray;
     visibility: hidden;
+    border: 2px solid black;
 }
 
 #recipeText {
@@ -273,4 +291,26 @@ body {
     /* background-color: red; */
     top: 92%;
     left: 46%;
+}
+
+#recipeInstructionsInputField {
+    display: block;
+    width: 99%;
+    height: 5em;
+}
+/* 
+#ingredientInputContainer {
+    width: 100%;
+    height:5em;
+    background-color: red;
+} */
+
+
+.newIngredients {
+    display: inline-block;
+    width: 90%;
+}
+
+.newIngredientInputFieldBtns {
+    display: inline-block;
 }
