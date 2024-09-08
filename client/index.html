@@ -7,35 +7,93 @@
     <link rel="stylesheet" href="./styles/style.css" />
   </head>
   <body>
-    <!-- <div id="main"> -->
     <div id="applicationContaner">
-        <table>
-          <tbody id="shoppingListTableBody">
-        <br />
-            </tbody>
-          </table>
+      <table>
+        <tbody id="shoppingListTableBody">
+          <br />
+        </tbody>
+      </table>
+    </div>
+
+    <div id="recipeContent">
+      <div class="headers">Recipe Ingredients</div>
+      <div id="recipeItem">
+        <table id="recipeItemTable">
+          <tbody id="recipeTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="recipesContainer">
+      <div class="headers">Recipes</div>
+      <div id="selections"></div>
+    </div>
+
+    <div id="recipeWindow">
+      <div id="recipeWindowContent">
+        <div id="recipeText">
+          <div>Recipe Name Here</div>
+          <div>Temp</div>
+          <div>Time</div>
+          <ul>
+            <li>Ingredient 1</li>
+            <li>Ingredient 2</li>
+          </ul>
+          <div id="instructions">
+            Instruction text Here: Lorem ipsum dolor sit, amet consectetur
+            adipisicing elit. Repellat consequuntur minus sapiente perspiciatis
+            deleniti magnam illo eius ut corporis, vitae voluptatibus adipisci
+            obcaecati ea beatae? Iusto, debitis voluptas in totam, voluptatem
+            unde sunt ullam provident reiciendis nulla inventore, aspernatur at!
+            Explicabo dolores harum inventore voluptatibus consectetur eaque
+            nemo repudiandae laboriosam optio. Nulla consectetur, nesciunt
+            magnam laborum consequatur mollitia, numquam explicabo molestias,
+            repudiandae praesentium recusandae atque aspernatur laboriosam!
+            Voluptas, dicta perferendis non quisquam hic doloremque alias? Quos
+            repellendus voluptatem sequi in voluptatibus dolores odio nisi
+            facilis numquam fugit expedita eum sed eos rerum officiis nesciunt
+            molestias accusamus pariatur dignissimos, saepe facere! Optio aut
+            mollitia magnam facilis quod exercitationem, minus placeat
+            distinctio aliquam, iure cum autem? Quaerat iure cum voluptatum.
+            Alias unde, molestias ipsam aperiam suscipit nam explicabo, ut
+            provident, nihil voluptatibus tempore assumenda ipsa quos sunt. Id
+            rerum deleniti obcaecati, eius ipsum, quos dolorem temporibus labore
+            at quam veniam sunt recusandae necessitatibus voluptate excepturi
+            eveniet earum. Esse ad, autem inventore architecto error temporibus
+            praesentium dicta, libero placeat dolorum at laboriosam vitae,
+            deleniti nesciunt? Nihil culpa fugiat perferendis eaque obcaecati
+            laudantium, placeat possimus fugit accusantium unde cumque
+            temporibus quidem nemo earum rem iste sunt exercitationem tenetur
+            nulla reprehenderit beatae impedit architecto nobis. Lorem ipsum
+            dolor sit amet consectetur adipisicing elit. Optio enim in
+            cupiditate architecto vero deserunt dicta laudantium voluptatibus,
+            consectetur excepturi? Dolorem, laborum quod ab veritatis eos, autem
+            deleniti quasi id, error maiores reprehenderit eaque labore maxime
+            facere vero molestiae quibusdam corrupti asperiores ipsum velit quae
+            repellat? Tempore eum sapiente quam maiores ad dicta, expedita
+            nostrum adipisci labore dolore molestias velit maxime doloremque
+            vel? Sapiente dicta culpa eligendi deserunt delectus harum ab
+            dignissimos officiis voluptatibus, eum debitis quo impedit,
+            excepturi amet reprehenderit ut illum quidem expedita ullam? At
+            ipsa, esse atque rerum culpa accusamus quaerat alias voluptatem
+            consectetur mollitia voluptas odio dignissimos nam corporis ducimus
+            earum, unde nulla expedita inventore, dolores doloribus maxime! Vel,
+            quisquam. Quam blanditiis magnam illum veritatis dolore, odit saepe
+            tenetur eaque optio perspiciatis quas velit vel veniam hic vitae
+            harum rerum eius accusamus laboriosam excepturi repellendus dolorum,
+            nisi nihil! Voluptates deleniti quod tempora iste consectetur
+            incidunt voluptatum veniam quidem, atque voluptas, perspiciatis
+            sequi totam exercitationem magnam ratione blanditiis eligendi error
+            nulla quam, ad et cupiditate in velit. Architecto eligendi quis,
+            autem nulla impedit similique reprehenderit necessitatibus dolorem
+            consectetur blanditiis laborum corrupti iste numquam sapiente saepe
+            incidunt officia beatae voluptates. Deserunt perspiciatis quia, ut
+            ipsa labore illo dicta!
+          </div>
         </div>
-        
-        <div id="recipeContent">
-          <div class="headers">Recipe Ingredients</div>
-                    <div id="recipeItem">
-                      <table id="recipeItemTable">
-                        <tbody id="recipeTableBody">
-                          </tbody>
-                        </table>  
-                    </div>
-                  </div>
-                
-                <div id="recipesContainer">
-                  <div class="headers">  Recipes</div>
-                  <div id="selections">
-                    <!-- <div id="addRecipeContainer"><button id="addRecipe">New</button></div> -->
-                  </div>
-                </div>
-              </div>
-            <!-- </div> -->
-              
-              
-        <script src="./scripts/index.js" type="module"></script>
+        <button class="button" id="closeRecipeWindowBtn">Close</button>
+      </div>
+    </div>
+    <script src="./scripts/index.js" type="module"></script>
   </body>
 </html>

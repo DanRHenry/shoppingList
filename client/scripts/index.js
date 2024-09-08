@@ -54,7 +54,6 @@ Source code is available on Github
 */
 // const serverURL = "http://127.0.0.1:3498";
 
-
 /*!
  * swiped-events.js - v@version@
  * Pure JavaScript swipe events
@@ -64,27 +63,33 @@ Source code is available on Github
  * @license MIT
  */
 (function (window, document) {
-
-  'use strict';
+  "use strict";
 
   // patch CustomEvent to allow constructor creation (IE/Chrome)
-  if (typeof window.CustomEvent !== 'function') {
-
-      window.CustomEvent = function (event, params) {
-
-          params = params || { bubbles: false, cancelable: false, detail: undefined };
-
-          var evt = document.createEvent('CustomEvent');
-          evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-          return evt;
+  if (typeof window.CustomEvent !== "function") {
+    window.CustomEvent = function (event, params) {
+      params = params || {
+        bubbles: false,
+        cancelable: false,
+        detail: undefined,
       };
 
-      window.CustomEvent.prototype = window.Event.prototype;
+      var evt = document.createEvent("CustomEvent");
+      evt.initCustomEvent(
+        event,
+        params.bubbles,
+        params.cancelable,
+        params.detail
+      );
+      return evt;
+    };
+
+    window.CustomEvent.prototype = window.Event.prototype;
   }
 
-  document.addEventListener('touchstart', handleTouchStart, false);
-  document.addEventListener('touchmove', handleTouchMove, false);
-  document.addEventListener('touchend', handleTouchEnd, false);
+  document.addEventListener("touchstart", handleTouchStart, false);
+  document.addEventListener("touchmove", handleTouchMove, false);
+  document.addEventListener("touchend", handleTouchEnd, false);
 
   var xDown = null;
   var yDown = null;
@@ -100,66 +105,84 @@ Source code is available on Github
    * @returns {void}
    */
   function handleTouchEnd(e) {
+    // if the user released on a different target, cancel!
+    if (startEl !== e.target) return;
 
-      // if the user released on a different target, cancel!
-      if (startEl !== e.target) return;
+    var swipeThreshold = parseInt(
+      getNearestAttribute(startEl, "data-swipe-threshold", "20"),
+      10
+    ); // default 20 units
+    var swipeUnit = getNearestAttribute(startEl, "data-swipe-unit", "px"); // default px
+    var swipeTimeout = parseInt(
+      getNearestAttribute(startEl, "data-swipe-timeout", "500"),
+      10
+    ); // default 500ms
+    var timeDiff = Date.now() - timeDown;
+    var eventType = "";
+    var changedTouches = e.changedTouches || e.touches || [];
 
-      var swipeThreshold = parseInt(getNearestAttribute(startEl, 'data-swipe-threshold', '20'), 10); // default 20 units
-      var swipeUnit = getNearestAttribute(startEl, 'data-swipe-unit', 'px'); // default px
-      var swipeTimeout = parseInt(getNearestAttribute(startEl, 'data-swipe-timeout', '500'), 10);    // default 500ms
-      var timeDiff = Date.now() - timeDown;
-      var eventType = '';
-      var changedTouches = e.changedTouches || e.touches || [];
+    if (swipeUnit === "vh") {
+      swipeThreshold = Math.round(
+        (swipeThreshold / 100) * document.documentElement.clientHeight
+      ); // get percentage of viewport height in pixels
+    }
+    if (swipeUnit === "vw") {
+      swipeThreshold = Math.round(
+        (swipeThreshold / 100) * document.documentElement.clientWidth
+      ); // get percentage of viewport height in pixels
+    }
 
-      if (swipeUnit === 'vh') {
-          swipeThreshold = Math.round((swipeThreshold / 100) * document.documentElement.clientHeight); // get percentage of viewport height in pixels
+    if (Math.abs(xDiff) > Math.abs(yDiff)) {
+      // most significant
+      if (Math.abs(xDiff) > swipeThreshold && timeDiff < swipeTimeout) {
+        if (xDiff > 0) {
+          eventType = "swiped-left";
+        } else {
+          eventType = "swiped-right";
+        }
       }
-      if (swipeUnit === 'vw') {
-          swipeThreshold = Math.round((swipeThreshold / 100) * document.documentElement.clientWidth); // get percentage of viewport height in pixels
+    } else if (Math.abs(yDiff) > swipeThreshold && timeDiff < swipeTimeout) {
+      if (yDiff > 0) {
+        eventType = "swiped-up";
+      } else {
+        eventType = "swiped-down";
       }
+    }
 
-      if (Math.abs(xDiff) > Math.abs(yDiff)) { // most significant
-          if (Math.abs(xDiff) > swipeThreshold && timeDiff < swipeTimeout) {
-              if (xDiff > 0) {
-                  eventType = 'swiped-left';
-              }
-              else {
-                  eventType = 'swiped-right';
-              }
-          }
-      }
-      else if (Math.abs(yDiff) > swipeThreshold && timeDiff < swipeTimeout) {
-          if (yDiff > 0) {
-              eventType = 'swiped-up';
-          }
-          else {
-              eventType = 'swiped-down';
-          }
-      }
+    if (eventType !== "") {
+      var eventData = {
+        dir: eventType.replace(/swiped-/, ""),
+        touchType: (changedTouches[0] || {}).touchType || "direct",
+        fingers: touchCount, // Number of fingers used
+        xStart: parseInt(xDown, 10),
+        xEnd: parseInt((changedTouches[0] || {}).clientX || -1, 10),
+        yStart: parseInt(yDown, 10),
+        yEnd: parseInt((changedTouches[0] || {}).clientY || -1, 10),
+      };
 
-      if (eventType !== '') {
+      // fire `swiped` event event on the element that started the swipe
+      startEl.dispatchEvent(
+        new CustomEvent("swiped", {
+          bubbles: true,
+          cancelable: true,
+          detail: eventData,
+        })
+      );
 
-          var eventData = {
-              dir: eventType.replace(/swiped-/, ''),
-              touchType: (changedTouches[0] || {}).touchType || 'direct',
-              fingers: touchCount, // Number of fingers used
-              xStart: parseInt(xDown, 10),
-              xEnd: parseInt((changedTouches[0] || {}).clientX || -1, 10),
-              yStart: parseInt(yDown, 10),
-              yEnd: parseInt((changedTouches[0] || {}).clientY || -1, 10)
-          };
+      // fire `swiped-dir` event on the element that started the swipe
+      startEl.dispatchEvent(
+        new CustomEvent(eventType, {
+          bubbles: true,
+          cancelable: true,
+          detail: eventData,
+        })
+      );
+    }
 
-          // fire `swiped` event event on the element that started the swipe
-          startEl.dispatchEvent(new CustomEvent('swiped', { bubbles: true, cancelable: true, detail: eventData }));
-
-          // fire `swiped-dir` event on the element that started the swipe
-          startEl.dispatchEvent(new CustomEvent(eventType, { bubbles: true, cancelable: true, detail: eventData }));
-      }
-
-      // reset values
-      xDown = null;
-      yDown = null;
-      timeDown = null;
+    // reset values
+    xDown = null;
+    yDown = null;
+    timeDown = null;
   }
   /**
    * Records current location on touchstart event
@@ -167,18 +190,17 @@ Source code is available on Github
    * @returns {void}
    */
   function handleTouchStart(e) {
+    // if the element has data-swipe-ignore="true" we stop listening for swipe events
+    if (e.target.getAttribute("data-swipe-ignore") === "true") return;
 
-      // if the element has data-swipe-ignore="true" we stop listening for swipe events
-      if (e.target.getAttribute('data-swipe-ignore') === 'true') return;
+    startEl = e.target;
 
-      startEl = e.target;
-
-      timeDown = Date.now();
-      xDown = e.touches[0].clientX;
-      yDown = e.touches[0].clientY;
-      xDiff = 0;
-      yDiff = 0;
-      touchCount = e.touches.length;
+    timeDown = Date.now();
+    xDown = e.touches[0].clientX;
+    yDown = e.touches[0].clientY;
+    xDiff = 0;
+    yDiff = 0;
+    touchCount = e.touches.length;
   }
 
   /**
@@ -187,14 +209,13 @@ Source code is available on Github
    * @returns {void}
    */
   function handleTouchMove(e) {
+    if (!xDown || !yDown) return;
 
-      if (!xDown || !yDown) return;
+    var xUp = e.touches[0].clientX;
+    var yUp = e.touches[0].clientY;
 
-      var xUp = e.touches[0].clientX;
-      var yUp = e.touches[0].clientY;
-
-      xDiff = xDown - xUp;
-      yDiff = yDown - yUp;
+    xDiff = xDown - xUp;
+    yDiff = yDown - yUp;
   }
 
   /**
@@ -205,25 +226,20 @@ Source code is available on Github
    * @returns {any} attribute value or defaultValue
    */
   function getNearestAttribute(el, attributeName, defaultValue) {
+    // walk up the dom tree looking for attributeName
+    while (el && el !== document.documentElement) {
+      var attributeValue = el.getAttribute(attributeName);
 
-      // walk up the dom tree looking for attributeName
-      while (el && el !== document.documentElement) {
-
-          var attributeValue = el.getAttribute(attributeName);
-
-          if (attributeValue) {
-              return attributeValue;
-          }
-
-          el = el.parentNode;
+      if (attributeValue) {
+        return attributeValue;
       }
 
-      return defaultValue;
+      el = el.parentNode;
+    }
+
+    return defaultValue;
   }
-
-}(window, document));
-
-
+})(window, document);
 
 const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
 const loginForm = document.getElementById("login-form");
@@ -291,13 +307,19 @@ async function handleNewRecipeIngredientSubmit(e) {
   }
 
   await postNewRecipe(nameInput, ingredientValues);
-  console.log(nameInput)
+  console.log(nameInput);
   // setTimeout(() => {
   // await populateRecipeList();
-  const recipeContent = document.getElementById("recipeContent")
-  // recipeContent.innerHTML = `<div>${nameInput.value} Created</div>`
-  // setTimeout(() => {
-    recipeContent.innerHTML = ""
+
+
+  //todo remove this, it doesn't seem to link to anything anymore
+  // const recipeIngredients = document.getElementById("recipeIngredients");
+  // // recipeIngredients.innerHTML = `<div>${nameInput.value} Created</div>`
+  // // setTimeout(() => {
+  // recipeIngredients.innerHTML = "";
+
+  //todo remove the above
+
   // }, 3000);
   // }, 100);
   // nameInput.value = "";
@@ -560,19 +582,18 @@ function populateShoppingList(items) {
     const item = document.createElement("td");
     item.className = "item";
     item.textContent = ingredient.ingredientName;
-    item.style.textDecoration = "none"
+    item.style.textDecoration = "none";
     mainContent.append(item);
 
-    checkBox.addEventListener("click",handleShoppingListCheckboxClick)
+    checkBox.addEventListener("click", handleShoppingListCheckboxClick);
 
-    function handleShoppingListCheckboxClick () {
-      console.log("click")
+    function handleShoppingListCheckboxClick() {
+      console.log("click");
       if (item.style.textDecoration === "line-through") {
-        item.style.textDecoration = "none"
+        item.style.textDecoration = "none";
+      } else if (item.style.textDecoration === "none") {
+        item.style.textDecoration = "line-through";
       }
-      else 
-      if (item.style.textDecoration === "none") {
-        item.style.textDecoration = "line-through"}
     }
     const itemQuantity = document.createElement("td");
     itemQuantity.className = "qty";
@@ -615,30 +636,30 @@ function addShoppingListInput() {
 
   const addNewItemBtn = document.createElement("button");
   addNewItemBtn.id = "addNewItem";
-  addNewItemBtn.className = "button"
+  addNewItemBtn.className = "button";
   addNewItemBtn.textContent = "Add";
   addNewItemBtn.addEventListener("click", handlePostNewItem);
   check.append(addNewItemBtn);
-  
+
   const item = document.createElement("td");
   item.className = "item";
   const itemInput = document.createElement("input");
   itemInput.id = "itemInput";
   itemInput.type = "text";
   itemInput.required = "true";
-  itemInput.placeholder = "Enter New Item"
+  itemInput.placeholder = "Enter New Item";
   item.append(itemInput);
 
-  itemInput.addEventListener("keypress", handlPostNewItemKeypress)
-  function handlPostNewItemKeypress (e) {
-      // If the user presses the "Enter" key on the keyboard
-  if (e.key === "Enter" || e.keyCode === "13" || e.keyCode === "9") {
-    // Cancel the default action, if needed
-    e.preventDefault();
-    // Trigger the button element with a click
-    handlePostNewItem()
-    // document.getElementById("myBtn").click();
-  }
+  itemInput.addEventListener("keypress", handlPostNewItemKeypress);
+  function handlPostNewItemKeypress(e) {
+    // If the user presses the "Enter" key on the keyboard
+    if (e.key === "Enter" || e.keyCode === "13" || e.keyCode === "9") {
+      // Cancel the default action, if needed
+      e.preventDefault();
+      // Trigger the button element with a click
+      handlePostNewItem();
+      // document.getElementById("myBtn").click();
+    }
   }
 
   mainContent.append(item);
@@ -746,45 +767,45 @@ async function populateRecipeList() {
   const selections = document.getElementById("selections");
   selections.innerHTML = "";
 
-  const recipeListTable = document.createElement("table")
-  recipeListTable.id = "recipeListTable"
-  selections.append(recipeListTable)
+  const recipeListTable = document.createElement("table");
+  recipeListTable.id = "recipeListTable";
+  selections.append(recipeListTable);
 
-  const recipeListTableBody = document.createElement("tbody")
-  recipeListTableBody.id = "recipeListTableBody"
-  recipeListTable.append(recipeListTableBody)
+  const recipeListTableBody = document.createElement("tbody");
+  recipeListTableBody.id = "recipeListTableBody";
+  recipeListTable.append(recipeListTableBody);
 
   const addRecipeContainer = document.createElement("div");
   addRecipeContainer.id = "addRecipeContainer";
 
   const addRecipeBtn = document.createElement("button");
   addRecipeBtn.id = "addRecipe";
-  addRecipeBtn.className = "button"
+  addRecipeBtn.className = "button";
   addRecipeBtn.textContent = "New Recipe";
 
   selections.append(addRecipeContainer);
   addRecipeContainer.append(addRecipeBtn);
   addRecipeBtn.addEventListener("click", handleNewRecipeClick);
 
-  const deleteRecipeBtn = document.createElement("button")
-  deleteRecipeBtn.id = "deleteRecipe"  
-  deleteRecipeBtn.className = "button"
-  deleteRecipeBtn.textContent = "Delete Selected"
-  addRecipeContainer.append(deleteRecipeBtn)
-  deleteRecipeBtn.addEventListener("click", handleDeleteRecipe)
+  const deleteRecipeBtn = document.createElement("button");
+  deleteRecipeBtn.id = "deleteRecipe";
+  deleteRecipeBtn.className = "button";
+  deleteRecipeBtn.textContent = "Delete Selected";
+  addRecipeContainer.append(deleteRecipeBtn);
+  deleteRecipeBtn.addEventListener("click", handleDeleteRecipe);
 
   async function handleDeleteRecipe(e) {
-    e.preventDefault()
-    const recipeCheckboxes = document.getElementsByClassName("recipeCheckbox")
-    const recipeName = document.getElementsByClassName("recipeName")
+    e.preventDefault();
+    const recipeCheckboxes = document.getElementsByClassName("recipeCheckbox");
+    const recipeName = document.getElementsByClassName("recipeName");
 
     for (let i = 0; i < recipeCheckboxes.length; i++) {
       if (recipeCheckboxes[i].checked === true) {
-        console.log(recipeCheckboxes[i].checked)
-        console.log(recipeName[i].textContent)
-        const URL = `${serverURL}/recipe/delete/`
-        let delItem = {}
-        delItem.recipeName = recipeName[i].textContent
+        console.log(recipeCheckboxes[i].checked);
+        console.log(recipeName[i].textContent);
+        const URL = `${serverURL}/recipe/delete/`;
+        let delItem = {};
+        delItem.recipeName = recipeName[i].textContent;
         try {
           const res = await fetch(URL, {
             method: "DELETE",
@@ -796,7 +817,7 @@ async function populateRecipeList() {
           });
           const data = await res.json();
           if (data.message === "The recipe was successfully deleted!") {
-            console.log("the recipe was deleted")
+            console.log("the recipe was deleted");
             await populateRecipeList();
           }
         } catch (error) {
@@ -804,7 +825,7 @@ async function populateRecipeList() {
         }
       }
     }
-   /* 
+    /* 
    async function handleRemovingShoppingListItems() {
   const shoppingListCheckBoxes = document.getElementsByClassName(
     "shoppingListCheckBoxes"
@@ -838,12 +859,12 @@ async function populateRecipeList() {
   fetchShoppingList();
 }
 
-   */ 
+   */
   }
 
   async function handleNewRecipeClick() {
     if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
-      document.getElementById("addRecipeIngredientsToShoppingListBtn").remove()
+      document.getElementById("addRecipeIngredientsToShoppingListBtn").remove();
     }
     const recipeTableBody = document.getElementById("recipeTableBody");
 
@@ -873,36 +894,86 @@ async function populateRecipeList() {
     newRecipeNameInput.placeholder = "New Recipe Name";
     newRecipeNameInput.required = true;
 
-    const ingredientInput = document.createElement("input");
-    ingredientInput.type = "text";
-    ingredientInput.className = "ingredients";
-    ingredientInput.id = "newIngredients";
-    ingredientInput.setAttribute("list", "ingredientOptions");
-    ingredientInput.placeholder = "Add Ingredient";
-    ingredientInput.required = true;
+    // const ingredientInputContainer = document.createElement("div");
+    // ingredientInputContainer.className = "ingredientInputContainer";
 
+    const newIngredientInput = document.createElement("input");
+    newIngredientInput.type = "text";
+    newIngredientInput.className = "newIngredients";
+    // newIngredientInput.id = "newIngredientInput";
+    newIngredientInput.setAttribute("list", "ingredientOptions");
+    newIngredientInput.placeholder = "Add Ingredient";
+    newIngredientInput.required = true;
+
+    const newIngredientFieldBtn = document.createElement("button");
+    newIngredientFieldBtn.id = "newIngredientInputFieldBtn";
+    newIngredientFieldBtn.classList = ("button", "newIngredientFieldBtns");
+    newIngredientFieldBtn.addEventListener(
+      "click",
+      handleIngredientInputSubmit
+    );
+
+    newIngredientFieldBtn.textContent = "+";
+
+    // ingredientInputContainer.append(newIngredientInput, newIngredientFieldBtn);
+
+    const recipeCookTimeInputField = document.createElement("input");
+    recipeCookTimeInputField.type = "string";
+    recipeCookTimeInputField.id = "recipeCookTimeInputField";
+    recipeCookTimeInputField.placeholder = "Time to Make";
+
+    const recipeTempInputField = document.createElement("input");
+    recipeTempInputField.type = "string";
+    recipeTempInputField.id = "recipeTempInputField";
+    recipeTempInputField.placeholder = "Temperature";
+
+    const recipeInstructionsInputField = document.createElement("textarea");
+    recipeInstructionsInputField.id = "recipeInstructionsInputField";
+    recipeInstructionsInputField.placeholder = "Instructions";
     if (document.getElementById("ingredientInputForm")) {
       document
         .getElementById("addRecipeIngredientsToShoppingListBtn")
         ?.remove();
     }
 
+
     function handleIngredientInputSubmit() {
-      const ingredients = document.getElementsByClassName("ingredients");
-      for (let ingredient of ingredients) {
+
+      const newIngredients = document.getElementsByClassName("newIngredients");
+      for (let ingredient of newIngredients) {
         if (ingredient.value === "") {
           return;
         }
       }
-      console.log("adding new line");
-      const ingredientInput = document.createElement("input");
-      ingredientInput.type = "text";
-      ingredientInput.className = "ingredients";
-      ingredientInput.placeholder = "Add Ingredient";
-      ingredientInput.setAttribute("list", "ingredientOptions");
-      // ingredientInput.id = "ingredientInput";
-      ingredientInput.required = true;
-      ingredientInputForm.append(ingredientInput);
+
+      const ingredientInputContainer = document.createElement("div");
+      ingredientInputContainer.className = "ingredientInputContainer";
+  
+      const newIngredientInput = document.createElement("input");
+      newIngredientInput.type = "text";
+      newIngredientInput.className = "newIngredients";
+      newIngredientInput.setAttribute("list", "ingredientOptions");
+      newIngredientInput.placeholder = "Add Ingredient";
+      newIngredientInput.required = true;
+  
+      const newIngredientFieldBtn = document.createElement("button");
+      newIngredientFieldBtn.id = "newIngredientInputFieldBtn";
+      newIngredientFieldBtn.classList = ("button", "newIngredientFieldBtns");
+      newIngredientFieldBtn.addEventListener(
+        "click",
+        handleIngredientInputSubmit
+      );
+  
+      newIngredientFieldBtn.textContent = "+";
+  
+      ingredientInputContainer.append(newIngredientInput, newIngredientFieldBtn);
+
+      // newIngredientInput.append(newIngredientFieldBtn);
+      const newIngredientInputFieldBtn = document.getElementById("newIngredientInputFieldBtn")
+      newIngredientInputFieldBtn.remove()
+      newIngredientInputFieldBtn.id = ""
+    
+      newIngredientContainer.append(ingredientInputContainer)
     }
 
     const ingredientDataList = document.createElement("datalist");
@@ -911,77 +982,117 @@ async function populateRecipeList() {
     const ingredientOption = document.createElement("option");
     ingredientOption.value = "Lettuce"; //todo - populate this with the list of ingredients from all recipes
 
-    const newIngredientFieldBtn = document.createElement("button");
-    newIngredientFieldBtn.id = "newIngredientInputFieldBtn";
-    newIngredientFieldBtn.className = "button"
-    newIngredientFieldBtn.addEventListener(
-      "click",
-      handleIngredientInputSubmit
-    );
-    newIngredientFieldBtn.textContent = "+";
-
     const newRecipeInputBtn = document.createElement("input");
     newRecipeInputBtn.type = "submit";
     newRecipeInputBtn.id = "newRecipeInputBtn";
-    newRecipeInputBtn.addEventListener("click", handleNewRecipeIngredientSubmit);
+    newRecipeInputBtn.addEventListener(
+      "click",
+      handleNewRecipeIngredientSubmit
+    );
+
+    const newIngredientContainer = document.createElement("tr");
+    newIngredientContainer.id = "newIngredientContainer";
+    newIngredientContainer.append(newIngredientInput, newIngredientFieldBtn);
+
     ingredientInputForm.append(
       newRecipeNameInput,
-      ingredientInput,
+      // newIngredientInput,
+      // newIngredientFieldBtn,
       ingredientDataList
     );
 
+    recipeTableBody.append(
+      newIngredientContainer,
+      recipeInstructionsInputField
+    );
     ingredientDataList.append(ingredientOption);
 
-    // const br = document.createElement("br");
+    const timeAndTemp = document.createElement("div");
+    timeAndTemp.id = "timeAndTemp";
+    timeAndTemp.append(recipeCookTimeInputField, recipeTempInputField);
 
     ingredient.append(
       ingredientInputForm,
-      newIngredientFieldBtn,
-      // br,
-      newRecipeInputBtn
+      timeAndTemp
+      // recipeInstructionsInputField
     );
-
-  //   document
-  //     .getElementById("newRecipeInputBtn")
-  //     .addEventListener("click", handleNewRecipeIngredientSubmit);
   }
 
   recipes.map((recipe) => {
+    const recipeCheck = document.createElement("td");
+    recipeCheck.className = "recipeCheck";
 
-    const recipeCheck = document.createElement("td")
-    recipeCheck.className = "recipeCheck"    
-
-    const recipeCheckbox = document.createElement("input")
-    recipeCheckbox.type = "checkbox"
-    recipeCheckbox.className = "recipeCheckbox"
-    recipeCheck.append(recipeCheckbox)
+    const recipeCheckbox = document.createElement("input");
+    recipeCheckbox.type = "checkbox";
+    recipeCheckbox.className = "recipeCheckbox";
+    recipeCheck.append(recipeCheckbox);
 
     const entry = document.createElement("td");
     entry.className = "recipeName";
     entry.value = recipe.recipeName;
     entry.textContent = recipe.recipeName;
-    entry.style.textDecoration = "none"
+    entry.style.textDecoration = "none";
     entry.addEventListener("click", handleEntryClick);
 
-    const recipeGroup = document.createElement("tr")
-    recipeGroup.className = "recipeGroup"
-    recipeGroup.append(recipeCheck)
-    recipeGroup.append(entry)
+    const showRecipeBtn = document.createElement("button");
+    showRecipeBtn.className = "button";
+    showRecipeBtn.addEventListener("click", handleShowRecipeClick);
+    showRecipeBtn.textContent = "View Recipe";
+
+    const recipeGroup = document.createElement("tr");
+    recipeGroup.className = "recipeGroup";
+    recipeGroup.append(recipeCheck);
+    recipeGroup.append(entry);
+    recipeGroup.append(showRecipeBtn);
+    //append show recipe button here
 
     recipeListTableBody.append(recipeGroup);
 
-    recipeCheckbox.addEventListener("click",handleRecipeCheckboxClick)
+    async function handleShowRecipeClick() {
+      const recipeWindow = document.getElementById("recipeWindow");
+      const recipeWindowContent = document.getElementById(
+        "recipeWindowContent"
+      );
+      const closeRecipeWindowBtn = document.getElementById(
+        "closeRecipeWindowBtn"
+      );
 
-    function handleRecipeCheckboxClick () {
-      console.log("click")
-      if (entry.style.textDecoration === "line-through") {
-        entry.style.textDecoration = "none"
-      }
-      else 
-      if (entry.style.textDecoration === "none") {
-        entry.style.textDecoration = "line-through"}
+      recipeWindow.style.height = "95%";
+      recipeWindow.style.width = "95%";
+
+      recipeWindowContent.style.height = "93%";
+      recipeWindowContent.style.width = "93%";
+      recipeWindowContent.style.visibility = "visible";
+
+      closeRecipeWindowBtn.style.visibility = "visible";
+
+      closeRecipeWindowBtn.addEventListener("click", handleCloseRecipeWindow);
     }
 
+    recipeCheckbox.addEventListener("click", handleRecipeCheckboxClick);
+
+    function handleCloseRecipeWindow() {
+      recipeWindow.style.height = "0";
+      recipeWindow.style.width = "0";
+
+      recipeWindowContent.style.height = "0";
+      recipeWindowContent.style.width = "0";
+      recipeWindowContent.style.visibility = "hidden";
+
+      closeRecipeWindowBtn.style.visibility = "hidden";
+      closeRecipeWindowBtn.removeEventListener(
+        "click",
+        handleCloseRecipeWindow
+      );
+    }
+
+    function handleRecipeCheckboxClick() {
+      if (entry.style.textDecoration === "line-through") {
+        entry.style.textDecoration = "none";
+      } else if (entry.style.textDecoration === "none") {
+        entry.style.textDecoration = "line-through";
+      }
+    }
 
     function handleEntryClick() {
       const recipeTableBody = document.getElementById("recipeTableBody");
@@ -1015,20 +1126,19 @@ async function populateRecipeList() {
         const ingredient = document.createElement("td");
         ingredient.className = "ingredient";
         ingredient.textContent = item;
-        ingredient.style.textDecoration = "none"
+        ingredient.style.textDecoration = "none";
         mainContent.append(check);
         mainContent.append(ingredient);
         recipeTableBody.append(mainContent);
 
-        checkBox.addEventListener("click",handleIngredientListCheckboxClick)
+        checkBox.addEventListener("click", handleIngredientListCheckboxClick);
 
-        function handleIngredientListCheckboxClick () {
+        function handleIngredientListCheckboxClick() {
           if (ingredient.style.textDecoration === "line-through") {
-            ingredient.style.textDecoration = "none"
+            ingredient.style.textDecoration = "none";
+          } else if (ingredient.style.textDecoration === "none") {
+            ingredient.style.textDecoration = "line-through";
           }
-          else 
-          if (ingredient.style.textDecoration === "none") {
-            ingredient.style.textDecoration = "line-through"}
         }
       });
 
@@ -1041,7 +1151,7 @@ async function populateRecipeList() {
         document.createElement("button");
       addRecipeIngredientsToShoppingListBtn.id =
         "addRecipeIngredientsToShoppingListBtn";
-        addRecipeIngredientsToShoppingListBtn.className = "button"
+      addRecipeIngredientsToShoppingListBtn.className = "button";
       addRecipeIngredientsToShoppingListBtn.textContent =
         "Add to Shopping List";
       addRecipeIngredientsToShoppingListBtn.addEventListener(
