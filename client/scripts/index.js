@@ -289,7 +289,53 @@ async function login(e) {
 loadPageContents();
 function loadPageContents() {
   fetchShoppingList();
-  populateRecipeList();
+
+  // populateRecipeList();
+
+  // const applicationContainer = document.getElementById("applicationContainer")
+  // applicationContainer.addEventListener("click", handleApplicationContainerClick)
+  // const recipeContent = document.getElementById("recipeContent")
+  // recipeContent.addEventListener("click", handleRecipeContentClick)
+  // const recipesContainer = document.getElementById("recipesContainer")
+  // recipesContainer.addEventListener("click", handleRecipesContainerClick)
+}
+
+function handleApplicationContainerClick() {
+  const applicationContainer = document.getElementById("applicationContainer");
+  const recipeContent = document.getElementById("recipeContent");
+  const recipesContainer = document.getElementById("recipesContainer");
+
+  // const applicationContainerContents = applicationContainer.innerHTML;
+  const recipeContentContents = recipeContent.innerHTML;
+  const recipesContainerContent = recipesContainer.innerHTML;
+
+  // recipeContent.innerHTML = ""
+  recipeContent.style.height = "0";
+
+  // recipesContainer.innerHTML = ""
+  recipesContainer.style.height = "0";
+
+  applicationContainer.style.height = "100vh";
+}
+
+function handleRecipeContentClick() {
+  const applicationContainer = document.getElementById("applicationContainer");
+  const recipeContent = document.getElementById("recipeContent");
+  const recipesContainer = document.getElementById("recipesContainer");
+
+  const applicationContainerContents = applicationContainer.innerHTML;
+  const recipeContentContents = recipeContent.innerHTML;
+  const recipesContainerContent = recipesContainer.innerHTML;
+}
+
+function handleRecipesContainerClick() {
+  const applicationContainer = document.getElementById("applicationContainer");
+  const recipeContent = document.getElementById("recipeContent");
+  const recipesContainer = document.getElementById("recipesContainer");
+
+  const applicationContainerContents = applicationContainer.innerHTML;
+  const recipeContentContents = recipeContent.innerHTML;
+  const recipesContainerContent = recipesContainer.innerHTML;
 }
 
 async function handleNewRecipeIngredientSubmit(e) {
@@ -310,7 +356,6 @@ async function handleNewRecipeIngredientSubmit(e) {
   console.log(nameInput);
   // setTimeout(() => {
   // await populateRecipeList();
-
 
   //todo remove this, it doesn't seem to link to anything anymore
   // const recipeIngredients = document.getElementById("recipeIngredients");
@@ -902,8 +947,11 @@ async function populateRecipeList() {
     newIngredientInput.className = "newIngredients";
     // newIngredientInput.id = "newIngredientInput";
     newIngredientInput.setAttribute("list", "ingredientOptions");
-    newIngredientInput.placeholder = "Add Ingredient";
+    newIngredientInput.placeholder = "Ingredient Name";
     newIngredientInput.required = true;
+
+    const newIngredientMeasure = document.createElement("input");
+    newIngredientMeasure.className = "newIngredientMeasure";
 
     const newIngredientFieldBtn = document.createElement("button");
     newIngredientFieldBtn.id = "newIngredientInputFieldBtn";
@@ -936,9 +984,7 @@ async function populateRecipeList() {
         ?.remove();
     }
 
-
     function handleIngredientInputSubmit() {
-
       const newIngredients = document.getElementsByClassName("newIngredients");
       for (let ingredient of newIngredients) {
         if (ingredient.value === "") {
@@ -948,14 +994,24 @@ async function populateRecipeList() {
 
       const ingredientInputContainer = document.createElement("div");
       ingredientInputContainer.className = "ingredientInputContainer";
-  
+
+      const newIngredientQty = document.createElement("input");
+      newIngredientQty.placeholder = "qty";
+      newIngredientQty.className = "newIngredientQtys";
+
+      const newIngredientUnit = document.createElement("input");
+      newIngredientUnit.type = "text";
+      newIngredientUnit.className = "newIngredientUnits";
+      newIngredientUnit.setAttribute("list", "unitOptions");
+      newIngredientUnit.required = "true";
+
       const newIngredientInput = document.createElement("input");
       newIngredientInput.type = "text";
       newIngredientInput.className = "newIngredients";
       newIngredientInput.setAttribute("list", "ingredientOptions");
       newIngredientInput.placeholder = "Add Ingredient";
       newIngredientInput.required = true;
-  
+
       const newIngredientFieldBtn = document.createElement("button");
       newIngredientFieldBtn.id = "newIngredientInputFieldBtn";
       newIngredientFieldBtn.classList = ("button", "newIngredientFieldBtns");
@@ -963,21 +1019,47 @@ async function populateRecipeList() {
         "click",
         handleIngredientInputSubmit
       );
-  
+
       newIngredientFieldBtn.textContent = "+";
-  
-      ingredientInputContainer.append(newIngredientInput, newIngredientFieldBtn);
+
+      ingredientInputContainer.append(
+        newIngredientQty,
+        newIngredientInput,
+        newIngredientFieldBtn
+      );
 
       // newIngredientInput.append(newIngredientFieldBtn);
-      const newIngredientInputFieldBtn = document.getElementById("newIngredientInputFieldBtn")
-      newIngredientInputFieldBtn.remove()
-      newIngredientInputFieldBtn.id = ""
-    
-      newIngredientContainer.append(ingredientInputContainer)
+      const newIngredientInputFieldBtn = document.getElementById(
+        "newIngredientInputFieldBtn"
+      );
+      newIngredientInputFieldBtn.remove();
+      newIngredientInputFieldBtn.id = "";
+
+      newIngredientContainer.append(ingredientInputContainer);
     }
+
+    const measurementUnit = document.createElement("input");
+    measurementUnit.setAttribute("list", "unitOptions");
+    measurementUnit.className = "measurementUnit";
+    measurementUnit.placeholder = "unit";
+
+    const unitOptionsDataList = document.createElement("datalist");
+    unitOptionsDataList.id = "unitOptions";
+    // unitOptionsDataList = "unit"
+
+    const unitOptions = ["tsp", "tbsp", "fl oz", "cup", "pint", "qt", "gal"];
+
+    unitOptions.map((unit) => {
+      const option = document.createElement("option");
+      option.value = unit;
+      unitOptionsDataList.append(option);
+    });
 
     const ingredientDataList = document.createElement("datalist");
     ingredientDataList.id = "ingredientOptions";
+
+    const unitOption = document.createElement("option");
+    // unitOption.value = "cup"; //todo add more
 
     const ingredientOption = document.createElement("option");
     ingredientOption.value = "Lettuce"; //todo - populate this with the list of ingredients from all recipes
@@ -990,11 +1072,30 @@ async function populateRecipeList() {
       handleNewRecipeIngredientSubmit
     );
 
+    const newIngredientAmtInputs = document.createElement("input");
+    newIngredientAmtInputs.placeholder = "qty";
+    newIngredientAmtInputs.type = "number";
+    newIngredientAmtInputs.className = "newIngredientAmtInputs";
+    newIngredientAmtInputs.min = 0;
+    // newIngredientAmtInputs.setAttribute (list,"unitOptionsDataList")
+
+    const newIngredientCalorieInputs = document.createElement("input");
+    newIngredientCalorieInputs.className = "newIngredientCalorieInputs";
+    newIngredientCalorieInputs.placeholder = "Cal";
+
     const newIngredientContainer = document.createElement("tr");
     newIngredientContainer.id = "newIngredientContainer";
-    newIngredientContainer.append(newIngredientInput, newIngredientFieldBtn);
+    newIngredientContainer.append(
+      newIngredientInput,
+      newIngredientAmtInputs,
+      measurementUnit,
+      newIngredientCalorieInputs,
+      newIngredientFieldBtn
+    );
 
     ingredientInputForm.append(
+      unitOption,
+      unitOptionsDataList,
       newRecipeNameInput,
       // newIngredientInput,
       // newIngredientFieldBtn,
@@ -1005,6 +1106,8 @@ async function populateRecipeList() {
       newIngredientContainer,
       recipeInstructionsInputField
     );
+
+    unitOptionsDataList.append(unitOption);
     ingredientDataList.append(ingredientOption);
 
     const timeAndTemp = document.createElement("div");
@@ -1041,9 +1144,9 @@ async function populateRecipeList() {
 
     const recipeGroup = document.createElement("tr");
     recipeGroup.className = "recipeGroup";
-    recipeGroup.append(recipeCheck);
-    recipeGroup.append(entry);
-    recipeGroup.append(showRecipeBtn);
+    recipeGroup.append(recipeCheck, entry, showRecipeBtn);
+    // recipeGroup.append(entry);
+    // recipeGroup.append(showRecipeBtn);
     //append show recipe button here
 
     recipeListTableBody.append(recipeGroup);
@@ -1067,6 +1170,112 @@ async function populateRecipeList() {
       closeRecipeWindowBtn.style.visibility = "visible";
 
       closeRecipeWindowBtn.addEventListener("click", handleCloseRecipeWindow);
+
+      const recipeText = document.getElementById("recipeText");
+
+      const recipeName = document.createElement("div");
+      recipeName.textContent = "Recipe Name Here";
+
+      const temp = document.createElement("div");
+      temp.textContent = "Temp...";
+
+      const time = document.createElement("div");
+      time.textContent = "Time...";
+
+      const listContainer = document.createElement("div");
+      listContainer.id = "listContainer";
+
+      const column_one = document.createElement("ul");
+      column_one.className = "recipeIngredientsColumns";
+      column_one.id = "recipeIngredientsColumn_1";
+
+      const column_two = document.createElement("ul");
+      column_two.className = "recipeIngredientsColumns";
+      column_two.id = "recipeIngredientsColumn_2";
+
+      const ingredient_one = document.createElement("li");
+      ingredient_one.textContent = "Ingredient 1";
+
+      const ingredient_two = document.createElement("li");
+      ingredient_two.textContent = "Ingredient 2";
+
+      const ingredient_three = document.createElement("li");
+      ingredient_three.textContent = "Ingredient 3";
+
+      const ingredient_four = document.createElement("li");
+      ingredient_four.textContent = "Ingredient 4";
+
+      column_one.append(ingredient_one, ingredient_two);
+      column_two.append(ingredient_three, ingredient_four);
+
+      listContainer.append(column_one, column_two);
+
+      const instructions = document.createElement("div");
+      instructions.id = "instructions";
+      instructions.textContent = `Instruction text Here: Lorem ipsum dolor sit, amet consectetur
+            adipisicing elit. Repellat consequuntur minus sapiente perspiciatis
+            deleniti magnam illo eius ut corporis, vitae voluptatibus adipisci
+            obcaecati ea beatae? Iusto, debitis voluptas in totam, voluptatem
+            unde sunt ullam provident reiciendis nulla inventore, aspernatur at!
+            Explicabo dolores harum inventore voluptatibus consectetur eaque
+            nemo repudiandae laboriosam optio. Nulla consectetur, nesciunt
+            magnam laborum consequatur mollitia, numquam explicabo molestias,
+            repudiandae praesentium recusandae atque aspernatur laboriosam!
+            Voluptas, dicta perferendis non quisquam hic doloremque alias? Quos
+            repellendus voluptatem sequi in voluptatibus dolores odio nisi
+            facilis numquam fugit expedita eum sed eos rerum officiis nesciunt
+            molestias accusamus pariatur dignissimos, saepe facere! Optio aut
+            mollitia magnam facilis quod exercitationem, minus placeat
+            distinctio aliquam, iure cum autem? Quaerat iure cum voluptatum.
+            Alias unde, molestias ipsam aperiam suscipit nam explicabo, ut
+            provident, nihil voluptatibus tempore assumenda ipsa quos sunt. Id
+            rerum deleniti obcaecati, eius ipsum, quos dolorem temporibus labore
+            at quam veniam sunt recusandae necessitatibus voluptate excepturi
+            eveniet earum. Esse ad, autem inventore architecto error temporibus
+            praesentium dicta, libero placeat dolorum at laboriosam vitae,
+            deleniti nesciunt? Nihil culpa fugiat perferendis eaque obcaecati
+            laudantium, placeat possimus fugit accusantium unde cumque
+            temporibus quidem nemo earum rem iste sunt exercitationem tenetur
+            nulla reprehenderit beatae impedit architecto nobis. Lorem ipsum
+            dolor sit amet consectetur adipisicing elit. Optio enim in
+            cupiditate architecto vero deserunt dicta laudantium voluptatibus,
+            consectetur excepturi? Dolorem, laborum quod ab veritatis eos, autem
+            deleniti quasi id, error maiores reprehenderit eaque labore maxime
+            facere vero molestiae quibusdam corrupti asperiores ipsum velit quae
+            repellat? Tempore eum sapiente quam maiores ad dicta, expedita
+            nostrum adipisci labore dolore molestias velit maxime doloremque
+            vel? Sapiente dicta culpa eligendi deserunt delectus harum ab
+            dignissimos officiis voluptatibus, eum debitis quo impedit,
+            excepturi amet reprehenderit ut illum quidem expedita ullam? At
+            ipsa, esse atque rerum culpa accusamus quaerat alias voluptatem
+            consectetur mollitia voluptas odio dignissimos nam corporis ducimus
+            earum, unde nulla expedita inventore, dolores doloribus maxime! Vel,
+            quisquam. Quam blanditiis magnam illum veritatis dolore, odit saepe
+            tenetur eaque optio perspiciatis quas velit vel veniam hic vitae
+            harum rerum eius accusamus laboriosam excepturi repellendus dolorum,
+            nisi nihil! Voluptates deleniti quod tempora iste consectetur
+            incidunt voluptatum veniam quidem, atque voluptas, perspiciatis
+            sequi totam exercitationem magnam ratione blanditiis eligendi error
+            nulla quam, ad et cupiditate in velit. Architecto eligendi quis,
+            autem nulla impedit similique reprehenderit necessitatibus dolorem
+            consectetur blanditiis laborum corrupti iste numquam sapiente saepe
+            incidunt officia beatae voluptates. Deserunt perspiciatis quia, ut
+            ipsa labore illo dicta!`;
+
+      recipeText.append(recipeName, temp, time, listContainer, instructions);
+
+      /* 
+        <div>Recipe Name Here</div>
+          <div>Temp</div>
+          <div>Time</div>
+          <ul>
+            <li>Ingredient 1</li>
+            <li>Ingredient 2</li>
+          </ul>
+          <div id="instructions">
+
+          </div>
+      */
     }
 
     recipeCheckbox.addEventListener("click", handleRecipeCheckboxClick);
