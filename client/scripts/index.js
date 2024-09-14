@@ -460,6 +460,8 @@ async function checkForExistingIngredient(item) {
   };
 
   try {
+    //todo if the ingredient is found, populate the information on unit and calories, which can then be converted to the actual units and quantities used
+
     const res = await fetch(URL, reqOptions);
     const data = await res.json();
     return data.message;
@@ -920,10 +922,20 @@ async function populateRecipeList() {
 
     function handleIngredientInputSubmit (e) {
       e.preventDefault()
-      const ingredientNameInput = document.getElementById("newIngredientInput").value;
-      const ingredientAmtInput = document.getElementById("newIngredientAmtInputs").value;
-      const measurementUnitInput = document.getElementById("measurementUnitInput").value;
-      const newIngredientCalorieInput = document.getElementById("newIngredientCalorieInput").value;
+      const ingredientNameInput = document.getElementById("newIngredientInput");
+      const ingredientAmtInput = document.getElementById("newIngredientAmtInput");
+      const measurementUnitInput = document.getElementById("measurementUnitInput");
+      const newIngredientCalorieInput = document.getElementById("newIngredientCalorieInput");
+      if (ingredientNameInput.value && ingredientAmtInput.value && measurementUnitInput.value && newIngredientCalorieInput.value)
+      {
+        //todo push this information to the ingredients array that will be sent to the back end when the recipe is actually submitted
+        console.log(ingredientNameInput.value, ingredientAmtInput.value, measurementUnitInput.value, newIngredientCalorieInput.value) 
+        //todo - create tne new input line
+        //todo - remove the ids for the fields that had been submitted
+      } else { 
+        console.log("missing input")
+      
+    }
     }
 
 
@@ -987,6 +999,7 @@ async function populateRecipeList() {
     newIngredientAmtInputs.type = "number";
     newIngredientAmtInputs.className = "newIngredientAmtInputs";
     newIngredientAmtInputs.min = 0;
+    newIngredientAmtInputs.id = "newIngredientAmtInput"
 
     const newIngredientCalorieInputs = document.createElement("input");
     newIngredientCalorieInputs.className = "newIngredientCalorieInputs";
@@ -996,12 +1009,7 @@ async function populateRecipeList() {
     const newIngredientContainer = document.createElement("tr");
     newIngredientContainer.id = "newIngredientContainer";
 
-    // todo - fix this form not showing up
-    const newIngredientForm = document.createElement("form")
-    newIngredientForm.id = "newIngredientForm"
-    newIngredientContainer.append(newIngredientForm)
-
-    newIngredientForm.append(
+      newIngredientContainer.append(
       newIngredientInput,
       newIngredientAmtInputs,
       measurementUnit,
