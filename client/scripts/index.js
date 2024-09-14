@@ -338,6 +338,7 @@ function handleRecipesContainerClick() {
   const recipesContainerContent = recipesContainer.innerHTML;
 }
 
+//todo - this is where the new recipe ingredients, qty, etc need to go
 async function handleNewRecipeIngredientSubmit(e) {
   await e.preventDefault();
 
@@ -907,6 +908,8 @@ async function populateRecipeList() {
    */
   }
 
+
+
   async function handleNewRecipeClick() {
     if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
       document.getElementById("addRecipeIngredientsToShoppingListBtn").remove();
@@ -945,7 +948,7 @@ async function populateRecipeList() {
     const newIngredientInput = document.createElement("input");
     newIngredientInput.type = "text";
     newIngredientInput.className = "newIngredients";
-    // newIngredientInput.id = "newIngredientInput";
+    newIngredientInput.id = "newIngredientInput";
     newIngredientInput.setAttribute("list", "ingredientOptions");
     newIngredientInput.placeholder = "Ingredient Name";
     newIngredientInput.required = true;
@@ -984,13 +987,53 @@ async function populateRecipeList() {
         ?.remove();
     }
 
-    function handleIngredientInputSubmit() {
+
+    async function handleIngredientInputSubmit() {
+      const URL = `${serverURL}/ingredient`
+      const body = {"ingredientName": ingredientInput.value}
+
+
+      //
+      try {
+        const res = await fetch(`${URL}/find`, {
+          method: "POST",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (data.message === "Found!") {
+          console.log("Found: ", data)
+        } else {
+          console.log("data.message: ",data.message)
+          const newItemBody = {
+            
+          }
+        }
+      } catch (error) {
+        console.log("res: ",res)
+        console.log(error);
+      }
+      //
+
+      // try {
+      //   const data = fetch(`${URL}/find`)
+
+      //   console.log(data)
+      // } catch (err) {
+      //   console.log('error...', err)
+      // }
+      // console.log(ingredientInput.value)
       const newIngredients = document.getElementsByClassName("newIngredients");
       for (let ingredient of newIngredients) {
         if (ingredient.value === "") {
           return;
         }
       }
+
+
 
       const ingredientInputContainer = document.createElement("div");
       ingredientInputContainer.className = "ingredientInputContainer";
@@ -1034,6 +1077,7 @@ async function populateRecipeList() {
       );
       newIngredientInputFieldBtn.remove();
       newIngredientInputFieldBtn.id = "";
+      ingredientInput.id = ""
 
       newIngredientContainer.append(ingredientInputContainer);
     }
@@ -1119,6 +1163,15 @@ async function populateRecipeList() {
       timeAndTemp
       // recipeInstructionsInputField
     );
+
+    const ingredientInput = document.getElementById("newIngredientInput")
+    console.log(ingredientInput.textContent)
+    ingredientInput.addEventListener("change", async () => {
+      // console.log(ingredientInput.textContent)
+      console.log(ingredientInput)
+      console.log("checking for ingredient response:",await checkForExistingIngredient(ingredientInput.textContent))
+
+    })
   }
 
   recipes.map((recipe) => {
@@ -1156,6 +1209,7 @@ async function populateRecipeList() {
       const recipeWindowContent = document.getElementById(
         "recipeWindowContent"
       );
+      // recipeWindowContent.innerHTML = ""
       const closeRecipeWindowBtn = document.getElementById(
         "closeRecipeWindowBtn"
       );
@@ -1171,7 +1225,10 @@ async function populateRecipeList() {
 
       closeRecipeWindowBtn.addEventListener("click", handleCloseRecipeWindow);
 
+      //todo - change this recipetext to data fetched
+
       const recipeText = document.getElementById("recipeText");
+      recipeText.innerHTML = ''
 
       const recipeName = document.createElement("div");
       recipeName.textContent = "Recipe Name Here";
@@ -1262,6 +1319,7 @@ async function populateRecipeList() {
             incidunt officia beatae voluptates. Deserunt perspiciatis quia, ut
             ipsa labore illo dicta!`;
 
+      
       recipeText.append(recipeName, temp, time, listContainer, instructions);
 
       /* 
