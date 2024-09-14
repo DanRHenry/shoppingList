@@ -343,6 +343,11 @@ async function handleNewRecipeIngredientSubmit(e) {
   await e.preventDefault();
 
   const nameInput = document.getElementById("newRecipeNameInput").value;
+  const timeInput = document.getElementById("recipeCookTimeInputField").value;
+  const temperatureInput = document.getElementById("recipeTempInputField").value;
+  const recipeInstructionsInput = document.getElementById("recipeInstructionsInputField").value;
+
+
   const ingredients = document.getElementsByClassName("ingredients");
 
   const ingredientValues = [];
@@ -721,20 +726,6 @@ function addShoppingListInput() {
   mainContent.append(qty);
 
   shoppingListTableBody.append(mainContent);
-  /* 
-              <!-- <tr class="mainContent">
-              <td class="check">
-                  <div></div>
-                  <button id="addNewItem">Add</button>
-                </td>
-                <td class="item">
-                  <input  id="itemInput" type="text" required>
-                </td>
-                <td class="qty">
-                  <input id="qtyInput" type="text" placeholder="1" value=1 style="text-align: center;">
-                </td>
-            </tr>
-  */
 }
 
 function handlePostNewItem() {
@@ -871,44 +862,7 @@ async function populateRecipeList() {
         }
       }
     }
-    /* 
-   async function handleRemovingShoppingListItems() {
-  const shoppingListCheckBoxes = document.getElementsByClassName(
-    "shoppingListCheckBoxes"
-  );
-  const item = document.getElementsByClassName("item");
-
-  for (let i = 0; i < shoppingListCheckBoxes.length; i++) {
-    if (shoppingListCheckBoxes[i].checked === true) {
-      const URL = `${serverURL}/ingredient/delete/`;
-
-      let delItem = {};
-      delItem.ingredientName = item[i].textContent;
-      try {
-        const res = await fetch(URL, {
-          method: "DELETE",
-          mode: "cors",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(delItem),
-        });
-        const data = await res.json();
-        if (data.message === "The ingredient was successfully deleted!") {
-          // console.log("the item was deleted")
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
   }
-  fetchShoppingList();
-}
-
-   */
-  }
-
-
 
   async function handleNewRecipeClick() {
     if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
@@ -964,6 +918,15 @@ async function populateRecipeList() {
       handleIngredientInputSubmit
     );
 
+    function handleIngredientInputSubmit (e) {
+      e.preventDefault()
+      const ingredientNameInput = document.getElementById("newIngredientInput").value;
+      const ingredientAmtInput = document.getElementById("newIngredientAmtInputs").value;
+      const measurementUnitInput = document.getElementById("measurementUnitInput").value;
+      const newIngredientCalorieInput = document.getElementById("newIngredientCalorieInput").value;
+    }
+
+
     newIngredientFieldBtn.textContent = "+";
 
     // ingredientInputContainer.append(newIngredientInput, newIngredientFieldBtn);
@@ -986,110 +949,14 @@ async function populateRecipeList() {
         .getElementById("addRecipeIngredientsToShoppingListBtn")
         ?.remove();
     }
-
-
-    async function handleIngredientInputSubmit() {
-      const URL = `${serverURL}/ingredient`
-      const body = {"ingredientName": ingredientInput.value}
-
-
-      //
-      try {
-        const res = await fetch(`${URL}/find`, {
-          method: "POST",
-          mode: "cors",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(body),
-        });
-        const data = await res.json();
-        if (data.message === "Found!") {
-          console.log("Found: ", data)
-        } else {
-          console.log("data.message: ",data.message)
-          const newItemBody = {
-            
-          }
-        }
-      } catch (error) {
-        console.log("res: ",res)
-        console.log(error);
-      }
-      //
-
-      // try {
-      //   const data = fetch(`${URL}/find`)
-
-      //   console.log(data)
-      // } catch (err) {
-      //   console.log('error...', err)
-      // }
-      // console.log(ingredientInput.value)
-      const newIngredients = document.getElementsByClassName("newIngredients");
-      for (let ingredient of newIngredients) {
-        if (ingredient.value === "") {
-          return;
-        }
-      }
-
-
-
-      const ingredientInputContainer = document.createElement("div");
-      ingredientInputContainer.className = "ingredientInputContainer";
-
-      const newIngredientQty = document.createElement("input");
-      newIngredientQty.placeholder = "qty";
-      newIngredientQty.className = "newIngredientQtys";
-
-      const newIngredientUnit = document.createElement("input");
-      newIngredientUnit.type = "text";
-      newIngredientUnit.className = "newIngredientUnits";
-      newIngredientUnit.setAttribute("list", "unitOptions");
-      newIngredientUnit.required = "true";
-
-      const newIngredientInput = document.createElement("input");
-      newIngredientInput.type = "text";
-      newIngredientInput.className = "newIngredients";
-      newIngredientInput.setAttribute("list", "ingredientOptions");
-      newIngredientInput.placeholder = "Add Ingredient";
-      newIngredientInput.required = true;
-
-      const newIngredientFieldBtn = document.createElement("button");
-      newIngredientFieldBtn.id = "newIngredientInputFieldBtn";
-      newIngredientFieldBtn.classList = ("button", "newIngredientFieldBtns");
-      newIngredientFieldBtn.addEventListener(
-        "click",
-        handleIngredientInputSubmit
-      );
-
-      newIngredientFieldBtn.textContent = "+";
-
-      ingredientInputContainer.append(
-        newIngredientQty,
-        newIngredientInput,
-        newIngredientFieldBtn
-      );
-
-      // newIngredientInput.append(newIngredientFieldBtn);
-      const newIngredientInputFieldBtn = document.getElementById(
-        "newIngredientInputFieldBtn"
-      );
-      newIngredientInputFieldBtn.remove();
-      newIngredientInputFieldBtn.id = "";
-      ingredientInput.id = ""
-
-      newIngredientContainer.append(ingredientInputContainer);
-    }
-
     const measurementUnit = document.createElement("input");
     measurementUnit.setAttribute("list", "unitOptions");
     measurementUnit.className = "measurementUnit";
+    measurementUnit.id = "measurementUnitInput" //todo - remove this when adding a new ingredient line
     measurementUnit.placeholder = "unit";
 
     const unitOptionsDataList = document.createElement("datalist");
     unitOptionsDataList.id = "unitOptions";
-    // unitOptionsDataList = "unit"
 
     const unitOptions = ["tsp", "tbsp", "fl oz", "cup", "pint", "qt", "gal"];
 
@@ -1103,7 +970,6 @@ async function populateRecipeList() {
     ingredientDataList.id = "ingredientOptions";
 
     const unitOption = document.createElement("option");
-    // unitOption.value = "cup"; //todo add more
 
     const ingredientOption = document.createElement("option");
     ingredientOption.value = "Lettuce"; //todo - populate this with the list of ingredients from all recipes
@@ -1121,15 +987,21 @@ async function populateRecipeList() {
     newIngredientAmtInputs.type = "number";
     newIngredientAmtInputs.className = "newIngredientAmtInputs";
     newIngredientAmtInputs.min = 0;
-    // newIngredientAmtInputs.setAttribute (list,"unitOptionsDataList")
 
     const newIngredientCalorieInputs = document.createElement("input");
     newIngredientCalorieInputs.className = "newIngredientCalorieInputs";
     newIngredientCalorieInputs.placeholder = "Cal";
+    newIngredientCalorieInputs.id = "newIngredientCalorieInput"
 
     const newIngredientContainer = document.createElement("tr");
     newIngredientContainer.id = "newIngredientContainer";
-    newIngredientContainer.append(
+
+    // todo - fix this form not showing up
+    const newIngredientForm = document.createElement("form")
+    newIngredientForm.id = "newIngredientForm"
+    newIngredientContainer.append(newIngredientForm)
+
+    newIngredientForm.append(
       newIngredientInput,
       newIngredientAmtInputs,
       measurementUnit,
@@ -1141,8 +1013,6 @@ async function populateRecipeList() {
       unitOption,
       unitOptionsDataList,
       newRecipeNameInput,
-      // newIngredientInput,
-      // newIngredientFieldBtn,
       ingredientDataList
     );
 
@@ -1161,7 +1031,6 @@ async function populateRecipeList() {
     ingredient.append(
       ingredientInputForm,
       timeAndTemp
-      // recipeInstructionsInputField
     );
 
     const ingredientInput = document.getElementById("newIngredientInput")
