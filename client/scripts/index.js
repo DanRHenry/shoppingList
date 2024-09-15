@@ -871,28 +871,14 @@ async function populateRecipeList() {
   }
 
   async function handleNewRecipeClick() {
+    if (document.getElementById("ingredientInputForm")) {
+      return;
+    }
     if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
       document.getElementById("addRecipeIngredientsToShoppingListBtn").remove();
     }
     const ingredientsInformation = [];
     const recipeTableBody = document.getElementById("recipeTableBody");
-
-    // Recipe Table Headers
-    const trHeaders = document.createElement("tr");
-    trHeaders.id = "recipeHeaders";
-
-    recipeTableBody.innerHTML = "";
-    recipeTableBody.append(trHeaders);
-
-    // New Recipe Item Input
-    const mainContent = document.createElement("tr");
-    // mainContent.class = "mainContent";
-
-    recipeTableBody.append(mainContent);
-
-    const ingredient = document.createElement("td");
-
-    mainContent.append(ingredient);
 
     const ingredientInputForm = document.createElement("div");
     ingredientInputForm.id = "ingredientInputForm";
@@ -1087,7 +1073,7 @@ async function populateRecipeList() {
     const newIngredientGrid = document.createElement("div");
     newIngredientGrid.id = "newIngredientGrid";
 
-    recipeTableBody.append(newIngredientGrid, recipeInstructionsInputField);
+    document.getElementById("recipeItem").append(newIngredientGrid, recipeInstructionsInputField);
 
     const newIngredientContainer = document.createElement("tr");
     newIngredientContainer.id = "newIngredientContainer";
@@ -1108,13 +1094,6 @@ async function populateRecipeList() {
       ingredientDataList
     );
 
-    // newIngredientGrid.append(newIngredientContainer)
-
-    // recipeTableBody.append(
-    //   newIngredientContainer,
-    //   recipeInstructionsInputField
-    // );
-
     unitOptionsDataList.append(unitOption);
     ingredientDataList.append(ingredientOption);
 
@@ -1122,7 +1101,7 @@ async function populateRecipeList() {
     timeAndTemp.id = "timeAndTemp";
     timeAndTemp.append(recipeCookTimeInputField, recipeTempInputField);
 
-    ingredient.append(ingredientInputForm, timeAndTemp);
+    recipeTableBody.append(ingredientInputForm, timeAndTemp);
 
     const ingredientInput = document.getElementById("newIngredientInput");
     console.log(ingredientInput.textContent);
@@ -1333,12 +1312,6 @@ async function populateRecipeList() {
 
       const ingredientHeader = document.createElement("th");
       ingredientHeader.textContent = "Ingredient";
-
-      //   recipeHeaders.append(checkboxHeader, ingredientHeader);
-
-      // recipeTableBody.append(recipeHeaders);
-      // const recipeHeaders = document.getElementById("recipeHeaders")
-      // recipeHeaders.innerHTML = ""
 
       recipe.ingredients.map((item) => {
         const mainContent = document.createElement("tr");
