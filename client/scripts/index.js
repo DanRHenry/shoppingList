@@ -339,14 +339,18 @@ function handleRecipesContainerClick() {
 }
 
 //todo - this is where the new recipe ingredients, qty, etc need to go
+
 async function handleNewRecipeIngredientSubmit(e) {
   await e.preventDefault();
 
   const nameInput = document.getElementById("newRecipeNameInput").value;
   const timeInput = document.getElementById("recipeCookTimeInputField").value;
-  const temperatureInput = document.getElementById("recipeTempInputField").value;
-  const recipeInstructionsInput = document.getElementById("recipeInstructionsInputField").value;
-
+  const temperatureInput = document.getElementById(
+    "recipeTempInputField"
+  ).value;
+  const recipeInstructionsInput = document.getElementById(
+    "recipeInstructionsInputField"
+  ).value;
 
   const ingredients = document.getElementsByClassName("ingredients");
 
@@ -870,6 +874,7 @@ async function populateRecipeList() {
     if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
       document.getElementById("addRecipeIngredientsToShoppingListBtn").remove();
     }
+    const ingredientsInformation = [];
     const recipeTableBody = document.getElementById("recipeTableBody");
 
     // Recipe Table Headers
@@ -881,7 +886,7 @@ async function populateRecipeList() {
 
     // New Recipe Item Input
     const mainContent = document.createElement("tr");
-    mainContent.class = "mainContent";
+    // mainContent.class = "mainContent";
 
     recipeTableBody.append(mainContent);
 
@@ -920,26 +925,96 @@ async function populateRecipeList() {
       handleIngredientInputSubmit
     );
 
-    function handleIngredientInputSubmit (e) {
-      e.preventDefault()
+    function handleIngredientInputSubmit(e) {
+      e.preventDefault();
       const ingredientNameInput = document.getElementById("newIngredientInput");
-      const ingredientAmtInput = document.getElementById("newIngredientAmtInput");
-      const measurementUnitInput = document.getElementById("measurementUnitInput");
-      const newIngredientCalorieInput = document.getElementById("newIngredientCalorieInput");
-      if (ingredientNameInput.value && ingredientAmtInput.value && measurementUnitInput.value && newIngredientCalorieInput.value)
-      {
+      const ingredientAmtInput = document.getElementById(
+        "newIngredientAmtInput"
+      );
+      const measurementUnitInput = document.getElementById(
+        "measurementUnitInput"
+      );
+      const newIngredientCalorieInput = document.getElementById(
+        "newIngredientCalorieInput"
+      );
+      if (
+        ingredientNameInput.value &&
+        ingredientAmtInput.value &&
+        measurementUnitInput.value &&
+        newIngredientCalorieInput.value
+      ) {
         //todo push this information to the ingredients array that will be sent to the back end when the recipe is actually submitted
-        console.log(ingredientNameInput.value, ingredientAmtInput.value, measurementUnitInput.value, newIngredientCalorieInput.value) 
-        //todo - create tne new input line
-        //todo - remove the ids for the fields that had been submitted
-      } else { 
-        console.log("missing input")
-      
-    }
+        const ingredientObject = {};
+        ingredientObject.ingredientName = ingredientNameInput.value;
+        ingredientObject.ingredientAmt = ingredientAmtInput.value;
+        ingredientObject.measurementUnitInput = measurementUnitInput.value;
+        ingredientObject.newIngredientCalorieInput =
+          newIngredientCalorieInput.value;
+
+        ingredientsInformation.push(ingredientObject);
+
+        console.log(ingredientsInformation);
+        const newIngredientContainer = document.getElementById(
+          "newIngredientContainer"
+        );
+        console.log("here");
+        // console.log(newIngredientContainer)
+        // oldIngredientContainer.id = ""
+
+        // const submittedIngredientContainer = document.createElement("tr");
+        // newIngredientContainer.className = "newIngredientContainers";
+
+        const submittedIngredient = document.createElement("div");
+        submittedIngredient.textContent = ingredientNameInput.value;
+        submittedIngredient.className = "newIngredients";
+
+        const submittedIngredientAmt = document.createElement("div");
+        submittedIngredientAmt.textContent = ingredientAmtInput.value;
+        submittedIngredientAmt.className = "newIngredientAmtInputs";
+
+        const submittedMeasurementUnit = document.createElement("div");
+        submittedMeasurementUnit.textContent = measurementUnit.value;
+        submittedMeasurementUnit.className = "measurementUnit";
+
+        const submittedIngredientCals = document.createElement("div");
+        submittedIngredientCals.textContent = newIngredientCalorieInputs.value;
+        submittedIngredientCals.className = "newIngredientCalorieInputs";
+
+        const editBtn = document.createElement("button");
+        editBtn.id = "recipeIngredientEdit";
+        editBtn.className = "newIngredientFieldBtns";
+        editBtn.textContent = "Edit";
+        editBtn.addEventListener("click", handleEditRecipeIngredient);
+        editBtn.removeEventListener("click", handleEditRecipeIngredient);
+        // submittedIngredientContainer.append(
+        newIngredientGrid.append(
+          submittedIngredient,
+          submittedIngredientAmt,
+          submittedMeasurementUnit,
+          submittedIngredientCals,
+          editBtn
+          // newIngredientFieldBtn
+        );
+
+        function handleEditRecipeIngredient() {
+          alert(
+            "This will be used to switch the line to inputs, and the text content to the previous values"
+          );
+        }
+        // recipeInstructionsInputField
+
+        // document.getElementById("newIngredientContainer").after(submittedIngredientContainer)
+        // newIngredientGrid.append(submittedIngredientContainer)
+        ingredientNameInput.value = "";
+        ingredientAmtInput.value = "";
+        measurementUnitInput.value = "";
+        newIngredientCalorieInput.value = "";
+      } else {
+        console.log("missing input");
+      }
     }
 
-
-    newIngredientFieldBtn.textContent = "+";
+    newIngredientFieldBtn.textContent = "Add ";
 
     // ingredientInputContainer.append(newIngredientInput, newIngredientFieldBtn);
 
@@ -964,7 +1039,7 @@ async function populateRecipeList() {
     const measurementUnit = document.createElement("input");
     measurementUnit.setAttribute("list", "unitOptions");
     measurementUnit.className = "measurementUnit";
-    measurementUnit.id = "measurementUnitInput" //todo - remove this when adding a new ingredient line
+    measurementUnit.id = "measurementUnitInput"; //todo - remove this when adding a new ingredient line
     measurementUnit.placeholder = "unit";
 
     const unitOptionsDataList = document.createElement("datalist");
@@ -987,6 +1062,7 @@ async function populateRecipeList() {
     ingredientOption.value = "Lettuce"; //todo - populate this with the list of ingredients from all recipes
 
     const newRecipeInputBtn = document.createElement("input");
+    // const newRecipeInputBtn = document.createElement("div");
     newRecipeInputBtn.type = "submit";
     newRecipeInputBtn.id = "newRecipeInputBtn";
     newRecipeInputBtn.addEventListener(
@@ -995,21 +1071,29 @@ async function populateRecipeList() {
     );
 
     const newIngredientAmtInputs = document.createElement("input");
+    // const newIngredientAmtInputs = document.createElement("div");
     newIngredientAmtInputs.placeholder = "qty";
     newIngredientAmtInputs.type = "number";
     newIngredientAmtInputs.className = "newIngredientAmtInputs";
     newIngredientAmtInputs.min = 0;
-    newIngredientAmtInputs.id = "newIngredientAmtInput"
+    newIngredientAmtInputs.id = "newIngredientAmtInput";
 
     const newIngredientCalorieInputs = document.createElement("input");
+    // const newIngredientCalorieInputs = document.createElement("div");
     newIngredientCalorieInputs.className = "newIngredientCalorieInputs";
     newIngredientCalorieInputs.placeholder = "Cal";
-    newIngredientCalorieInputs.id = "newIngredientCalorieInput"
+    newIngredientCalorieInputs.id = "newIngredientCalorieInput";
+
+    const newIngredientGrid = document.createElement("div");
+    newIngredientGrid.id = "newIngredientGrid";
+
+    recipeTableBody.append(newIngredientGrid, recipeInstructionsInputField);
 
     const newIngredientContainer = document.createElement("tr");
     newIngredientContainer.id = "newIngredientContainer";
+    newIngredientContainer.className = "newIngredientContainers";
 
-      newIngredientContainer.append(
+    newIngredientGrid.append(
       newIngredientInput,
       newIngredientAmtInputs,
       measurementUnit,
@@ -1024,10 +1108,12 @@ async function populateRecipeList() {
       ingredientDataList
     );
 
-    recipeTableBody.append(
-      newIngredientContainer,
-      recipeInstructionsInputField
-    );
+    // newIngredientGrid.append(newIngredientContainer)
+
+    // recipeTableBody.append(
+    //   newIngredientContainer,
+    //   recipeInstructionsInputField
+    // );
 
     unitOptionsDataList.append(unitOption);
     ingredientDataList.append(ingredientOption);
@@ -1036,19 +1122,18 @@ async function populateRecipeList() {
     timeAndTemp.id = "timeAndTemp";
     timeAndTemp.append(recipeCookTimeInputField, recipeTempInputField);
 
-    ingredient.append(
-      ingredientInputForm,
-      timeAndTemp
-    );
+    ingredient.append(ingredientInputForm, timeAndTemp);
 
-    const ingredientInput = document.getElementById("newIngredientInput")
-    console.log(ingredientInput.textContent)
+    const ingredientInput = document.getElementById("newIngredientInput");
+    console.log(ingredientInput.textContent);
     ingredientInput.addEventListener("change", async () => {
       // console.log(ingredientInput.textContent)
-      console.log(ingredientInput)
-      console.log("checking for ingredient response:",await checkForExistingIngredient(ingredientInput.textContent))
-
-    })
+      console.log(ingredientInput);
+      console.log(
+        "checking for ingredient response:",
+        await checkForExistingIngredient(ingredientInput.textContent)
+      );
+    });
   }
 
   recipes.map((recipe) => {
@@ -1105,7 +1190,7 @@ async function populateRecipeList() {
       //todo - change this recipetext to data fetched
 
       const recipeText = document.getElementById("recipeText");
-      recipeText.innerHTML = ''
+      recipeText.innerHTML = "";
 
       const recipeName = document.createElement("div");
       recipeName.textContent = "Recipe Name Here";
@@ -1196,7 +1281,6 @@ async function populateRecipeList() {
             incidunt officia beatae voluptates. Deserunt perspiciatis quia, ut
             ipsa labore illo dicta!`;
 
-      
       recipeText.append(recipeName, temp, time, listContainer, instructions);
 
       /* 

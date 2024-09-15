@@ -1,7 +1,8 @@
 body {
-    display: grid;
-    grid-template-rows: 50vh 25vh 25vh;
-    gap: 0;
+    /* display: grid; */
+    /* grid-template-rows: 40vh auto auto; */
+    /* grid-template-rows: 50vh 25vh 25vh; */
+    /* gap: 0; */
     /* grid-template-rows: 50% 25% 25%; */
     margin: 0;
     background-color: whitesmoke;
@@ -36,7 +37,7 @@ body {
 }
 
 #recipeIngredients, #recipesContainer {
-    padding-top: .5em;
+    /* padding-top: .5em; */
     align-items: center;
     display: flex;
     flex-direction: column;
@@ -56,18 +57,6 @@ body {
     background-color: rgb(182, 182, 182);
 }
 
-#recipeItem {
-    position: relative;
-    top: 0;
-    align-items: center;
-    max-height: 12em;
-    overflow-y: auto;
-}
-
-#recipeItemTable{
-    min-width: 100%;
-}
-
 #recipeIngredients {
     overflow-y: auto;
     position: relative;
@@ -81,7 +70,7 @@ body {
 }
 
 #headers, .headers {
-    position: sticky;
+    /* position: sticky; */
     /* position: relative; */
     top: 0;
     width: 100%;
@@ -93,7 +82,7 @@ body {
 .headers {
     text-indent: 1.5em;
     height: 3em;
-    position: sticky;
+    /* position: sticky; */
     top: 0;
     padding-top: 1em;
 }
@@ -212,6 +201,8 @@ body {
 #timeAndTemp {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    /* margin-left: 1em; */
 }
 
 #recipeCookTimeInputField, #recipeTempInputField {
@@ -232,7 +223,7 @@ body {
 }
 
 #newRecipeNameInput, .ingredients {
-    width: 98%;
+    width: 40%;
     text-align: center;
 }
 
@@ -315,48 +306,93 @@ body {
     width: 99%;
     height: 5em;
 }
-/* 
-#ingredientInputContainer {
-    width: 100%;
-    height:5em;
-    background-color: red;
-} */
-
-.newIngredientAmtInputs {
-    display: inline-block;
-    width: 3em;
-    /* margin-right: 1em; */
-}
-
-#newIngredientForm {
-    position: fixed;
-    visibility: visible;
-    width: 100vw;
-    height: 100vh;
-    background-color: red;
-}
 
 .newIngredients {
-    display: inline-block;
-    width: 30%;
-    margin-right: 1em;
+    /* display: inline-block; */
+    text-align: center;
+    /* background-color: green; */
+    /* min-width: 10rem; */
+    /* max-width: 10rem; */
+}
+
+.newIngredientAmtInputs {
+    /* display: inline-block; */
+    /* min-width: 3rem; */
+    /* max-width: 3rem; */
+    text-align: center;
+    /* background-color: blue; */
 }
 
 .newIngredientInputFieldBtns {
-    display: inline-block;
+    /* display: inline-block; */
 }
 
 .newIngredientCalorieInputs {
-    display: inline-block;
-    width: 4em;
-    margin-right: 1em;
+    /* display: inline-block; */
+    /* min-width: 4rem; */
+    /* max-width: 4rem; */
+    /* margin-right: 1rem; */
+    /* background-color: red; */
+    text-align: center;
 }
 
 .newIngredientFieldBtn {
-    display: inline-block;
+    /* display: inline-block; */
     width: 2em;
 }
 
 .measurementUnit {
+    /* margin-right: 1rem; */
+    /* background-color: yellow; */
+    /* display: inline-block; */
+    /* width: 10em; */
+    text-align: center;
+}
+
+/* #newIngredientInput {
+    width: 29.5%;
     margin-right: 1em;
+    text-indent: .6em;
+}
+
+#newIngredientAmtInput {
+    text-align: center;
+    text-indent: .8em;
+}
+
+#measurementUnitInput {
+    width: 11.7em;
+}
+
+#newIngredientCalorieInput {
+    width: 4.25rem;
+}
+
+.newIngredientContainers {
+    display: flex;
+} */
+
+#newIngredientGrid {
+    display: grid;
+    grid-template-columns: auto 4em 5em 4em 5em;
+    min-width: 90vw;
+}
+
+#recipeItem {
+    align-items: center;
+    /* max-height: 12em; */
+    max-width: 100%;
+}
+
+.newIngredientFieldBtns {
+    width: 3em;
+}
+
+.newIngredients, .newIngredientAmtInputs, .measurementUnit, .newIngredientCalorieInputs {
+    background-color: white;
+    border: 1px solid black;
+}
+
+#recipeContent {
+    overflow-y: auto;
 }
