@@ -301,77 +301,6 @@ body {
     left: 46%;
 }
 
-.newIngredients {
-    /* display: inline-block; */
-    text-align: center;
-    /* background-color: green; */
-    /* min-width: 10rem; */
-    /* max-width: 10rem; */
-}
-
-.newIngredientAmtInputs {
-    /* display: inline-block; */
-    /* min-width: 3rem; */
-    /* max-width: 3rem; */
-    text-align: center;
-    /* background-color: blue; */
-}
-
-.newIngredientInputFieldBtns {
-    /* display: inline-block; */
-}
-
-.newIngredientCalorieInputs {
-    /* display: inline-block; */
-    /* min-width: 4rem; */
-    /* max-width: 4rem; */
-    /* margin-right: 1rem; */
-    /* background-color: red; */
-    text-align: center;
-}
-
-.newIngredientFieldBtn {
-    /* display: inline-block; */
-    width: 2em;
-}
-
-.measurementUnit {
-    /* margin-right: 1rem; */
-    /* background-color: yellow; */
-    /* display: inline-block; */
-    /* width: 10em; */
-    text-align: center;
-}
-
-/* #newIngredientInput {
-    width: 29.5%;
-    margin-right: 1em;
-    text-indent: .6em;
-}
-
-#newIngredientAmtInput {
-    text-align: center;
-    text-indent: .8em;
-}
-
-#measurementUnitInput {
-    width: 11.7em;
-}
-
-#newIngredientCalorieInput {
-    width: 4.25rem;
-}
-
-.newIngredientContainers {
-    display: flex;
-} */
-
-#newIngredientGrid {
-    display: grid;
-    grid-template-columns: 8em 4em 5em 4em 5em;
-    /* min-width: 90vw; */
-}
-
 #recipeItem {
     align-items: center;
     max-width: 100%;
@@ -380,12 +309,7 @@ body {
 
 .newIngredientFieldBtns {
     width: 3em;
-    margin-left: 1em;
-}
-
-.newIngredients, .newIngredientAmtInputs, .measurementUnit, .newIngredientCalorieInputs {
-    background-color: white;
-    border: 1px solid black;
+    margin-left: .75em;
 }
 
 .newIngredients {
@@ -393,7 +317,7 @@ body {
 }
 
 #recipeContent {
-    overflow-y: auto;
+    overflow-y: hidden;
     /* background-color: purple; */
     max-width: 100%;
     /* border: 1em solid black; */
@@ -426,4 +350,51 @@ width: 100%;
     /* text-indent: 2em; */
     width: 99%;
     height: 5em;
+}
+
+.newIngredients {
+    min-width: 5em;
+    text-align: center;
+}
+
+.newIngredientAmtInputs {
+    text-align: center;
+    min-width: 2em;
+}
+
+.newIngredientInputFieldBtns {
+    /* display: inline-block; */
+}
+
+.newIngredientCalorieInputs {
+    text-align: center;
+}
+
+.newIngredientFieldBtn {
+    width: 2em;
+}
+
+.measurementUnit {
+    text-align: center;
+    min-width: 3em;
+}
+
+#newIngredientGrid {
+    /* display: flex; */
+    /* flex-direction: column; */
+    display: grid;
+    max-width: 100vw;
+    /* background-color: blue; */
+    /* grid-template-columns: 8em 4em 5em 4em 5em; */
+    grid-template-columns: 40% 15% 17% 12% 12%;
+    /* min-width: 90vw; */
+    /* overflow: hidden; */
+    /* width: 80vw; */
+    /* z-index: 10; */
+}
+
+.newIngredients, .newIngredientAmtInputs, .measurementUnit, .newIngredientCalorieInputs {
+    background-color: white;
+    border: 1px solid black;
+    /* max-width: 1em; */
 }

@@ -897,7 +897,7 @@ async function populateRecipeList() {
     newIngredientInput.className = "newIngredients";
     newIngredientInput.id = "newIngredientInput";
     newIngredientInput.setAttribute("list", "ingredientOptions");
-    newIngredientInput.placeholder = "Ingredient Name";
+    newIngredientInput.placeholder = "Name";
     newIngredientInput.required = true;
 
     const newIngredientMeasure = document.createElement("input");
@@ -965,6 +965,7 @@ async function populateRecipeList() {
         const submittedIngredientCals = document.createElement("div");
         submittedIngredientCals.textContent = newIngredientCalorieInputs.value;
         submittedIngredientCals.className = "newIngredientCalorieInputs";
+        submittedIngredientCals.setAttribute ("number",true)
 
         const editBtn = document.createElement("button");
         editBtn.id = "recipeIngredientEdit";
@@ -1069,6 +1070,7 @@ async function populateRecipeList() {
     newIngredientCalorieInputs.className = "newIngredientCalorieInputs";
     newIngredientCalorieInputs.placeholder = "Cal";
     newIngredientCalorieInputs.id = "newIngredientCalorieInput";
+    newIngredientCalorieInputs.setAttribute("number", true)
 
     const newIngredientGrid = document.createElement("div");
     newIngredientGrid.id = "newIngredientGrid";
