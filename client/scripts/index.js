@@ -1,6 +1,246 @@
 // https://developers.google.com/identity/sign-in/web/sign-getElementsByName("email")
+// https://stackoverflow.com/questions/2264072/detect-a-finger-swipe-through-javascript-on-the-iphone-and-android
+// https://github.com/john-doherty/swiped-events/blob/master/src/swiped-events.js
+/* 
+I merged a few of the answers here into a script that uses CustomEvent to fire swiped events in the DOM. Add the 0.7k swiped-events.min.js script to your page and listen for swiped events:
 
+swiped
+document.addEventListener('swiped', function(e) {
+    console.log(e.target); // the element that was swiped
+    console.log(e.detail.dir); // swiped direction
+});
+swiped-left
+document.addEventListener('swiped-left', function(e) {
+    console.log(e.target); // the element that was swiped
+});
+
+swiped-right
+document.addEventListener('swiped-right', function(e) {
+    console.log(e.target); // the element that was swiped
+});
+swiped-up
+document.addEventListener('swiped-up', function(e) {
+    console.log(e.target); // the element that was swiped
+});
+swiped-down
+document.addEventListener('swiped-down', function(e) {
+    console.log(e.target); // the element that was swiped
+});
+You can also attach directly to an element:
+
+document.getElementById('myBox').addEventListener('swiped-down', function(e) {
+    console.log(e.target); // the element that was swiped
+});
+/*
+
+
+
+/*
+Optional config
+You can specify the following attributes to tweak how swipe interaction functions in your page (these are optional).
+
+<div data-swipe-threshold="10"
+     data-swipe-timeout="1000"
+     data-swipe-ignore="false">
+      Swiper, get swiping!
+</div>
+To set defaults application wide, set config attributes on topmost element:
+
+<body data-swipe-threshold="100" data-swipe-timeout="250">
+    <div>Swipe me</div>
+    <div>or me</div>
+</body>
+Source code is available on Github
+*/
 // const serverURL = "http://127.0.0.1:3498";
+
+/*!
+ * swiped-events.js - v@version@
+ * Pure JavaScript swipe events
+ * https://github.com/john-doherty/swiped-events
+ * @inspiration https://stackoverflow.com/questions/16348031/disable-scrolling-when-touch-moving-certain-element
+ * @author John Doherty <www.johndoherty.info>
+ * @license MIT
+ */
+(function (window, document) {
+  "use strict";
+
+  // patch CustomEvent to allow constructor creation (IE/Chrome)
+  if (typeof window.CustomEvent !== "function") {
+    window.CustomEvent = function (event, params) {
+      params = params || {
+        bubbles: false,
+        cancelable: false,
+        detail: undefined,
+      };
+
+      var evt = document.createEvent("CustomEvent");
+      evt.initCustomEvent(
+        event,
+        params.bubbles,
+        params.cancelable,
+        params.detail
+      );
+      return evt;
+    };
+
+    window.CustomEvent.prototype = window.Event.prototype;
+  }
+
+  document.addEventListener("touchstart", handleTouchStart, false);
+  document.addEventListener("touchmove", handleTouchMove, false);
+  document.addEventListener("touchend", handleTouchEnd, false);
+
+  var xDown = null;
+  var yDown = null;
+  var xDiff = null;
+  var yDiff = null;
+  var timeDown = null;
+  var startEl = null;
+  var touchCount = 0;
+
+  /**
+   * Fires swiped event if swipe detected on touchend
+   * @param {object} e - browser event object
+   * @returns {void}
+   */
+  function handleTouchEnd(e) {
+    // if the user released on a different target, cancel!
+    if (startEl !== e.target) return;
+
+    var swipeThreshold = parseInt(
+      getNearestAttribute(startEl, "data-swipe-threshold", "20"),
+      10
+    ); // default 20 units
+    var swipeUnit = getNearestAttribute(startEl, "data-swipe-unit", "px"); // default px
+    var swipeTimeout = parseInt(
+      getNearestAttribute(startEl, "data-swipe-timeout", "500"),
+      10
+    ); // default 500ms
+    var timeDiff = Date.now() - timeDown;
+    var eventType = "";
+    var changedTouches = e.changedTouches || e.touches || [];
+
+    if (swipeUnit === "vh") {
+      swipeThreshold = Math.round(
+        (swipeThreshold / 100) * document.documentElement.clientHeight
+      ); // get percentage of viewport height in pixels
+    }
+    if (swipeUnit === "vw") {
+      swipeThreshold = Math.round(
+        (swipeThreshold / 100) * document.documentElement.clientWidth
+      ); // get percentage of viewport height in pixels
+    }
+
+    if (Math.abs(xDiff) > Math.abs(yDiff)) {
+      // most significant
+      if (Math.abs(xDiff) > swipeThreshold && timeDiff < swipeTimeout) {
+        if (xDiff > 0) {
+          eventType = "swiped-left";
+        } else {
+          eventType = "swiped-right";
+        }
+      }
+    } else if (Math.abs(yDiff) > swipeThreshold && timeDiff < swipeTimeout) {
+      if (yDiff > 0) {
+        eventType = "swiped-up";
+      } else {
+        eventType = "swiped-down";
+      }
+    }
+
+    if (eventType !== "") {
+      var eventData = {
+        dir: eventType.replace(/swiped-/, ""),
+        touchType: (changedTouches[0] || {}).touchType || "direct",
+        fingers: touchCount, // Number of fingers used
+        xStart: parseInt(xDown, 10),
+        xEnd: parseInt((changedTouches[0] || {}).clientX || -1, 10),
+        yStart: parseInt(yDown, 10),
+        yEnd: parseInt((changedTouches[0] || {}).clientY || -1, 10),
+      };
+
+      // fire `swiped` event event on the element that started the swipe
+      startEl.dispatchEvent(
+        new CustomEvent("swiped", {
+          bubbles: true,
+          cancelable: true,
+          detail: eventData,
+        })
+      );
+
+      // fire `swiped-dir` event on the element that started the swipe
+      startEl.dispatchEvent(
+        new CustomEvent(eventType, {
+          bubbles: true,
+          cancelable: true,
+          detail: eventData,
+        })
+      );
+    }
+
+    // reset values
+    xDown = null;
+    yDown = null;
+    timeDown = null;
+  }
+  /**
+   * Records current location on touchstart event
+   * @param {object} e - browser event object
+   * @returns {void}
+   */
+  function handleTouchStart(e) {
+    // if the element has data-swipe-ignore="true" we stop listening for swipe events
+    if (e.target.getAttribute("data-swipe-ignore") === "true") return;
+
+    startEl = e.target;
+
+    timeDown = Date.now();
+    xDown = e.touches[0].clientX;
+    yDown = e.touches[0].clientY;
+    xDiff = 0;
+    yDiff = 0;
+    touchCount = e.touches.length;
+  }
+
+  /**
+   * Records location diff in px on touchmove event
+   * @param {object} e - browser event object
+   * @returns {void}
+   */
+  function handleTouchMove(e) {
+    if (!xDown || !yDown) return;
+
+    var xUp = e.touches[0].clientX;
+    var yUp = e.touches[0].clientY;
+
+    xDiff = xDown - xUp;
+    yDiff = yDown - yUp;
+  }
+
+  /**
+   * Gets attribute off HTML element or nearest parent
+   * @param {object} el - HTML element to retrieve attribute from
+   * @param {string} attributeName - name of the attribute
+   * @param {any} defaultValue - default value to return if no match found
+   * @returns {any} attribute value or defaultValue
+   */
+  function getNearestAttribute(el, attributeName, defaultValue) {
+    // walk up the dom tree looking for attributeName
+    while (el && el !== document.documentElement) {
+      var attributeValue = el.getAttribute(attributeName);
+
+      if (attributeValue) {
+        return attributeValue;
+      }
+
+      el = el.parentNode;
+    }
+
+    return defaultValue;
+  }
+})(window, document);
+
 const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
 const loginForm = document.getElementById("login-form");
 
@@ -49,30 +289,98 @@ async function login(e) {
 loadPageContents();
 function loadPageContents() {
   fetchShoppingList();
-  populateRecipeList();
+
+  // populateRecipeList();
+
+  // const applicationContainer = document.getElementById("applicationContainer")
+  // applicationContainer.addEventListener("click", handleApplicationContainerClick)
+  // const recipeContent = document.getElementById("recipeContent")
+  // recipeContent.addEventListener("click", handleRecipeContentClick)
+  // const recipesContainer = document.getElementById("recipesContainer")
+  // recipesContainer.addEventListener("click", handleRecipesContainerClick)
 }
+
+function handleApplicationContainerClick() {
+  const applicationContainer = document.getElementById("applicationContainer");
+  const recipeContent = document.getElementById("recipeContent");
+  const recipesContainer = document.getElementById("recipesContainer");
+
+  // const applicationContainerContents = applicationContainer.innerHTML;
+  const recipeContentContents = recipeContent.innerHTML;
+  const recipesContainerContent = recipesContainer.innerHTML;
+
+  // recipeContent.innerHTML = ""
+  recipeContent.style.height = "0";
+
+  // recipesContainer.innerHTML = ""
+  recipesContainer.style.height = "0";
+
+  applicationContainer.style.height = "100vh";
+}
+
+function handleRecipeContentClick() {
+  const applicationContainer = document.getElementById("applicationContainer");
+  const recipeContent = document.getElementById("recipeContent");
+  const recipesContainer = document.getElementById("recipesContainer");
+
+  const applicationContainerContents = applicationContainer.innerHTML;
+  const recipeContentContents = recipeContent.innerHTML;
+  const recipesContainerContent = recipesContainer.innerHTML;
+}
+
+function handleRecipesContainerClick() {
+  const applicationContainer = document.getElementById("applicationContainer");
+  const recipeContent = document.getElementById("recipeContent");
+  const recipesContainer = document.getElementById("recipesContainer");
+
+  const applicationContainerContents = applicationContainer.innerHTML;
+  const recipeContentContents = recipeContent.innerHTML;
+  const recipesContainerContent = recipesContainer.innerHTML;
+}
+
+//todo - this is where the new recipe ingredients, qty, etc need to go
 
 async function handleNewRecipeIngredientSubmit(e) {
   await e.preventDefault();
 
   const nameInput = document.getElementById("newRecipeNameInput").value;
+  const timeInput = document.getElementById("recipeCookTimeInputField").value;
+  const temperatureInput = document.getElementById(
+    "recipeTempInputField"
+  ).value;
+  const recipeInstructionsInput = document.getElementById(
+    "recipeInstructionsInputField"
+  ).value;
+
   const ingredients = document.getElementsByClassName("ingredients");
 
   const ingredientValues = [];
 
-  for (item of ingredients) {
+  for (let item of ingredients) {
     if (item.value.length > 0) {
       ingredientValues.push(item.value);
     }
   }
 
   await postNewRecipe(nameInput, ingredientValues);
+  console.log(nameInput);
   // setTimeout(() => {
-  await populateRecipeList();
+  // await populateRecipeList();
+
+  //todo remove this, it doesn't seem to link to anything anymore
+  // const recipeIngredients = document.getElementById("recipeIngredients");
+  // // recipeIngredients.innerHTML = `<div>${nameInput.value} Created</div>`
+  // // setTimeout(() => {
+  // recipeIngredients.innerHTML = "";
+
+  //todo remove the above
+
+  // }, 3000);
   // }, 100);
-  nameInput.value = "";
+  // nameInput.value = "";
   for (let item of ingredients) item.value = "";
   console.log("submitted");
+  await populateRecipeList();
 
   // repopulate the list from the back end, appending the form at the end
 }
@@ -156,6 +464,8 @@ async function checkForExistingIngredient(item) {
   };
 
   try {
+    //todo if the ingredient is found, populate the information on unit and calories, which can then be converted to the actual units and quantities used
+
     const res = await fetch(URL, reqOptions);
     const data = await res.json();
     return data.message;
@@ -186,7 +496,7 @@ async function checkForExistingRecipe(item) {
     // console.log(data)
     return data.message;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }
 
@@ -329,8 +639,19 @@ function populateShoppingList(items) {
     const item = document.createElement("td");
     item.className = "item";
     item.textContent = ingredient.ingredientName;
+    item.style.textDecoration = "none";
     mainContent.append(item);
 
+    checkBox.addEventListener("click", handleShoppingListCheckboxClick);
+
+    function handleShoppingListCheckboxClick() {
+      console.log("click");
+      if (item.style.textDecoration === "line-through") {
+        item.style.textDecoration = "none";
+      } else if (item.style.textDecoration === "none") {
+        item.style.textDecoration = "line-through";
+      }
+    }
     const itemQuantity = document.createElement("td");
     itemQuantity.className = "qty";
     const qtyInput = document.createElement("input");
@@ -346,16 +667,6 @@ function populateShoppingList(items) {
 
   const mainContent = document.createElement("tr");
   mainContent.className = "mainContent";
-
-  // const check = document.createElement("td")
-  // check.className = "check"
-  // mainContent.append(check)
-
-  // const addNewItemBtn = document.createElement("button")
-  // addNewItemBtn.textContent = "Add"
-  // addNewItemBtn.id = "addNewItem"
-  // addNewItemBtn.addEventListener("click", handlePostNewItem)
-  // check.append(addNewItemBtn)
 
   const itemInput = document.createElement("input");
   itemInput.type = "text";
@@ -382,6 +693,7 @@ function addShoppingListInput() {
 
   const addNewItemBtn = document.createElement("button");
   addNewItemBtn.id = "addNewItem";
+  addNewItemBtn.className = "button";
   addNewItemBtn.textContent = "Add";
   addNewItemBtn.addEventListener("click", handlePostNewItem);
   check.append(addNewItemBtn);
@@ -392,7 +704,21 @@ function addShoppingListInput() {
   itemInput.id = "itemInput";
   itemInput.type = "text";
   itemInput.required = "true";
+  itemInput.placeholder = "Enter New Item";
   item.append(itemInput);
+
+  itemInput.addEventListener("keypress", handlPostNewItemKeypress);
+  function handlPostNewItemKeypress(e) {
+    // If the user presses the "Enter" key on the keyboard
+    if (e.key === "Enter" || e.keyCode === "13" || e.keyCode === "9") {
+      // Cancel the default action, if needed
+      e.preventDefault();
+      // Trigger the button element with a click
+      handlePostNewItem();
+      // document.getElementById("myBtn").click();
+    }
+  }
+
   mainContent.append(item);
 
   const qty = document.createElement("td");
@@ -406,20 +732,6 @@ function addShoppingListInput() {
   mainContent.append(qty);
 
   shoppingListTableBody.append(mainContent);
-  /* 
-              <!-- <tr class="mainContent">
-              <td class="check">
-                  <div></div>
-                  <button id="addNewItem">Add</button>
-                </td>
-                <td class="item">
-                  <input  id="itemInput" type="text" required>
-                </td>
-                <td class="qty">
-                  <input id="qtyInput" type="text" placeholder="1" value=1 style="text-align: center;">
-                </td>
-            </tr>
-  */
 }
 
 function handlePostNewItem() {
@@ -498,38 +810,79 @@ async function populateRecipeList() {
   const selections = document.getElementById("selections");
   selections.innerHTML = "";
 
+  const recipeListTable = document.createElement("table");
+  recipeListTable.id = "recipeListTable";
+  selections.append(recipeListTable);
+
+  const recipeListTableBody = document.createElement("tbody");
+  recipeListTableBody.id = "recipeListTableBody";
+  recipeListTable.append(recipeListTableBody);
+
   const addRecipeContainer = document.createElement("div");
   addRecipeContainer.id = "addRecipeContainer";
 
   const addRecipeBtn = document.createElement("button");
   addRecipeBtn.id = "addRecipe";
+  addRecipeBtn.className = "button";
   addRecipeBtn.textContent = "New Recipe";
+
   selections.append(addRecipeContainer);
   addRecipeContainer.append(addRecipeBtn);
   addRecipeBtn.addEventListener("click", handleNewRecipeClick);
 
-  async function handleNewRecipeClick() {
-    if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
-      document.getElementById("addRecipeIngredientsToShoppingListBtn").remove()
+  const deleteRecipeBtn = document.createElement("button");
+  deleteRecipeBtn.id = "deleteRecipe";
+  deleteRecipeBtn.className = "button";
+  deleteRecipeBtn.textContent = "Delete Selected";
+  addRecipeContainer.append(deleteRecipeBtn);
+  deleteRecipeBtn.addEventListener("click", handleDeleteRecipe);
+
+  async function handleDeleteRecipe(e) {
+    e.preventDefault();
+    const recipeCheckboxes = document.getElementsByClassName("recipeCheckbox");
+    const recipeName = document.getElementsByClassName("recipeName");
+
+    for (let i = 0; i < recipeCheckboxes.length; i++) {
+      if (recipeCheckboxes[i].checked === true) {
+        console.log(recipeCheckboxes[i].checked);
+        console.log(recipeName[i].textContent);
+        const URL = `${serverURL}/recipe/delete/`;
+        let delItem = {};
+        delItem.recipeName = recipeName[i].textContent;
+        try {
+          const res = await fetch(URL, {
+            method: "DELETE",
+            mode: "cors",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(delItem),
+          });
+          const data = await res.json();
+          if (data.message === "The recipe was successfully deleted!") {
+            console.log("the recipe was deleted");
+            await populateRecipeList();
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
     }
+  }
+
+  async function handleNewRecipeClick() {
+    if (document.getElementById("ingredientInputForm")) {
+      return;
+    }
+    if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
+      document.getElementById("addRecipeIngredientsToShoppingListBtn").remove();
+    }
+
+    // const mainContent = document.getElementsByClassName('mainContent');
+    
+    const ingredientsInformation = [];
     const recipeTableBody = document.getElementById("recipeTableBody");
-
-    // Recipe Table Headers
-    const trHeaders = document.createElement("tr");
-    trHeaders.id = "recipeHeaders";
-
-    recipeTableBody.innerHTML = "";
-    recipeTableBody.append(trHeaders);
-
-    // New Recipe Item Input
-    const mainContent = document.createElement("tr");
-    mainContent.class = "mainContent";
-
-    recipeTableBody.append(mainContent);
-
-    const ingredient = document.createElement("td");
-
-    mainContent.append(ingredient);
+    recipeTableBody.innerHTML = ""
 
     const ingredientInputForm = document.createElement("div");
     ingredientInputForm.id = "ingredientInputForm";
@@ -537,106 +890,437 @@ async function populateRecipeList() {
     const newRecipeNameInput = document.createElement("input");
     newRecipeNameInput.type = "text";
     newRecipeNameInput.id = "newRecipeNameInput";
-    newRecipeNameInput.placeholder = "Name";
+    newRecipeNameInput.placeholder = "New Recipe Name";
     newRecipeNameInput.required = true;
 
-    const ingredientInput = document.createElement("input");
-    ingredientInput.type = "text";
-    ingredientInput.className = "ingredients";
-    ingredientInput.id = "newIngredients";
-    ingredientInput.setAttribute("list", "ingredientOptions");
-    ingredientInput.placeholder = "Ingredient";
-    ingredientInput.required = true;
+    // const ingredientInputContainer = document.createElement("div");
+    // ingredientInputContainer.className = "ingredientInputContainer";
 
+    const newIngredientInput = document.createElement("input");
+    newIngredientInput.type = "text";
+    newIngredientInput.className = "newIngredients";
+    newIngredientInput.id = "newIngredientInput";
+    newIngredientInput.setAttribute("list", "ingredientOptions");
+    newIngredientInput.placeholder = "Name";
+    newIngredientInput.required = true;
+
+    const newIngredientMeasure = document.createElement("input");
+    newIngredientMeasure.className = "newIngredientMeasure";
+
+    const newIngredientFieldBtn = document.createElement("button");
+    newIngredientFieldBtn.id = "newIngredientInputFieldBtn";
+    newIngredientFieldBtn.classList = ("button", "newIngredientFieldBtns");
+    newIngredientFieldBtn.addEventListener(
+      "click",
+      handleIngredientInputSubmit
+    );
+
+    function handleIngredientInputSubmit(e) {
+      e.preventDefault();
+      const ingredientNameInput = document.getElementById("newIngredientInput");
+      const ingredientAmtInput = document.getElementById(
+        "newIngredientAmtInput"
+      );
+      const measurementUnitInput = document.getElementById(
+        "measurementUnitInput"
+      );
+      const newIngredientCalorieInput = document.getElementById(
+        "newIngredientCalorieInput"
+      );
+      if (
+        ingredientNameInput.value &&
+        ingredientAmtInput.value &&
+        measurementUnitInput.value &&
+        newIngredientCalorieInput.value
+      ) {
+        //todo push this information to the ingredients array that will be sent to the back end when the recipe is actually submitted
+        const ingredientObject = {};
+        ingredientObject.ingredientName = ingredientNameInput.value;
+        ingredientObject.ingredientAmt = ingredientAmtInput.value;
+        ingredientObject.measurementUnitInput = measurementUnitInput.value;
+        ingredientObject.newIngredientCalorieInput =
+          newIngredientCalorieInput.value;
+
+        ingredientsInformation.push(ingredientObject);
+
+        console.log(ingredientsInformation);
+        const newIngredientContainer = document.getElementById(
+          "newIngredientContainer"
+        );
+        console.log("here");
+        // console.log(newIngredientContainer)
+        // oldIngredientContainer.id = ""
+
+        // const submittedIngredientContainer = document.createElement("tr");
+        // newIngredientContainer.className = "newIngredientContainers";
+
+        const submittedIngredient = document.createElement("div");
+        submittedIngredient.textContent = ingredientNameInput.value;
+        submittedIngredient.className = "newIngredients";
+
+        const submittedIngredientAmt = document.createElement("div");
+        submittedIngredientAmt.textContent = ingredientAmtInput.value;
+        submittedIngredientAmt.className = "newIngredientAmtInputs";
+
+        const submittedMeasurementUnit = document.createElement("div");
+        submittedMeasurementUnit.textContent = measurementUnit.value;
+        submittedMeasurementUnit.className = "measurementUnit";
+
+        const submittedIngredientCals = document.createElement("div");
+        submittedIngredientCals.textContent = newIngredientCalorieInputs.value;
+        submittedIngredientCals.className = "newIngredientCalorieInputs";
+        submittedIngredientCals.setAttribute ("number",true)
+
+        const editBtn = document.createElement("button");
+        editBtn.id = "recipeIngredientEdit";
+        editBtn.className = "newIngredientFieldBtns";
+        editBtn.textContent = "Edit";
+        editBtn.addEventListener("click", handleEditRecipeIngredient);
+        editBtn.removeEventListener("click", handleEditRecipeIngredient);
+        // submittedIngredientContainer.append(
+        newIngredientGrid.append(
+          submittedIngredient,
+          submittedIngredientAmt,
+          submittedMeasurementUnit,
+          submittedIngredientCals,
+          editBtn
+          // newIngredientFieldBtn
+        );
+
+        function handleEditRecipeIngredient() {
+          alert(
+            "This will be used to switch the line to inputs, and the text content to the previous values"
+          );
+        }
+        // recipeInstructionsInputField
+
+        // document.getElementById("newIngredientContainer").after(submittedIngredientContainer)
+        // newIngredientGrid.append(submittedIngredientContainer)
+        ingredientNameInput.value = "";
+        ingredientAmtInput.value = "";
+        measurementUnitInput.value = "";
+        newIngredientCalorieInput.value = "";
+      } else {
+        console.log("missing input");
+      }
+    }
+
+    newIngredientFieldBtn.textContent = "Add ";
+
+    // ingredientInputContainer.append(newIngredientInput, newIngredientFieldBtn);
+
+    const recipeCookTimeInputField = document.createElement("input");
+    recipeCookTimeInputField.type = "string";
+    recipeCookTimeInputField.id = "recipeCookTimeInputField";
+    recipeCookTimeInputField.placeholder = "Time to Make";
+
+    const recipeTempInputField = document.createElement("input");
+    recipeTempInputField.type = "string";
+    recipeTempInputField.id = "recipeTempInputField";
+    recipeTempInputField.placeholder = "Temperature";
+
+    const recipeInstructionsInputField = document.createElement("textarea");
+    recipeInstructionsInputField.id = "recipeInstructionsInputField";
+    recipeInstructionsInputField.placeholder = "Instructions";
     if (document.getElementById("ingredientInputForm")) {
       document
         .getElementById("addRecipeIngredientsToShoppingListBtn")
         ?.remove();
     }
+    const measurementUnit = document.createElement("input");
+    measurementUnit.setAttribute("list", "unitOptions");
+    measurementUnit.className = "measurementUnit";
+    measurementUnit.id = "measurementUnitInput"; //todo - remove this when adding a new ingredient line
+    measurementUnit.placeholder = "unit";
 
-    function handleIngredientInputSubmit() {
-      const ingredients = document.getElementsByClassName("ingredients");
-      for (let ingredient of ingredients) {
-        if (ingredient.value === "") {
-          return;
-        }
-      }
-      console.log("adding new line");
-      const ingredientInput = document.createElement("input");
-      ingredientInput.type = "text";
-      ingredientInput.className = "ingredients";
-      ingredientInput.setAttribute("list", "ingredientOptions");
-      // ingredientInput.id = "ingredientInput";
-      ingredientInput.required = true;
-      ingredientInputForm.append(ingredientInput);
-    }
+    const unitOptionsDataList = document.createElement("datalist");
+    unitOptionsDataList.id = "unitOptions";
+
+    const unitOptions = ["tsp", "tbsp", "fl oz", "cup", "pint", "qt", "gal"];
+
+    unitOptions.map((unit) => {
+      const option = document.createElement("option");
+      option.value = unit;
+      unitOptionsDataList.append(option);
+    });
 
     const ingredientDataList = document.createElement("datalist");
     ingredientDataList.id = "ingredientOptions";
 
+    const unitOption = document.createElement("option");
+
     const ingredientOption = document.createElement("option");
     ingredientOption.value = "Lettuce"; //todo - populate this with the list of ingredients from all recipes
 
-    const newIngredientFieldBtn = document.createElement("button");
-    newIngredientFieldBtn.id = "newIngredientInputFieldBtn";
-    newIngredientFieldBtn.addEventListener(
-      "click",
-      handleIngredientInputSubmit
-    );
-    newIngredientFieldBtn.textContent = "+";
-
     const newRecipeInputBtn = document.createElement("input");
+    // const newRecipeInputBtn = document.createElement("div");
     newRecipeInputBtn.type = "submit";
     newRecipeInputBtn.id = "newRecipeInputBtn";
+    newRecipeInputBtn.addEventListener(
+      "click",
+      handleNewRecipeIngredientSubmit
+    );
+
+    const newIngredientAmtInputs = document.createElement("input");
+    // const newIngredientAmtInputs = document.createElement("div");
+    newIngredientAmtInputs.placeholder = "qty";
+    newIngredientAmtInputs.type = "number";
+    newIngredientAmtInputs.className = "newIngredientAmtInputs";
+    newIngredientAmtInputs.min = 0;
+    newIngredientAmtInputs.id = "newIngredientAmtInput";
+
+    const newIngredientCalorieInputs = document.createElement("input");
+    // const newIngredientCalorieInputs = document.createElement("div");
+    newIngredientCalorieInputs.className = "newIngredientCalorieInputs";
+    newIngredientCalorieInputs.placeholder = "Cal";
+    newIngredientCalorieInputs.id = "newIngredientCalorieInput";
+    newIngredientCalorieInputs.setAttribute("number", true)
+
+    const newIngredientGrid = document.createElement("div");
+    newIngredientGrid.id = "newIngredientGrid";
+
+    document.getElementById("recipeItem").append(newIngredientGrid, recipeInstructionsInputField);
+
+    const newIngredientContainer = document.createElement("tr");
+    newIngredientContainer.id = "newIngredientContainer";
+    newIngredientContainer.className = "newIngredientContainers";
+
+    newIngredientGrid.append(
+      newIngredientInput,
+      newIngredientAmtInputs,
+      measurementUnit,
+      newIngredientCalorieInputs,
+      newIngredientFieldBtn
+    );
 
     ingredientInputForm.append(
+      unitOption,
+      unitOptionsDataList,
       newRecipeNameInput,
-      ingredientInput,
       ingredientDataList
     );
 
+    unitOptionsDataList.append(unitOption);
     ingredientDataList.append(ingredientOption);
 
-    const br = document.createElement("br");
+    const timeAndTemp = document.createElement("div");
+    timeAndTemp.id = "timeAndTemp";
+    timeAndTemp.append(recipeCookTimeInputField, recipeTempInputField);
 
-    ingredient.append(
-      ingredientInputForm,
-      newIngredientFieldBtn,
-      br,
-      newRecipeInputBtn
-    );
+    recipeTableBody.append(ingredientInputForm, timeAndTemp);
 
-    document
-      .getElementById("newRecipeInputBtn")
-      .addEventListener("click", handleNewRecipeIngredientSubmit);
+    const ingredientInput = document.getElementById("newIngredientInput");
+    console.log(ingredientInput.textContent);
+    ingredientInput.addEventListener("change", async () => {
+      // console.log(ingredientInput.textContent)
+      console.log(ingredientInput);
+      console.log(
+        "checking for ingredient response:",
+        await checkForExistingIngredient(ingredientInput.textContent)
+      );
+    });
   }
 
   recipes.map((recipe) => {
-    const entry = document.createElement("div");
+    const recipeCheck = document.createElement("td");
+    recipeCheck.className = "recipeCheck";
+
+    const recipeCheckbox = document.createElement("input");
+    recipeCheckbox.type = "checkbox";
+    recipeCheckbox.className = "recipeCheckbox";
+    recipeCheck.append(recipeCheckbox);
+
+    const entry = document.createElement("td");
     entry.className = "recipeName";
     entry.value = recipe.recipeName;
     entry.textContent = recipe.recipeName;
+    entry.style.textDecoration = "none";
     entry.addEventListener("click", handleEntryClick);
 
-    selections.append(entry);
+    const showRecipeBtn = document.createElement("button");
+    showRecipeBtn.className = "button";
+    showRecipeBtn.addEventListener("click", handleShowRecipeClick);
+    showRecipeBtn.textContent = "View Recipe";
+
+    const recipeGroup = document.createElement("tr");
+    recipeGroup.className = "recipeGroup";
+    recipeGroup.append(recipeCheck, entry, showRecipeBtn);
+    // recipeGroup.append(entry);
+    // recipeGroup.append(showRecipeBtn);
+    //append show recipe button here
+
+    recipeListTableBody.append(recipeGroup);
+
+    async function handleShowRecipeClick() {
+      const recipeWindow = document.getElementById("recipeWindow");
+      const recipeWindowContent = document.getElementById(
+        "recipeWindowContent"
+      );
+      // recipeWindowContent.innerHTML = ""
+      const closeRecipeWindowBtn = document.getElementById(
+        "closeRecipeWindowBtn"
+      );
+
+      recipeWindow.style.height = "95%";
+      recipeWindow.style.width = "95%";
+
+      recipeWindowContent.style.height = "93%";
+      recipeWindowContent.style.width = "93%";
+      recipeWindowContent.style.visibility = "visible";
+
+      closeRecipeWindowBtn.style.visibility = "visible";
+
+      closeRecipeWindowBtn.addEventListener("click", handleCloseRecipeWindow);
+
+      //todo - change this recipetext to data fetched
+
+      const recipeText = document.getElementById("recipeText");
+      recipeText.innerHTML = "";
+
+      const recipeName = document.createElement("div");
+      recipeName.textContent = "Recipe Name Here";
+
+      const temp = document.createElement("div");
+      temp.textContent = "Temp...";
+
+      const time = document.createElement("div");
+      time.textContent = "Time...";
+
+      const listContainer = document.createElement("div");
+      listContainer.id = "listContainer";
+
+      const column_one = document.createElement("ul");
+      column_one.className = "recipeIngredientsColumns";
+      column_one.id = "recipeIngredientsColumn_1";
+
+      const column_two = document.createElement("ul");
+      column_two.className = "recipeIngredientsColumns";
+      column_two.id = "recipeIngredientsColumn_2";
+
+      const ingredient_one = document.createElement("li");
+      ingredient_one.textContent = "Ingredient 1";
+
+      const ingredient_two = document.createElement("li");
+      ingredient_two.textContent = "Ingredient 2";
+
+      const ingredient_three = document.createElement("li");
+      ingredient_three.textContent = "Ingredient 3";
+
+      const ingredient_four = document.createElement("li");
+      ingredient_four.textContent = "Ingredient 4";
+
+      column_one.append(ingredient_one, ingredient_two);
+      column_two.append(ingredient_three, ingredient_four);
+
+      listContainer.append(column_one, column_two);
+
+      const instructions = document.createElement("div");
+      instructions.id = "instructions";
+      instructions.textContent = `Instruction text Here: Lorem ipsum dolor sit, amet consectetur
+            adipisicing elit. Repellat consequuntur minus sapiente perspiciatis
+            deleniti magnam illo eius ut corporis, vitae voluptatibus adipisci
+            obcaecati ea beatae? Iusto, debitis voluptas in totam, voluptatem
+            unde sunt ullam provident reiciendis nulla inventore, aspernatur at!
+            Explicabo dolores harum inventore voluptatibus consectetur eaque
+            nemo repudiandae laboriosam optio. Nulla consectetur, nesciunt
+            magnam laborum consequatur mollitia, numquam explicabo molestias,
+            repudiandae praesentium recusandae atque aspernatur laboriosam!
+            Voluptas, dicta perferendis non quisquam hic doloremque alias? Quos
+            repellendus voluptatem sequi in voluptatibus dolores odio nisi
+            facilis numquam fugit expedita eum sed eos rerum officiis nesciunt
+            molestias accusamus pariatur dignissimos, saepe facere! Optio aut
+            mollitia magnam facilis quod exercitationem, minus placeat
+            distinctio aliquam, iure cum autem? Quaerat iure cum voluptatum.
+            Alias unde, molestias ipsam aperiam suscipit nam explicabo, ut
+            provident, nihil voluptatibus tempore assumenda ipsa quos sunt. Id
+            rerum deleniti obcaecati, eius ipsum, quos dolorem temporibus labore
+            at quam veniam sunt recusandae necessitatibus voluptate excepturi
+            eveniet earum. Esse ad, autem inventore architecto error temporibus
+            praesentium dicta, libero placeat dolorum at laboriosam vitae,
+            deleniti nesciunt? Nihil culpa fugiat perferendis eaque obcaecati
+            laudantium, placeat possimus fugit accusantium unde cumque
+            temporibus quidem nemo earum rem iste sunt exercitationem tenetur
+            nulla reprehenderit beatae impedit architecto nobis. Lorem ipsum
+            dolor sit amet consectetur adipisicing elit. Optio enim in
+            cupiditate architecto vero deserunt dicta laudantium voluptatibus,
+            consectetur excepturi? Dolorem, laborum quod ab veritatis eos, autem
+            deleniti quasi id, error maiores reprehenderit eaque labore maxime
+            facere vero molestiae quibusdam corrupti asperiores ipsum velit quae
+            repellat? Tempore eum sapiente quam maiores ad dicta, expedita
+            nostrum adipisci labore dolore molestias velit maxime doloremque
+            vel? Sapiente dicta culpa eligendi deserunt delectus harum ab
+            dignissimos officiis voluptatibus, eum debitis quo impedit,
+            excepturi amet reprehenderit ut illum quidem expedita ullam? At
+            ipsa, esse atque rerum culpa accusamus quaerat alias voluptatem
+            consectetur mollitia voluptas odio dignissimos nam corporis ducimus
+            earum, unde nulla expedita inventore, dolores doloribus maxime! Vel,
+            quisquam. Quam blanditiis magnam illum veritatis dolore, odit saepe
+            tenetur eaque optio perspiciatis quas velit vel veniam hic vitae
+            harum rerum eius accusamus laboriosam excepturi repellendus dolorum,
+            nisi nihil! Voluptates deleniti quod tempora iste consectetur
+            incidunt voluptatum veniam quidem, atque voluptas, perspiciatis
+            sequi totam exercitationem magnam ratione blanditiis eligendi error
+            nulla quam, ad et cupiditate in velit. Architecto eligendi quis,
+            autem nulla impedit similique reprehenderit necessitatibus dolorem
+            consectetur blanditiis laborum corrupti iste numquam sapiente saepe
+            incidunt officia beatae voluptates. Deserunt perspiciatis quia, ut
+            ipsa labore illo dicta!`;
+
+      recipeText.append(recipeName, temp, time, listContainer, instructions);
+
+      /* 
+        <div>Recipe Name Here</div>
+          <div>Temp</div>
+          <div>Time</div>
+          <ul>
+            <li>Ingredient 1</li>
+            <li>Ingredient 2</li>
+          </ul>
+          <div id="instructions">
+
+          </div>
+      */
+    }
+
+    recipeCheckbox.addEventListener("click", handleRecipeCheckboxClick);
+
+    function handleCloseRecipeWindow() {
+      recipeWindow.style.height = "0";
+      recipeWindow.style.width = "0";
+
+      recipeWindowContent.style.height = "0";
+      recipeWindowContent.style.width = "0";
+      recipeWindowContent.style.visibility = "hidden";
+
+      closeRecipeWindowBtn.style.visibility = "hidden";
+      closeRecipeWindowBtn.removeEventListener(
+        "click",
+        handleCloseRecipeWindow
+      );
+    }
+
+    function handleRecipeCheckboxClick() {
+      if (entry.style.textDecoration === "line-through") {
+        entry.style.textDecoration = "none";
+      } else if (entry.style.textDecoration === "none") {
+        entry.style.textDecoration = "line-through";
+      }
+    }
 
     function handleEntryClick() {
       const recipeTableBody = document.getElementById("recipeTableBody");
       recipeTableBody.innerHTML = "";
 
-      const recipeHeaders = document.createElement("tr");
+      document.getElementById("recipeInstructionsInputField")?.remove()
+      document.getElementById("newIngredientGrid")?.remove()
+      document.getElementById("addRecipeIngredientsToShoppingListBtnContainer")?.remove()
+      // const recipeHeaders = document.createElement("tr");
 
       const checkboxHeader = document.createElement("th");
       checkboxHeader.textContent = "Select";
 
       const ingredientHeader = document.createElement("th");
       ingredientHeader.textContent = "Ingredient";
-
-      //   recipeHeaders.append(checkboxHeader, ingredientHeader);
-
-      recipeTableBody.append(recipeHeaders);
-      // const recipeHeaders = document.getElementById("recipeHeaders")
-      // recipeHeaders.innerHTML = ""
 
       recipe.ingredients.map((item) => {
         const mainContent = document.createElement("tr");
@@ -652,9 +1336,20 @@ async function populateRecipeList() {
         const ingredient = document.createElement("td");
         ingredient.className = "ingredient";
         ingredient.textContent = item;
+        ingredient.style.textDecoration = "none";
         mainContent.append(check);
         mainContent.append(ingredient);
         recipeTableBody.append(mainContent);
+
+        checkBox.addEventListener("click", handleIngredientListCheckboxClick);
+
+        function handleIngredientListCheckboxClick() {
+          if (ingredient.style.textDecoration === "line-through") {
+            ingredient.style.textDecoration = "none";
+          } else if (ingredient.style.textDecoration === "none") {
+            ingredient.style.textDecoration = "line-through";
+          }
+        }
       });
 
       const addRecipeIngredientsToShoppingListBtnContainer =
@@ -666,6 +1361,7 @@ async function populateRecipeList() {
         document.createElement("button");
       addRecipeIngredientsToShoppingListBtn.id =
         "addRecipeIngredientsToShoppingListBtn";
+      addRecipeIngredientsToShoppingListBtn.className = "button";
       addRecipeIngredientsToShoppingListBtn.textContent =
         "Add to Shopping List";
       addRecipeIngredientsToShoppingListBtn.addEventListener(

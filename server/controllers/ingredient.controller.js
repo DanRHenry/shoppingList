@@ -14,7 +14,9 @@ router.post("/storeIngredient", async (req, res) => {
   try {
     const ingredientInfo = new Ingredient({
       ingredientName: req.body.ingredientName,
-      cost: req.body.cost
+      quantity: req.body.quantity,
+      unit: req.body.unit,
+      calories: req.body.calories
     });
 
     const newIngredientInfo = await ingredientInfo.save();

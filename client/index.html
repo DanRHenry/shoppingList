@@ -7,63 +7,35 @@
     <link rel="stylesheet" href="./styles/style.css" />
   </head>
   <body>
-    <!-- <form id="login-form" class="form-signin">
-       <div id="loginWelcomeSection">
-      <input id="email" type="text" required name="email" placeholder="Email">
-      <input id="password" type="password" required name="password" placeholder="Password">
-      <input id="family" type="text" name="family" placeholder="Family">
-      <button id="login-Btn" type="submit">Login</button>
+    <div id="applicationContainer">
+      <table>
+        <tbody id="shoppingListTableBody">
+          <br />
+        </tbody>
+      </table>
     </div>
-  </form>
-  <button id="switchBtn">Signup?</button>
-    <br> -->
-    <div id="applicationContaner">
-        <table>
-          <tbody id="shoppingListTableBody">
-            <tr id="headers">
-              <th class="check" id="checkboxHeader">Select All</th>
-              <th class="item" id="itemHeader">Name</th>
-              <th class="qty" id="qtyHeader">Qty</th>
-            </tr>
-        <br />
-        <tr id="removeSelectedItemsContainer">
-            <td id="removeSelectedItems">Remove</td>
-        </tr>
-    <div id="mainContent">
-            </tbody>
-            <!-- <tr class="mainContent">
-              <td class="check">
-                  <div></div>
-                  <button id="addNewItem">Add</button>
-                </td>
-                <td class="item">
-                  <input  id="itemInput" type="text" required>
-                </td>
-                <td class="qty">
-                  <input id="qtyInput" type="text" placeholder="1" value=1 style="text-align: center;">
-                </td>
-            </tr> -->
-          </table>
-        </div>
-        <br>
-        <div id="recipeContentContainer">
-          <div id="recipeContent">
-                    <div id="recipeItem">
-                      <table id="recipeItemTable">
-                        <tbody id="recipeTableBody">
-                          </tbody>
-                        </table>  
-                    </div>
-                </div>
-              </div>
 
-        <div id="recipesContainer">
-            <div id="selections">
-                <!-- <div id="addRecipeContainer"><button id="addRecipe">New</button></div> -->
-        </div>
+    <div id="recipeContent">
+      <div class="headers">Recipe Ingredients</div>
+      <div id="recipeItem">
+        <!-- <table id="recipeItemTable"> -->
+          <div id="recipeTableBody"></div>
+        <!-- </table> -->
       </div>
+    </div>
 
+    <div id="recipesContainer">
+      <div class="headers">Recipes</div>
+      <div id="selections"></div>
+    </div>
 
-        <script src="./scripts/index.js"></script>
+    <div id="recipeWindow">
+      <div id="recipeWindowContent">
+        <div id="recipeText">
+        </div>
+        <button class="button" id="closeRecipeWindowBtn">Close</button>
+      </div>
+    </div>
+    <script src="./scripts/index.js" type="module"></script>
   </body>
 </html>
