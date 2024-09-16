@@ -877,8 +877,12 @@ async function populateRecipeList() {
     if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
       document.getElementById("addRecipeIngredientsToShoppingListBtn").remove();
     }
+
+    // const mainContent = document.getElementsByClassName('mainContent');
+    
     const ingredientsInformation = [];
     const recipeTableBody = document.getElementById("recipeTableBody");
+    recipeTableBody.innerHTML = ""
 
     const ingredientInputForm = document.createElement("div");
     ingredientInputForm.id = "ingredientInputForm";
@@ -1307,6 +1311,9 @@ async function populateRecipeList() {
       const recipeTableBody = document.getElementById("recipeTableBody");
       recipeTableBody.innerHTML = "";
 
+      document.getElementById("recipeInstructionsInputField")?.remove()
+      document.getElementById("newIngredientGrid")?.remove()
+      document.getElementById("addRecipeIngredientsToShoppingListBtnContainer")?.remove()
       // const recipeHeaders = document.createElement("tr");
 
       const checkboxHeader = document.createElement("th");
