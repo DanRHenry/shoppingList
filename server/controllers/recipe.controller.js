@@ -14,7 +14,7 @@ router.post("/storeRecipe", async (req, res) => {
   try {
     const recipeInfo = new Recipe({
       recipeName: req.body.recipeName,
-      ingredients: req.body.ingredients
+      ingredients: req.body.ingredients,
     });
 
     const newRecipeInfo = await recipeInfo.save();
@@ -26,7 +26,7 @@ router.post("/storeRecipe", async (req, res) => {
       message: `Success! Recipe Saved!:${req.body}`,
     });
   } catch (err) {
-    console.log(Recipe)
+    console.log(Recipe);
     res.status(500).json({
       ERROR: err.message,
     });
@@ -38,8 +38,8 @@ router.post("/storeRecipe", async (req, res) => {
 router.post("/find", async (req, res) => {
   try {
     const { recipeName } = req.body;
-    console.log("RecipeName:",recipeName)
-    const findRecipe = await Recipe.findOne({ "recipeName": recipeName });
+    console.log("RecipeName:", recipeName);
+    const findRecipe = await Recipe.findOne({ recipeName: recipeName });
 
     findRecipe
       ? res.status(200).json({
@@ -52,35 +52,35 @@ router.post("/find", async (req, res) => {
   } catch (err) {
     serverError(res, err);
   }
-})
+});
 
 // --------------------------Get All ---------------------
-  router.get("/", async (req, res) => {
-    try {
-      const getAllRecipes = await Recipe.find();
-      getAllRecipes
-        ? res.status(200).json({
-            message: "All Recipes:",
-            getAllRecipes,
-          })
-        : res.status(404).json({
-            message: `No Recipes Found!`,
-          });
-    } catch (err) {
-      serverError(res, err);
-    }
-  });
+router.get("/", async (req, res) => {
+  try {
+    const getAllRecipes = await Recipe.find();
+    getAllRecipes
+      ? res.status(200).json({
+          message: "All Recipes:",
+          getAllRecipes,
+        })
+      : res.status(404).json({
+          message: `No Recipes Found!`,
+        });
+  } catch (err) {
+    serverError(res, err);
+  }
+});
 /* 
 ----------------------------- Delete Ingredient Endpoint ------------------------
 */
 router.delete("/delete/", async (req, res) => {
-  console.log("in progress")
+  console.log("in progress");
   // res.header("Access-Control-Allow-Origin", "*");
   // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   // console.log("deleting...");
   try {
     //* Pull the ingredient's info from the req
-    const {recipeName} = req.body;
+    const { recipeName } = req.body;
 
     const recipeId = { recipeName: recipeName };
 

@@ -396,5 +396,4 @@ width: 100%;
 .newIngredients, .newIngredientAmtInputs, .measurementUnit, .newIngredientCalorieInputs {
     background-color: white;
     border: 1px solid black;
-    /* max-width: 1em; */
 }
