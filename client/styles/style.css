@@ -43,12 +43,6 @@ body {
     flex-direction: column;
 }
 
-#recipeIngredients {
-    /* visibility: hidden; */
-    /* position: absolute; */
-    /* background-color: red; */
-}
-
 #recipeItem, #selections {
     width: 100%;
     height: 100%;
@@ -164,6 +158,7 @@ body {
 #addRecipeContainer {
     padding-top: 1em;
     text-align: center;
+    padding-bottom: 1em;
 }
 
 #addRecipe, #deleteRecipe, #newIngredientInputFieldBtn, #newRecipeInputBtn {
@@ -202,7 +197,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* margin-left: 1em; */
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 #recipeCookTimeInputField, #recipeTempInputField {
@@ -225,6 +221,7 @@ body {
 #newRecipeNameInput, .ingredients {
     width: 40%;
     text-align: center;
+    margin-top: 1em;
 }
 
 .recipeName {
@@ -304,7 +301,7 @@ body {
 #recipeItem {
     align-items: center;
     max-width: 100%;
-    /* display: none; */
+    padding-bottom: 1em;
 }
 
 .newIngredientFieldBtns {
@@ -318,38 +315,24 @@ body {
 
 #recipeContent {
     overflow-y: hidden;
-    /* background-color: purple; */
     max-width: 100%;
-    /* border: 1em solid black; */
 }
 
-#recipeItem {
-    /* background-color: yellow; */
-    /* border: 1em solid black; */
-}
 
 #newIngredientGrid{
-    /* background-color: orange; */
     max-width: fit-content;
-    /* max-width: 10em; */
-}
-
-#recipeItemTable {
-    /* max-width: 10em; */
-    /* background-color: red; */
+    width: 86%;
 }
 
 #recipeTableBody {
-/* max-width: 10em; */
 width: 100%;
-/* background-color: blue; */
 }
 
 #recipeInstructionsInputField {
-    /* display: block; */
-    /* text-indent: 2em; */
-    width: 99%;
-    height: 5em;
+    margin-top: 1em;
+    width: 85%;
+    min-height: 8em;
+    text-indent: 1em;
 }
 
 .newIngredients {
@@ -380,17 +363,9 @@ width: 100%;
 }
 
 #newIngredientGrid {
-    /* display: flex; */
-    /* flex-direction: column; */
     display: grid;
     max-width: 100vw;
-    /* background-color: blue; */
-    /* grid-template-columns: 8em 4em 5em 4em 5em; */
     grid-template-columns: 40% 15% 17% 12% 12%;
-    /* min-width: 90vw; */
-    /* overflow: hidden; */
-    /* width: 80vw; */
-    /* z-index: 10; */
 }
 
 .newIngredients, .newIngredientAmtInputs, .measurementUnit, .newIngredientCalorieInputs {

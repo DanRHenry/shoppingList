@@ -362,22 +362,9 @@ async function handleNewRecipeIngredientSubmit(e) {
     }
   }
 
-  await postNewRecipe(nameInput, ingredientValues);
+  await postNewRecipe(nameInput, timeInput, temperatureInput, ingredientValues, recipeInstructionsInput);
   console.log(nameInput);
-  // setTimeout(() => {
-  // await populateRecipeList();
 
-  //todo remove this, it doesn't seem to link to anything anymore
-  // const recipeIngredients = document.getElementById("recipeIngredients");
-  // // recipeIngredients.innerHTML = `<div>${nameInput.value} Created</div>`
-  // // setTimeout(() => {
-  // recipeIngredients.innerHTML = "";
-
-  //todo remove the above
-
-  // }, 3000);
-  // }, 100);
-  // nameInput.value = "";
   for (let item of ingredients) item.value = "";
   console.log("submitted");
   await populateRecipeList();
@@ -418,33 +405,36 @@ async function postNewIngredient(item, qty) {
   }
   await fetchShoppingList();
 }
-
-async function postNewRecipe(recipeName, ingredients) {
-  console.log("recipeName:", recipeName);
-  console.log("ingredients:", ingredients);
+// console.log(nameInput, timeInput, temperatureInput, ingredientValues, recipeInstructionsInput)
+async function postNewRecipe(recipeName, time, temperature, ingredients, instructions) {
+  console.log("recipeName: ", recipeName);
+  console.log("time: ",time)
+  console.log("temperature: ",temperature)
+  console.log("ingredients: ", ingredients); // ingredients not working yet
+  console.log("instructions: ",instructions)
   const URL = `${serverURL}/recipe/storeRecipe`;
 
-  if ((await checkForExistingRecipe(recipeName)) === "Found!") {
-    return console.log("it's here");
-  } else {
-    try {
-      const newRecipe = {
-        recipeName: recipeName,
-        ingredients: ingredients,
-      };
+  // if ((await checkForExistingRecipe(recipeName)) === "Found!") {
+  //   return console.log("it's here");
+  // } else {
+  //   try {
+  //     const newRecipe = {
+  //       recipeName: recipeName,
+  //       ingredients: ingredients,
+  //     };
 
-      const res = fetch(URL, {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newRecipe),
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  //     const res = fetch(URL, {
+  //       method: "POST",
+  //       mode: "cors",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(newRecipe),
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 }
 
 async function checkForExistingIngredient(item) {
@@ -932,33 +922,11 @@ async function populateRecipeList() {
         ingredientAmtInput.value &&
         measurementUnitInput.value &&
         newIngredientCalorieInput.value
-      ) {
-        const conversionObject = {
-          gal: 128,
-          qt: 32,
-          pint: 16,
-          cup: 8,
-          tbsp: .5,
-          tsp: 1.6666667,
-          "fl oz": 1
-        }
-
-        let measurementUnitToSend = measurementUnitInput.value;
-        let caloriesToSend = +newIngredientCalorieInput.value;
-
-        if (conversionObject[measurementUnitInput.value]) {
-          const convertedUnits = conversionObject[measurementUnitInput.value] * +ingredientAmtInput.value
-
-          const convertedCalories = +newIngredientCalorieInputs.value / convertedUnits
-
-          console.log(convertedCalories, typeof convertedCalories)
-          caloriesToSend = convertedCalories;
-          measurementUnitToSend = "fl oz"
-          console.log("sending converted: ", caloriesToSend, "calories per ",measurementUnitToSend)
-        } else {
-          caloriesToSend = +newIngredientCalorieInput.value / +ingredientAmtInput.value;
-          console.log("sending converted: ", caloriesToSend, "calories per ",measurementUnitToSend)
-        }
+      ) 
+      
+      {
+        convertMeasurementUnits (measurementUnitInput, ingredientAmtInput, newIngredientCalorieInput, )
+      
 
 
         //todo push this information to the ingredients array that will be sent to the back end when the recipe is actually submitted
@@ -1030,6 +998,46 @@ async function populateRecipeList() {
         newIngredientCalorieInput.value = "";
       } else {
         console.log("missing input");
+      }
+    }
+
+    function convertMeasurementUnits (measurementUnitInput, ingredientAmtInput, newIngredientCalorieInput, ) {
+
+      const conversionObject = {
+        gal: 128,
+        qt: 32,
+        pint: 16,
+        cup: 8,
+        tbsp: .5,
+        tsp: 1.6666667,
+        "fl oz": 1
+      }
+
+      let measurementUnitToSend = measurementUnitInput.value;
+      let caloriesToSend = +newIngredientCalorieInput.value;
+
+      if (conversionObject[measurementUnitInput.value]) {
+        const convertedUnits = conversionObject[measurementUnitInput.value] * +ingredientAmtInput.value
+
+        const convertedCalories = +newIngredientCalorieInputs.value / convertedUnits
+
+        console.log(convertedCalories, typeof convertedCalories)
+        console.log("sending converted: ", caloriesToSend, "calories per ",measurementUnitToSend)
+        return (
+          {
+            caloriesToSend: convertedCalories,
+            measurementUnitToSend: "fl oz"
+          }
+          // caloriesToSend = convertedCalories,
+          // measurementUnitToSend = "fl oz"
+        )
+      } else {
+        console.log("sending converted: ", caloriesToSend, "calories per ",measurementUnitToSend)
+        return ({
+          caloriesToSend: +newIngredientCalorieInput.value,
+          measurementUnitToSend: +ingredientAmtInput.value
+        })
+        // caloriesToSend = +newIngredientCalorieInput.value / +ingredientAmtInput.value;
       }
     }
 
@@ -1420,6 +1428,18 @@ async function populateRecipeList() {
 }
 
 async function handleAddRecipeIngredientsToShoppingList() {
+  const button = document.getElementById("addRecipeIngredientsToShoppingListBtn")
+  // button.style.backgroundColor = "black"
+  // button.style.color = "white"
+  // button.textContent = "Submitting"
+  button.removeEventListener("click", handleAddRecipeIngredientsToShoppingList)
+
+  setTimeout(() => {
+    button.style.backgroundColor = "initial"
+    button.style.color = "initial"
+    button.textContent = "Add to Shopping List"
+    button.addEventListener("click", handleAddRecipeIngredientsToShoppingList)
+  }, 6000);
   const ingredientCollection = document.getElementsByClassName("ingredient");
   const ingredientCheck = document.getElementsByClassName("ingredientCheck");
 
