@@ -1154,10 +1154,14 @@ async function populateRecipeList() {
     ingredientInput.addEventListener("change", async () => {
       // console.log(ingredientInput.textContent)
       console.log(ingredientInput);
-      console.log(
-        "checking for ingredient response:",
-        await checkForExistingIngredient(ingredientInput.textContent)
-      );
+      // console.log(
+      //   "checking for ingredient response:",
+      console.log(await checkForExistingIngredient(ingredientInput.textContent))
+        if (await checkForExistingIngredient(ingredientInput.textContent) === "Found!") {
+          console.log("the item has been found")
+        }
+
+      // );
     });
   }
 
