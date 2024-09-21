@@ -464,6 +464,33 @@ async function checkForExistingIngredient(item) {
   }
 }
 
+async function checkForExistingRecipeIngredient(item) {
+  const URL = `${serverURL}/recipeingredient/find`;
+
+  const ingredientQuery = {
+    ingredientName: item,
+  };
+
+  const reqOptions = {
+    method: "POST",
+    mode: "cors",
+    headers: new Headers({
+      "Content-Type": "application/json",
+    }),
+    body: JSON.stringify(ingredientQuery),
+  };
+
+  try {
+    //todo if the ingredient is found, populate the information on unit and calories, which can then be converted to the actual units and quantities used
+
+    const res = await fetch(URL, reqOptions);
+    const data = await res.json();
+    return data.message;
+  } catch (error) {
+    // console.log(error);
+  }
+}
+
 async function checkForExistingRecipe(item) {
   const URL = `${serverURL}/recipe/find`;
 
@@ -905,7 +932,7 @@ async function populateRecipeList() {
       handleIngredientInputSubmit
     );
 
-    function handleIngredientInputSubmit(e) {
+    async function handleIngredientInputSubmit(e) {
       e.preventDefault();
       const ingredientNameInput = document.getElementById("newIngredientInput");
       const ingredientAmtInput = document.getElementById(
@@ -938,6 +965,25 @@ async function populateRecipeList() {
           caloriesToSend;
 
         ingredientsInformation.push(ingredientObject);
+
+        const URL = `${serverURL}/api/shoppingList/recipeingredient/storeRecipeIngredient`
+
+        try {
+          const res = await fetch(URL, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(ingredientObject),
+          });
+          const data = await res.json();
+          if (data.message === "Success! RecipeIngredient Saved!") {
+            console.log("Success! RecipeIngredient Saved!")
+          }
+        } catch (error) {
+          console.log(error);
+        }
 
         console.log(ingredientsInformation);
         // const newIngredientContainer = document.getElementById(
@@ -1156,9 +1202,11 @@ async function populateRecipeList() {
       console.log(ingredientInput);
       // console.log(
       //   "checking for ingredient response:",
-      console.log(await checkForExistingIngredient(ingredientInput.textContent))
-        if (await checkForExistingIngredient(ingredientInput.textContent) === "Found!") {
+      console.log(await checkForExistingRecipeIngredient(ingredientInput.textContent))
+        if (await checkForExistingRecipeIngredient(ingredientInput.textContent) === "Found!") {
           console.log("the item has been found")
+        } else {
+          console.log("the recipe ingredient was not found")
         }
 
       // );

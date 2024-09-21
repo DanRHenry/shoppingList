@@ -25,7 +25,7 @@ router.post("/storeRecipeIngredient", async (req, res) => {
     }
     res.status(200).json({
       ingredientInfo: newIngredientInfo,
-      message: `Success! RecipeIngredient Saved!:${req.body}`,
+      message: `Success! RecipeIngredient Saved!`,
     });
   } catch (err) {
     console.log(RecipeIngredient)

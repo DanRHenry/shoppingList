@@ -30,7 +30,7 @@ const PORT = process.env.PORT;
 
 // ---------------------- Controllers: -------------------
 const userController = require("./controllers/user.controller");
-const ingrientController = require ("./controllers/ingredient.controller")
+const ingredientController = require ("./controllers/ingredient.controller")
 const recipeController = require("./controllers/recipe.controller")
 const recipeIngredientController = require ("./controllers/recipeIngredient.controller")
 // Adding cors() to handle the preflight request for us (something Postman did for us), this is part of our server middleware required and called in the app.js
@@ -105,7 +105,7 @@ app.options("*", (req, res) => {
 });
 
 app.use("/api/shoppinglist/user", userController)
-app.use("/api/shoppinglist/ingredient", ingrientController)
+app.use("/api/shoppinglist/ingredient", ingredientController)
 app.use("/api/shoppinglist/recipe", recipeController)
 app.use("/api/shoppingList/recipeingredient", recipeIngredientController)
 // app.use("/api/jeopardy/user", user);
