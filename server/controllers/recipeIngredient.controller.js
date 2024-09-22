@@ -20,15 +20,15 @@ router.post("/storeRecipeIngredient", async (req, res) => {
     });
 
     const newIngredientInfo = await ingredientInfo.save();
-    if (newIngredientInfo) {
-      // console.log("newIngredient:", newIngredientInfo);
-    }
+    // if (newIngredientInfo) {
+    //   // console.log("newIngredient:", newIngredientInfo);
+    // }
     res.status(200).json({
       ingredientInfo: newIngredientInfo,
       message: `Success! RecipeIngredient Saved!`,
     });
   } catch (err) {
-    console.log(RecipeIngredient)
+    // console.log(RecipeIngredient)
     res.status(500).json({
       ERROR: err.message,
     });
