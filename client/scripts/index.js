@@ -1433,7 +1433,7 @@ async function populateRecipeList() {
       document.getElementById("recipeInstructionsInputField")?.remove()
       document.getElementById("newIngredientGrid")?.remove()
       document.getElementById("addRecipeIngredientsToShoppingListBtnContainer")?.remove()
-      // const recipeHeaders = document.createElement("tr");
+      document.getElementById("newRecipeInputBtn")?.remove()
 
       const checkboxHeader = document.createElement("th");
       checkboxHeader.textContent = "Select";
