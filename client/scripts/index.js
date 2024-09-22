@@ -467,6 +467,7 @@ async function checkForExistingIngredient(item) {
 async function checkForExistingRecipeIngredient(item) {
   const URL = `${serverURL}/recipeingredient/find`;
 
+  console.log("item: ",item)
   const ingredientQuery = {
     ingredientName: item,
   };
@@ -485,6 +486,7 @@ async function checkForExistingRecipeIngredient(item) {
 
     const res = await fetch(URL, reqOptions);
     const data = await res.json();
+    console.log("data.message: ", data.message)
     return data.message;
   } catch (error) {
     // console.log(error);
@@ -1195,8 +1197,8 @@ async function populateRecipeList() {
       console.log(ingredientInput);
       // console.log(
       //   "checking for ingredient response:",
-      console.log(await checkForExistingRecipeIngredient(ingredientInput.textContent))
-        if (await checkForExistingRecipeIngredient(ingredientInput.textContent) === "Found!") {
+      console.log(await checkForExistingRecipeIngredient(ingredientInput.value))
+        if (await checkForExistingRecipeIngredient(ingredientInput.value) === "Found!") {
           console.log("the item has been found")
         } else {
           console.log("the recipe ingredient was not found")
