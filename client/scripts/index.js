@@ -52,7 +52,7 @@ To set defaults application wide, set config attributes on topmost element:
 </body>
 Source code is available on Github
 */
-// const serverURL = "http://127.0.0.1:3498";
+
 
 /*!
  * swiped-events.js - v@version@
@@ -241,7 +241,11 @@ Source code is available on Github
   }
 })(window, document);
 
-const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
+
+const serverURL = "http://127.0.0.1:3498/api/shoppinglist";
+// const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
+
+
 const loginForm = document.getElementById("login-form");
 
 const loginBtn = document.getElementById("login-Btn");
@@ -487,7 +491,7 @@ async function checkForExistingRecipeIngredient(item) {
     const res = await fetch(URL, reqOptions);
     const data = await res.json();
     console.log("data.message: ", data.message)
-    return data.message;
+    return data;
   } catch (error) {
     // console.log(error);
   }
@@ -1193,18 +1197,28 @@ async function populateRecipeList() {
     const ingredientInput = document.getElementById("newIngredientInput");
     console.log(ingredientInput.textContent);
     ingredientInput.addEventListener("change", async () => {
-      // console.log(ingredientInput.textContent)
-      console.log(ingredientInput);
-      // console.log(
-      //   "checking for ingredient response:",
-      console.log(await checkForExistingRecipeIngredient(ingredientInput.value))
-        if (await checkForExistingRecipeIngredient(ingredientInput.value) === "Found!") {
+
+      const data = await checkForExistingRecipeIngredient(ingredientInput.value)
+      console.log(data.findIngredient.calories)
+      const body = data.findIngredient
+
+        if (data.message === "Found!") {
           console.log("the item has been found")
+          console.log(body)
+          measurementUnit.value = "fl oz"
+          console.log("measurementUnit", measurementUnit)
+          newIngredientAmtInputs.value = 1
+          newIngredientCalorieInputs.value = body.calories.toFixed(0)
+/* 
+      newIngredientAmtInputs,
+      measurementUnit,
+      newIngredientCalorieInputs,
+*/
+          // 
+
         } else {
           console.log("the recipe ingredient was not found")
         }
-
-      // );
     });
   }
 
