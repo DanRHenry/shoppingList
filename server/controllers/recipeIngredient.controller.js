@@ -11,6 +11,7 @@ const serverError = (res, error) => {
 // ------------------------ POST ----------------------
 
 router.post("/storeRecipeIngredient", async (req, res) => {
+  console.log("storeRecipeIngredientReq.body: ", req.body)
   try {
     const ingredientInfo = new RecipeIngredient({
       recipeIngredientName: req.body.ingredientName,

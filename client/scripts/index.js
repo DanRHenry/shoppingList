@@ -974,6 +974,7 @@ async function populateRecipeList() {
         const URL = `${serverURL}/recipeingredient/storeRecipeIngredient`;
 
         try {
+          console.log("ingredientObject: ", ingredientObject)
           const res = await fetch(URL, {
             method: "POST",
             mode: "cors",
@@ -987,7 +988,7 @@ async function populateRecipeList() {
             console.log("Success! RecipeIngredient Saved!")
           }
         } catch (error) {
-          console.log(error);
+          console.log(error.message);
         }
         
         // console.log(ingredientsInformation);
