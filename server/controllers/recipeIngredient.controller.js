@@ -1,5 +1,6 @@
 const router = require("express").Router();
-const RecipeIngredient = require("../models/ingredient.model");
+// const RecipeIngredient = require("../models/ingredient.model");
+const RecipeIngredient = require("../models/recipeIngredient.model")
 
 const serverError = (res, error) => {
   console.log("Server-side error");
