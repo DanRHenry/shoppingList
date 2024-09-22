@@ -13,10 +13,10 @@ const serverError = (res, error) => {
 router.post("/storeRecipeIngredient", async (req, res) => {
   try {
     const ingredientInfo = new RecipeIngredient({
-      recipeIngredientName: req.body.recipeIngredientName,
-      quantity: req.body.quantity,
-      unit: req.body.unit,
-      calories: req.body.calories
+      recipeIngredientName: req.body.ingredientName,
+      quantity: req.body.ingredientAmt,
+      unit: req.body.measurementUnitInput,
+      calories: req.body.newIngredientCalorieInput
     });
 
     const newIngredientInfo = await ingredientInfo.save();

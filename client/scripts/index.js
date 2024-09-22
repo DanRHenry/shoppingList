@@ -958,15 +958,20 @@ async function populateRecipeList() {
 
         //todo push this information to the ingredients array that will be sent to the back end when the recipe is actually submitted
         const ingredientObject = {};
+        // console.log(convertMeasurementUnits(measurementUnitInput, ingredientAmtInput, newIngredientCalorieInput,))
+        const {measurementUnitToSend, caloriesToSend } = convertMeasurementUnits(measurementUnitInput, ingredientAmtInput, newIngredientCalorieInput,)
+
+        
         ingredientObject.ingredientName = ingredientNameInput.value;
         ingredientObject.ingredientAmt = ingredientAmtInput.value;
         ingredientObject.measurementUnitInput = measurementUnitToSend;
         ingredientObject.newIngredientCalorieInput =
+        // ingredientObject.calories =
           caloriesToSend;
 
         ingredientsInformation.push(ingredientObject);
 
-        const URL = `${serverURL}/api/shoppingList/recipeingredient/storeRecipeIngredient`
+        const URL = `${serverURL}/recipeingredient/storeRecipeIngredient`;
 
         try {
           const res = await fetch(URL, {
@@ -984,17 +989,8 @@ async function populateRecipeList() {
         } catch (error) {
           console.log(error);
         }
-
-        console.log(ingredientsInformation);
-        // const newIngredientContainer = document.getElementById(
-        //   "newIngredientContainer"
-        // );
-        // console.log("here");
-        // console.log(newIngredientContainer)
-        // oldIngredientContainer.id = ""
-
-        // const submittedIngredientContainer = document.createElement("tr");
-        // newIngredientContainer.className = "newIngredientContainers";
+        
+        // console.log(ingredientsInformation);
 
         const submittedIngredient = document.createElement("div");
         submittedIngredient.textContent = ingredientNameInput.value;
@@ -1074,11 +1070,9 @@ async function populateRecipeList() {
             caloriesToSend: convertedCalories,
             measurementUnitToSend: "fl oz"
           }
-          // caloriesToSend = convertedCalories,
-          // measurementUnitToSend = "fl oz"
         )
       } else {
-        console.log("sending converted: ", caloriesToSend, "calories per ",measurementUnitToSend)
+        // console.log("sending converted: ", caloriesToSend, "calories per ",measurementUnitToSend)
         return ({
           caloriesToSend: +newIngredientCalorieInput.value,
           measurementUnitToSend: +ingredientAmtInput.value
@@ -1088,8 +1082,6 @@ async function populateRecipeList() {
     }
 
     newIngredientFieldBtn.textContent = "Add ";
-
-    // ingredientInputContainer.append(newIngredientInput, newIngredientFieldBtn);
 
     const recipeCookTimeInputField = document.createElement("input");
     recipeCookTimeInputField.type = "string";
