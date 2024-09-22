@@ -13,19 +13,19 @@ const serverError = (res, error) => {
 router.post("/storeRecipeIngredient", async (req, res) => {
   console.log("storeRecipeIngredientReq.body: ", req.body)
   try {
-    const ingredientInfo = new RecipeIngredient({
+    const recipeIngredientInfo = new RecipeIngredient({
       recipeIngredientName: req.body.ingredientName,
       quantity: req.body.ingredientAmt,
       unit: req.body.measurementUnitInput,
       calories: req.body.newIngredientCalorieInput
     });
 
-    const newIngredientInfo = await ingredientInfo.save();
+    const newIngredientInfo = await recipeIngredientInfo.save();
     // if (newIngredientInfo) {
     //   // console.log("newIngredient:", newIngredientInfo);
     // }
     res.status(200).json({
-      ingredientInfo: newIngredientInfo,
+      recipeIngredientInfo: newIngredientInfo,
       message: `Success! RecipeIngredient Saved!`,
     });
   } catch (err) {
