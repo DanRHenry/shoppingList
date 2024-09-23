@@ -5,10 +5,22 @@ const RecipeSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    time: {
+        type: String,
+        required: true
+    },
+    temperature: {
+        type: String,
+        required: true
+    },
     ingredients: {
         type: Object,
         required: true
     },
+    instructions: {
+        type: String,
+        required: true
+    }
     // ingredientName: {
     //     type: String,
     //     required: true

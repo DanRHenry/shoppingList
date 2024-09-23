@@ -332,7 +332,8 @@ width: 100%;
     margin-top: 1em;
     width: 85%;
     min-height: 8em;
-    text-indent: 1em;
+    padding-left: 1em;
+    padding-top: 1em;
 }
 
 .newIngredients {

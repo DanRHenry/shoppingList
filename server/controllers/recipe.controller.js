@@ -12,21 +12,26 @@ const serverError = (res, error) => {
 
 router.post("/storeRecipe", async (req, res) => {
   try {
+    // console.log("body: ",req.body)
     const recipeInfo = new Recipe({
       recipeName: req.body.recipeName,
       ingredients: req.body.ingredients,
+      time: req.body.time,
+      temperature: req.body.temperature,
+      instructions: req.body.instructions
     });
 
+    // console.log("recipeInfo: ",recipeInfo)
     const newRecipeInfo = await recipeInfo.save();
     if (newRecipeInfo) {
-      console.log("newRecipe:", newRecipeInfo);
+      // console.log("newRecipe:", newRecipeInfo);
     }
     res.status(200).json({
       newRecipeInfo: newRecipeInfo,
       message: `Success! Recipe Saved!:${req.body}`,
     });
   } catch (err) {
-    console.log(Recipe);
+    // console.log(Recipe);
     res.status(500).json({
       ERROR: err.message,
     });
@@ -38,7 +43,7 @@ router.post("/storeRecipe", async (req, res) => {
 router.post("/find", async (req, res) => {
   try {
     const { recipeName } = req.body;
-    console.log("RecipeName:", recipeName);
+    // console.log("RecipeName:", recipeName);
     const findRecipe = await Recipe.findOne({ recipeName: recipeName });
 
     findRecipe
