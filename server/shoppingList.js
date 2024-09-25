@@ -107,7 +107,7 @@ app.options("*", (req, res) => {
 app.use("/api/shoppinglist/user", userController)
 app.use("/api/shoppinglist/ingredient", ingredientController)
 app.use("/api/shoppinglist/recipe", recipeController)
-app.use("/api/shoppingList/recipeingredient", recipeIngredientController)
+app.use("/api/shoppinglist/recipeingredient", recipeIngredientController)
 // app.use("/api/jeopardy/user", user);
 // app.use("/api/jeopardy/questions", questions);
 // app.use("/api/jeopardy/gameplay", gameplay);

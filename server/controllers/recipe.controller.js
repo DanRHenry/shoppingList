@@ -11,8 +11,8 @@ const serverError = (res, error) => {
 // ------------------------ POST ----------------------
 
 router.post("/storeRecipe", async (req, res) => {
+  console.log("req.body: ", req.body)
   try {
-    // console.log("body: ",req.body)
     const recipeInfo = new Recipe({
       recipeName: req.body.recipeName,
       ingredients: req.body.ingredients,
@@ -21,10 +21,9 @@ router.post("/storeRecipe", async (req, res) => {
       instructions: req.body.instructions
     });
 
-    // console.log("recipeInfo: ",recipeInfo)
     const newRecipeInfo = await recipeInfo.save();
     if (newRecipeInfo) {
-      // console.log("newRecipe:", newRecipeInfo);
+      console.log("newRecipe:", newRecipeInfo);
     }
     res.status(200).json({
       newRecipeInfo: newRecipeInfo,
@@ -42,8 +41,9 @@ router.post("/storeRecipe", async (req, res) => {
 
 router.post("/find", async (req, res) => {
   try {
-    const { recipeName } = req.body;
-    // console.log("RecipeName:", recipeName);
+    // console.log("req.body: ", await req.body)
+    const { recipeName } = await req.body;
+    // console.log("aRecipeName:", await recipeName);
     const findRecipe = await Recipe.findOne({ recipeName: recipeName });
 
     findRecipe
@@ -101,7 +101,7 @@ router.delete("/delete/", async (req, res) => {
           message: `The recipe was unable to be deleted.`,
         });
   } catch (err) {
-    console.log("oops");
+    // console.log("oops");
     serverError(res, err);
   }
 });

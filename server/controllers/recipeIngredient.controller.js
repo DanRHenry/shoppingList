@@ -12,7 +12,7 @@ const serverError = (res, error) => {
 // ------------------------ POST ----------------------
 
 router.post("/storeRecipeIngredient", async (req, res) => {
-  console.log("storeRecipeIngredientReq.body: ", req.body)
+  // console.log("storeRecipeIngredientReq.body: ", req.body)
   try {
     const recipeIngredientInfo = new RecipeIngredient({
       recipeIngredientName: req.body.ingredientName,

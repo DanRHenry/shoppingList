@@ -21,22 +21,6 @@ const RecipeSchema = new mongoose.Schema({
         type: String,
         required: true
     }
-    // ingredientName: {
-    //     type: String,
-    //     required: true
-    // },
-    // quantity: {
-    //     type: Object,
-    //     required: true
-    // },
-    // unit: {
-    //     type: Object,
-    //     required: true
-    // },
-    // calories: {
-    //     type: Object,
-    //     required: true
-    // }
 })
 
 module.exports = mongoose.model("Recipe", RecipeSchema);
