@@ -240,8 +240,8 @@ Source code is available on Github
   }
 })(window, document);
 
-const serverURL = "http://127.0.0.1:3498/api/shoppinglist";
-// const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
+// const serverURL = "http://127.0.0.1:3498/api/shoppinglist";
+const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
 
 const loginForm = document.getElementById("login-form");
 
@@ -362,20 +362,8 @@ async function handleNewRecipeSubmit(e) {
     "newIngredientCalorieInputs"
   );
 
-  /* 
-recipeName
-time
-temperature
-ingredients
-instructions
-*/
   let newRecipe = {};
-  console.log("start")
-console.log(newIngredients)
-console.log(newIngredientAmtInputs)
-console.log(measurementUnit)
-console.log(newIngredientCalorieInputs)
-console.log("finish")
+
   newRecipe.recipeName = nameInput;
   newRecipe.time = timeInput;
   newRecipe.temperature = temperatureInput;
@@ -391,8 +379,16 @@ console.log("finish")
     newRecipe.ingredients.push(newIngredient);
   }
 
-  console.log(newRecipe);
+  // console.log(newRecipe);
 
+  // console.log(nameInput)
+  // console.log("nameInput: ", nameInput, typeof nameInput)
+  // console.log("newRecipe: ",newRecipe)
+  // console.log(await checkForExistingRecipe(nameInput))
+  if (await checkForExistingRecipe(nameInput) === "Found!") {
+    return
+  }
+  // const nameObject = {nameInput: nameInput}
   await postNewRecipe(
     newRecipe
   );
@@ -400,7 +396,10 @@ console.log("finish")
 }
 
 async function postNewIngredient(item, qty) {
+  console.log("item:",item)
   const URL = `${serverURL}/ingredient/storeIngredient`;
+
+  console.log(await checkForExistingIngredient(item))
 
   if ((await checkForExistingIngredient(item)) === "Found!") {
     document.getElementById(
@@ -418,7 +417,7 @@ async function postNewIngredient(item, qty) {
         recipe: "",
       };
 
-      const res = fetch(URL, {
+      const res = await fetch(URL, {
         method: "POST",
         mode: "cors",
         headers: {
@@ -432,19 +431,17 @@ async function postNewIngredient(item, qty) {
   }
   await fetchShoppingList();
 }
-// console.log(nameInput, timeInput, temperatureInput, ingredientValues, recipeInstructionsInput)
+
 async function postNewRecipe(
-  newRecipe
+  newRecipeInformation
 ) {
-  const {ingredients, instructions, recipeName, temperature, time} = newRecipe;
-  console.log("recipeName: ", recipeName);
-  console.log("time: ", time);
-  console.log("temperature: ", temperature);
-  console.log("ingredients: ", ingredients); // ingredients not working yet
-  console.log("instructions: ", instructions);
+
+
+  const {ingredients, instructions, recipeName, temperature, time} = newRecipeInformation;
+
   const URL = `${serverURL}/recipe/storeRecipe`;
 
-  if ((await checkForExistingRecipe(recipeName)) === "Found!") {
+  if (await checkForExistingRecipe(recipeName) === "Found!") {
     return console.log("it's here");
   } else {
     try {
@@ -456,7 +453,9 @@ async function postNewRecipe(
         instructions: instructions
       };
 
-      const res = fetch(URL, {
+      // const res = await fetch(URL, {
+  await fetch(URL, {
+
         method: "POST",
         mode: "cors",
         headers: {
@@ -494,14 +493,13 @@ async function checkForExistingIngredient(item) {
     const data = await res.json();
     return data.message;
   } catch (error) {
-    // console.log(error);
   }
 }
 
 async function checkForExistingRecipeIngredient(item) {
   const URL = `${serverURL}/recipeingredient/find`;
 
-  console.log("item: ", item);
+  // console.log("item: ", item);
   const ingredientQuery = {
     ingredientName: item,
   };
@@ -531,7 +529,7 @@ async function checkForExistingRecipe(item) {
   const URL = `${serverURL}/recipe/find`;
 
   const ingredientQuery = {
-    ingredientName: item,
+    recipeName: item,
   };
 
   const reqOptions = {
@@ -858,7 +856,7 @@ async function fetchRecipeList() {
 
 async function populateRecipeList() {
   const recipes = await fetchRecipeList();
-console.log("recipes: ",recipes)
+// console.log("recipes: ",recipes)
   //   console.log(recipes);
   const selections = document.getElementById("selections");
   selections.innerHTML = "";
@@ -915,6 +913,8 @@ console.log("recipes: ",recipes)
           if (data.message === "The recipe was successfully deleted!") {
             console.log("the recipe was deleted");
             await populateRecipeList();
+            //delete previous recipe info
+            document.getElementsByClassName("mainContent")?.remove()
           }
         } catch (error) {
           console.log(error);
@@ -1014,7 +1014,7 @@ console.log("recipes: ",recipes)
         const URL = `${serverURL}/recipeingredient/storeRecipeIngredient`;
 
         try {
-          console.log("ingredientObject: ", ingredientObject);
+          // console.log("ingredientObject: ", ingredientObject);
           const res = await fetch(URL, {
             method: "POST",
             mode: "cors",
@@ -1104,13 +1104,13 @@ console.log("recipes: ",recipes)
         const convertedCalories =
           +newIngredientCalorieInputs.value / convertedUnits;
 
-        console.log(convertedCalories, typeof convertedCalories);
-        console.log(
-          "sending converted: ",
-          caloriesToSend,
-          "calories per ",
-          measurementUnitToSend
-        );
+        // console.log(convertedCalories, typeof convertedCalories);
+        // console.log(
+        //   "sending converted: ",
+        //   caloriesToSend,
+        //   "calories per ",
+        //   measurementUnitToSend
+        // );
         return {
           caloriesToSend: convertedCalories,
           measurementUnitToSend: "fl oz",
@@ -1266,7 +1266,7 @@ console.log("recipes: ",recipes)
     recipeTableBody.append(ingredientInputForm, timeAndTemp);
 
     const ingredientInput = document.getElementById("newIngredientInput");
-    console.log(ingredientInput.textContent);
+    // console.log(ingredientInput.textContent);
     ingredientInput.addEventListener("change", async () => {
       const data = await checkForExistingRecipeIngredient(
         ingredientInput.value
@@ -1276,7 +1276,7 @@ console.log("recipes: ",recipes)
 
       if (data.message === "Found!") {
         // console.log("the item has been found")
-        console.log(body);
+        // console.log(body);
         measurementUnit.value = "fl oz";
         // console.log("measurementUnit", measurementUnit)
         newIngredientAmtInputs.value = 1;
@@ -1307,7 +1307,7 @@ console.log("recipes: ",recipes)
     entry.value = recipe.recipeName;
     entry.textContent = recipe.recipeName;
     entry.style.textDecoration = "none";
-    entry.addEventListener("click", handleEntryClick);
+    entry.addEventListener("click", handleRecipeClick);
 
     const showRecipeBtn = document.createElement("button");
     showRecipeBtn.className = "button";
@@ -1479,7 +1479,7 @@ console.log("recipes: ",recipes)
       }
     }
 
-    function handleEntryClick() {
+    function handleRecipeClick() {
       const recipeTableBody = document.getElementById("recipeTableBody");
       recipeTableBody.innerHTML = "";
 
