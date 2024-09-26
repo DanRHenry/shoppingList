@@ -203,6 +203,7 @@ body {
 
 #recipeCookTimeInputField, #recipeTempInputField {
     width: 6em;
+    text-align: center;
 }
 
 .newIngredientQtys {

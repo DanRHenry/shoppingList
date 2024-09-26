@@ -884,7 +884,7 @@ async function populateRecipeList() {
   const deleteRecipeBtn = document.createElement("button");
   deleteRecipeBtn.id = "deleteRecipe";
   deleteRecipeBtn.className = "button";
-  deleteRecipeBtn.textContent = "Delete Selected";
+  deleteRecipeBtn.textContent = "Delete Recipe";
   addRecipeContainer.append(deleteRecipeBtn);
   deleteRecipeBtn.addEventListener("click", handleDeleteRecipe);
 
@@ -1143,7 +1143,8 @@ async function populateRecipeList() {
         .getElementById("addRecipeIngredientsToShoppingListBtn")
         ?.remove();
     }
-    const measurementUnit = document.createElement("input");
+    // const measurementUnit = document.createElement("input");
+    const measurementUnit = document.createElement("select");
     measurementUnit.setAttribute("list", "unitOptions");
     measurementUnit.className = "measurementUnit";
     measurementUnit.id = "measurementUnitInput"; //todo - remove this when adding a new ingredient line
@@ -1178,15 +1179,19 @@ async function populateRecipeList() {
       }
     }
 
-    const unitOptionsDataList = document.createElement("datalist");
-    unitOptionsDataList.id = "unitOptions";
+    // const unitOptionsDataList = document.createElement("datalist");
+    // unitOptionsDataList.id = "unitOptions";
 
+    //todo use this for ingredient names, fetched from the backend list of all known ingredients
     const unitOptions = ["tsp", "tbsp", "fl oz", "cup", "pint", "qt", "gal"];
 
     unitOptions.map((unit) => {
       const option = document.createElement("option");
       option.value = unit;
-      unitOptionsDataList.append(option);
+      option.textContent = unit;
+      // unitOptionsDataList.append(option);
+      measurementUnit.append(option);
+
     });
 
     const ingredientDataList = document.createElement("datalist");
