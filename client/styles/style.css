@@ -240,6 +240,7 @@ body {
     align-self: center;
     left: 3%;
     top: 2.5%;
+    overflow-y: auto;
 }
 
 #recipeWindowContent {
@@ -263,7 +264,7 @@ body {
     align-items: center;
     margin-top: 1em;
     width: 80vw;
-    overflow-y: auto;
+    /* overflow-y: auto; */
 }
 
 #instructions {
