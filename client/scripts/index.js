@@ -1434,8 +1434,8 @@ async function populateRecipeList() {
       instructions.textContent = recipeInfo.instructions
       instructionsContainer.append(instructions)
 
-      recipeText.append(recipeName, temp, time, listContainer, instructionsContainer);
-
+      recipeText.append(recipeName, temp, time, listContainer);
+      document.getElementById("recipeWindowContent").append(instructionsContainer)
       /* 
         <div>Recipe Name Here</div>
           <div>Temp</div>
@@ -1453,6 +1453,7 @@ async function populateRecipeList() {
     recipeCheckbox.addEventListener("click", handleRecipeCheckboxClick);
 
     function handleCloseRecipeWindow() {
+      document.getElementById("instructionsContainer")?.remove()
       recipeWindow.style.height = "0";
       recipeWindow.style.width = "0";
 
