@@ -1362,11 +1362,11 @@ async function populateRecipeList() {
         "closeRecipeWindowBtn"
       );
 
-      recipeWindow.style.height = "95%";
-      recipeWindow.style.width = "95%";
+      recipeWindow.style.height = "95vh";
+      recipeWindow.style.width = "95vw";
 
-      recipeWindowContent.style.height = "93%";
-      recipeWindowContent.style.width = "93%";
+      recipeWindowContent.style.height = "93vh";
+      recipeWindowContent.style.width = "93vw";
       recipeWindowContent.style.visibility = "visible";
 
       closeRecipeWindowBtn.style.visibility = "visible";
