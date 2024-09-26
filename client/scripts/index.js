@@ -1323,7 +1323,36 @@ async function populateRecipeList() {
 
     recipeListTableBody.append(recipeGroup);
 
+    // console.log("entry: ", entry.textContent)
+
     async function handleShowRecipeClick() {
+      const data = async () => {
+        const URL = `${serverURL}/recipe/find`
+
+        const recipeQuery = {
+          recipeName: recipe.recipeName
+        };
+      
+        const reqOptions = {
+          method: "POST",
+          mode: "cors",
+          headers: new Headers({
+            "Content-Type": "application/json",
+          }),
+          body: JSON.stringify(recipeQuery),
+        };
+      
+        try {
+          const res = await fetch(URL, reqOptions);
+          const data = await res.json();
+          return data.findRecipe;
+        } catch (error) {
+        }
+      }
+
+    const recipeInfo = (await data())
+
+    console.log(recipeInfo)
       const recipeWindow = document.getElementById("recipeWindow");
       const recipeWindowContent = document.getElementById(
         "recipeWindowContent"
@@ -1349,14 +1378,14 @@ async function populateRecipeList() {
       const recipeText = document.getElementById("recipeText");
       recipeText.innerHTML = "";
 
-      const recipeName = document.createElement("div");
-      recipeName.textContent = "Recipe Name Here";
+      const recipeName = document.createElement("h2");
+      recipeName.textContent = recipeInfo.recipeName;
 
       const temp = document.createElement("div");
-      temp.textContent = "Temp...";
+      temp.textContent = `Temp: ${recipeInfo.temperature}`;
 
       const time = document.createElement("div");
-      time.textContent = "Time...";
+      time.textContent = `Time: ${recipeInfo.time}`;
 
       const listContainer = document.createElement("div");
       listContainer.id = "listContainer";
@@ -1369,76 +1398,43 @@ async function populateRecipeList() {
       column_two.className = "recipeIngredientsColumns";
       column_two.id = "recipeIngredientsColumn_2";
 
-      const ingredient_one = document.createElement("li");
-      ingredient_one.textContent = "Ingredient 1";
+      // const ingredient_one = document.createElement("li");
+      // ingredient_one.textContent = "Ingredient 1";
 
-      const ingredient_two = document.createElement("li");
-      ingredient_two.textContent = "Ingredient 2";
+      // const ingredient_two = document.createElement("li");
+      // ingredient_two.textContent = "Ingredient 2";
 
-      const ingredient_three = document.createElement("li");
-      ingredient_three.textContent = "Ingredient 3";
+      // const ingredient_three = document.createElement("li");
+      // ingredient_three.textContent = "Ingredient 3";
 
-      const ingredient_four = document.createElement("li");
-      ingredient_four.textContent = "Ingredient 4";
+      // const ingredient_four = document.createElement("li");
+      // ingredient_four.textContent = "Ingredient 4";
 
-      column_one.append(ingredient_one, ingredient_two);
-      column_two.append(ingredient_three, ingredient_four);
+      const ingredients = recipeInfo.ingredients;
 
-      listContainer.append(column_one, column_two);
+      for (let i = 0; i < ingredients.length; i += 2){
+        const firstDiv = document.createElement("div")
+        firstDiv.textContent = `${ingredients[i].amount} ${ingredients[i].measurementUnit} ${ingredients[i].name}`;
+
+        const secondDiv = document.createElement("div")
+        secondDiv.textContent =  `${ingredients[i+1].amount} ${ingredients[i+1].measurementUnit} ${ingredients[i+1].name}`
+
+      column_one.append(firstDiv)
+      if (ingredients[i+1]) {
+        column_two.append(secondDiv)
+      }
+    }
+    listContainer.append(column_one, column_two);
+
+      const instructionsContainer = document.createElement("div")
+      instructionsContainer.id = "instructionsContainer"
 
       const instructions = document.createElement("div");
       instructions.id = "instructions";
-      instructions.textContent = `Instruction text Here: Lorem ipsum dolor sit, amet consectetur
-            adipisicing elit. Repellat consequuntur minus sapiente perspiciatis
-            deleniti magnam illo eius ut corporis, vitae voluptatibus adipisci
-            obcaecati ea beatae? Iusto, debitis voluptas in totam, voluptatem
-            unde sunt ullam provident reiciendis nulla inventore, aspernatur at!
-            Explicabo dolores harum inventore voluptatibus consectetur eaque
-            nemo repudiandae laboriosam optio. Nulla consectetur, nesciunt
-            magnam laborum consequatur mollitia, numquam explicabo molestias,
-            repudiandae praesentium recusandae atque aspernatur laboriosam!
-            Voluptas, dicta perferendis non quisquam hic doloremque alias? Quos
-            repellendus voluptatem sequi in voluptatibus dolores odio nisi
-            facilis numquam fugit expedita eum sed eos rerum officiis nesciunt
-            molestias accusamus pariatur dignissimos, saepe facere! Optio aut
-            mollitia magnam facilis quod exercitationem, minus placeat
-            distinctio aliquam, iure cum autem? Quaerat iure cum voluptatum.
-            Alias unde, molestias ipsam aperiam suscipit nam explicabo, ut
-            provident, nihil voluptatibus tempore assumenda ipsa quos sunt. Id
-            rerum deleniti obcaecati, eius ipsum, quos dolorem temporibus labore
-            at quam veniam sunt recusandae necessitatibus voluptate excepturi
-            eveniet earum. Esse ad, autem inventore architecto error temporibus
-            praesentium dicta, libero placeat dolorum at laboriosam vitae,
-            deleniti nesciunt? Nihil culpa fugiat perferendis eaque obcaecati
-            laudantium, placeat possimus fugit accusantium unde cumque
-            temporibus quidem nemo earum rem iste sunt exercitationem tenetur
-            nulla reprehenderit beatae impedit architecto nobis. Lorem ipsum
-            dolor sit amet consectetur adipisicing elit. Optio enim in
-            cupiditate architecto vero deserunt dicta laudantium voluptatibus,
-            consectetur excepturi? Dolorem, laborum quod ab veritatis eos, autem
-            deleniti quasi id, error maiores reprehenderit eaque labore maxime
-            facere vero molestiae quibusdam corrupti asperiores ipsum velit quae
-            repellat? Tempore eum sapiente quam maiores ad dicta, expedita
-            nostrum adipisci labore dolore molestias velit maxime doloremque
-            vel? Sapiente dicta culpa eligendi deserunt delectus harum ab
-            dignissimos officiis voluptatibus, eum debitis quo impedit,
-            excepturi amet reprehenderit ut illum quidem expedita ullam? At
-            ipsa, esse atque rerum culpa accusamus quaerat alias voluptatem
-            consectetur mollitia voluptas odio dignissimos nam corporis ducimus
-            earum, unde nulla expedita inventore, dolores doloribus maxime! Vel,
-            quisquam. Quam blanditiis magnam illum veritatis dolore, odit saepe
-            tenetur eaque optio perspiciatis quas velit vel veniam hic vitae
-            harum rerum eius accusamus laboriosam excepturi repellendus dolorum,
-            nisi nihil! Voluptates deleniti quod tempora iste consectetur
-            incidunt voluptatum veniam quidem, atque voluptas, perspiciatis
-            sequi totam exercitationem magnam ratione blanditiis eligendi error
-            nulla quam, ad et cupiditate in velit. Architecto eligendi quis,
-            autem nulla impedit similique reprehenderit necessitatibus dolorem
-            consectetur blanditiis laborum corrupti iste numquam sapiente saepe
-            incidunt officia beatae voluptates. Deserunt perspiciatis quia, ut
-            ipsa labore illo dicta!`;
+      instructions.textContent = recipeInfo.instructions
+      instructionsContainer.append(instructions)
 
-      recipeText.append(recipeName, temp, time, listContainer, instructions);
+      recipeText.append(recipeName, temp, time, listContainer, instructionsContainer);
 
       /* 
         <div>Recipe Name Here</div>
