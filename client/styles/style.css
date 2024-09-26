@@ -229,30 +229,21 @@ body {
     text-indent: 3em;
 }
 
-#recipeWindow, #recipeWindowContent {
+#recipeWindow, 
+#recipeWindowContent {
     height: 0;
     width: 0;
     position: fixed;
-    margin-left: auto;
-    margin-top: auto;
-    background-color: white;
 }
 
 #recipeWindow {
-    left: 2.5%;
+    align-self: center;
+    left: 3%;
     top: 2.5%;
 }
 
 #recipeWindowContent {
-    left: 3.5%;
-    top: 3.5%;
-    position: fixed;
-    /* width: 80%;
-    height: 80%; */
-    /* width: 85vw; */
-    /* height: 80vh; */
     background-color: gray;
-    /* background-color: blue; */
     visibility: hidden;
     border: 2px solid black;
 }
@@ -262,28 +253,21 @@ body {
     font-size: x-large;
     margin-left: auto;
     margin-right: auto;
-    /* padding-top: 10%; */
-    /* padding-top: 2em; */
-    /* max-width: 80%; */
     max-width: 80vw;
-    /* position: static; */
 }
 
 #instructionsContainer {
-    /* position: absolute; */
     position: fixed;
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-top: 1em;
-    /* height: 60vh; */
     width: 80vw;
 }
 
 #instructions {
     overflow-y: auto;
-    /* position: relative; */
-    /* bottom: 0; */
+    font-size: 18px;
     background-color: white;
     color: black;
     width: 80%;
@@ -291,9 +275,6 @@ body {
     border: solid black 2px;
     border-radius: .5em;
     padding: 1em;
-    /* height: 400px; */
-    /* background-color: red; */
-    /* height: 50%; */
 }
 
 #listContainer {
@@ -303,7 +284,6 @@ body {
 
 .recipeIngredientsColumns {
     max-width: 40%;
-    /* background-color: red; */
 }
 
 #recipeButtonContainer {
@@ -315,10 +295,8 @@ body {
 }
 
 #closeRecipeWindowBtn {
-    /* position: relative; */
     align-self: center;
     visibility: hidden;
-    /* background-color: red; */
     width: fit-content;
 }
 
