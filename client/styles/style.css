@@ -259,10 +259,11 @@ body {
 #instructionsContainer {
     position: fixed;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     margin-top: 1em;
     width: 80vw;
+    overflow-y: auto;
 }
 
 #instructions {
@@ -270,7 +271,7 @@ body {
     font-size: 18px;
     background-color: white;
     color: black;
-    width: 80%;
+    /* width: 80%; */
     height: 400px;
     border: solid black 2px;
     border-radius: .5em;
