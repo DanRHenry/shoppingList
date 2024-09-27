@@ -924,12 +924,13 @@ async function populateRecipeList() {
   }
 
   async function handleNewRecipeClick() {
-    if (document.getElementById("ingredientInputForm")) {
+    if (document.getElementById("newIngredientGrid")) {
       return;
     }
     if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
       document.getElementById("addRecipeIngredientsToShoppingListBtn").remove();
     }
+
 
     // const mainContent = document.getElementsByClassName('mainContent');
 
@@ -949,13 +950,24 @@ async function populateRecipeList() {
     // const ingredientInputContainer = document.createElement("div");
     // ingredientInputContainer.className = "ingredientInputContainer";
 
-    const newIngredientInput = document.createElement("input");
+    const newIngredientInput = document.createElement("select");
     newIngredientInput.type = "text";
     newIngredientInput.className = "newIngredients";
     newIngredientInput.id = "newIngredientInput";
     newIngredientInput.setAttribute("list", "ingredientOptions");
     newIngredientInput.placeholder = "Name";
     newIngredientInput.required = true;
+
+    const ingredientList = []
+
+    // const URL = `${serverURL}/recipeingredient`
+
+    // const data = await fetch (URL, {
+    //   method: "POST",
+    //   mode: "cors",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },})
 
     const newIngredientMeasure = document.createElement("input");
     newIngredientMeasure.className = "newIngredientMeasure";
@@ -1093,9 +1105,6 @@ async function populateRecipeList() {
         "fl oz": 1,
       };
 
-      let measurementUnitToSend = measurementUnitInput.value;
-      let caloriesToSend = +newIngredientCalorieInput.value;
-
       if (conversionObject[measurementUnitInput.value]) {
         const convertedUnits =
           conversionObject[measurementUnitInput.value] *
@@ -1104,13 +1113,6 @@ async function populateRecipeList() {
         const convertedCalories =
           +newIngredientCalorieInputs.value / convertedUnits;
 
-        // console.log(convertedCalories, typeof convertedCalories);
-        // console.log(
-        //   "sending converted: ",
-        //   caloriesToSend,
-        //   "calories per ",
-        //   measurementUnitToSend
-        // );
         return {
           caloriesToSend: convertedCalories,
           measurementUnitToSend: "fl oz",
@@ -1256,12 +1258,12 @@ async function populateRecipeList() {
 
     ingredientInputForm.append(
       unitOption,
-      unitOptionsDataList,
+      // unitOptionsDataList,
       newRecipeNameInput,
       ingredientDataList
     );
 
-    unitOptionsDataList.append(unitOption);
+    // unitOptionsDataList.append(unitOption);
     ingredientDataList.append(ingredientOption);
 
     const timeAndTemp = document.createElement("div");
@@ -1403,26 +1405,15 @@ async function populateRecipeList() {
       column_two.className = "recipeIngredientsColumns";
       column_two.id = "recipeIngredientsColumn_2";
 
-      // const ingredient_one = document.createElement("li");
-      // ingredient_one.textContent = "Ingredient 1";
-
-      // const ingredient_two = document.createElement("li");
-      // ingredient_two.textContent = "Ingredient 2";
-
-      // const ingredient_three = document.createElement("li");
-      // ingredient_three.textContent = "Ingredient 3";
-
-      // const ingredient_four = document.createElement("li");
-      // ingredient_four.textContent = "Ingredient 4";
-
       const ingredients = recipeInfo.ingredients;
+      console.log("ingredients: ", ingredients)
 
       for (let i = 0; i < ingredients.length; i += 2){
         const firstDiv = document.createElement("div")
         firstDiv.textContent = `${ingredients[i].amount} ${ingredients[i].measurementUnit} ${ingredients[i].name}`;
 
         const secondDiv = document.createElement("div")
-        secondDiv.textContent =  `${ingredients[i+1].amount} ${ingredients[i+1].measurementUnit} ${ingredients[i+1].name}`
+        secondDiv.textContent =  `${ingredients[i+1]?.amount} ${ingredients[i+1]?.measurementUnit} ${ingredients[i+1]?.name}`
 
       column_one.append(firstDiv)
       if (ingredients[i+1]) {
