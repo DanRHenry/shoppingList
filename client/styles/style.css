@@ -306,7 +306,9 @@ body {
 }
 
 #closeRecipeWindowBtn {
-    margin-bottom: 1em;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    /* margin-bottom: 1em; */
     /* align-self: center; */
     visibility: hidden;
     width: fit-content;
