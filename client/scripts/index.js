@@ -950,7 +950,8 @@ async function populateRecipeList() {
     // const ingredientInputContainer = document.createElement("div");
     // ingredientInputContainer.className = "ingredientInputContainer";
 
-    const newIngredientInput = document.createElement("select");
+    // const newIngredientInput = document.createElement("select");
+    const newIngredientInput = document.createElement("input")
     newIngredientInput.type = "text";
     newIngredientInput.className = "newIngredients";
     newIngredientInput.id = "newIngredientInput";
