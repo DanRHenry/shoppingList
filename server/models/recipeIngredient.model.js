@@ -7,12 +7,12 @@ const RecipeIngredientSchema = new mongoose.Schema({
     },
     calories: {
         type: Number,
-        required: false
+        required: true
     },
-    recipe: {
-        type: Object,
-        required: false
-    }
+    // recipe: {
+    //     type: Array,
+    //     required: true
+    // }
 })
 
 /* 

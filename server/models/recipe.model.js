@@ -14,7 +14,7 @@ const RecipeSchema = new mongoose.Schema({
         required: true
     },
     ingredients: {
-        type: Object,
+        type: Array,
         required: true
     },
     instructions: {
