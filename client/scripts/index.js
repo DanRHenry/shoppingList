@@ -1,3 +1,7 @@
+// const serverURL = "http://127.0.0.1:3498/api/shoppinglist";
+const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
+
+
 // https://developers.google.com/identity/sign-in/web/sign-getElementsByName("email")
 // https://stackoverflow.com/questions/2264072/detect-a-finger-swipe-through-javascript-on-the-iphone-and-android
 // https://github.com/john-doherty/swiped-events/blob/master/src/swiped-events.js
@@ -240,8 +244,6 @@ Source code is available on Github
   }
 })(window, document);
 
-// const serverURL = "http://127.0.0.1:3498/api/shoppinglist";
-const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
 
 const loginForm = document.getElementById("login-form");
 
@@ -1491,9 +1493,11 @@ async function populateRecipeList() {
         function handleInstructionsStepClick () {
           if (instructions.style.textDecoration === "line-through") {
             instructions.style.textDecoration = "none";
-            instructions.style.color = "black";
+            instructions.style.color = "white";
+
           } else if (instructions.style.textDecoration === "none") {
             instructions.style.textDecoration = "line-through";
+            instructions.style.color = "black"
           }
         }
       }
