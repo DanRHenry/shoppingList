@@ -240,8 +240,8 @@ Source code is available on Github
   }
 })(window, document);
 
-const serverURL = "http://127.0.0.1:3498/api/shoppinglist";
-// const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
+// const serverURL = "http://127.0.0.1:3498/api/shoppinglist";
+const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
 
 const loginForm = document.getElementById("login-form");
 
@@ -1122,7 +1122,7 @@ async function populateRecipeList() {
 
     const recipeInstructionsInputField = document.createElement("textarea");
     recipeInstructionsInputField.id = "recipeInstructionsInputField";
-    recipeInstructionsInputField.placeholder = "Instructions";
+    recipeInstructionsInputField.placeholder = "Description";
     if (document.getElementById("ingredientInputForm")) {
       document
         .getElementById("addRecipeIngredientsToShoppingListBtn")
@@ -1472,12 +1472,31 @@ async function populateRecipeList() {
       instructionsContainer.append(instructions);
 
       for (let i = 1; i < currentRecipeInstructions.length; i++) {
+        const instructionsRow = document.createElement("div")
+        instructionsRow.className = "instructionsRows"
+
+        const instructionsCheckbox = document.createElement("input")
+        instructionsCheckbox.type = "checkbox"
+        instructionsCheckbox.className = "instructionsCheckboxes"
+        instructionsCheckbox.addEventListener("click", handleInstructionsStepClick)
+
         const instructions = document.createElement("div");
         instructions.className = "instructionsText";
         instructions.textContent = `Step ${i}: ${currentRecipeInstructions[i]}`
-        instructionsContainer.append(instructions);
+        instructions.style.textDecoration = "none";
+        instructionsRow.append(instructionsCheckbox, instructions)
+
+        instructionsContainer.append(instructionsRow);
+
+        function handleInstructionsStepClick () {
+          if (instructions.style.textDecoration === "line-through") {
+            instructions.style.textDecoration = "none";
+            instructions.style.color = "black";
+          } else if (instructions.style.textDecoration === "none") {
+            instructions.style.textDecoration = "line-through";
+          }
+        }
       }
-    
 
 
 
