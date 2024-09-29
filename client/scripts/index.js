@@ -1144,29 +1144,29 @@ async function populateRecipeList() {
     recipeStepRow.append(recipeStepLabel, recipeStep, submitRecipeStepBtn);
 
     function handleSubmitRecipeStep() {
+      const oldBtns = document.getElementsByClassName("submitRecipeStepBtn")
+      oldBtns[oldBtns.length-1].removeEventListener("click", handleSubmitRecipeStep)
+
+      const oldStep = document.getElementsByClassName("recipeStepLabels")
+
+      // console.log("oldStep: ",oldStep)
+
+      // console.log("last step",oldStep[oldStep.length -1])
+
+      // const oldNum = oldStep[oldStep.length -1].textContent[oldStep[oldStep.length -1].textContent.length -3]
+      // console.log("oldnum: ", oldNum)
+
       const recipeStepRow = document.createElement("div");
       recipeStepRow.className = "recipeStepRows";
 
       const recipeStepLabel = document.createElement("div");
       recipeStepLabel.className = "recipeStepLabels";
 
-      const currentRecipeStep = document.getElementById("currentRecipeStep");
-
-      let num = (currentRecipeStep.textContent, currentRecipeStep.textContent[currentRecipeStep.textContent.length -3])
-
       // console.log(currentRecipeStep.textContent)
 
       // console.log(num)
-      num = +num
-
-      num+= 1
-      
-      // console.log(num)
-      // console.log(currentRecipeStep.textContent)
-      recipeStepLabel.textContent = `Step ${num}:`;
 
       // currentRecipeStep.id = "";
-      currentRecipeStep.removeAttribute("id")
 
       recipeStepLabel.id = "currentRecipeStep";
 
@@ -1185,7 +1185,26 @@ async function populateRecipeList() {
 
       const newRecipeBtn = document.getElementById("newRecipeInputBtn") 
       console.log(newRecipeBtn.textContent)
-      newRecipeBtn.prepend(recipeStepRow);
+
+      
+      newRecipeBtn.before(recipeStepRow);
+
+      const currentRecipeStep = document.getElementById("currentRecipeStep");
+
+      console.log(currentRecipeStep)
+
+      currentRecipeStep.removeAttribute("id")
+
+      console.log(currentRecipeStep)
+      let num = (currentRecipeStep.textContent, currentRecipeStep.textContent[currentRecipeStep.textContent.length -3])
+      num = +num
+
+      num+= 1
+      
+      console.log(num)
+      // console.log(currentRecipeStep.textContent)
+      recipeStepLabel.textContent = `Step ${num}:`;
+
     }
 
     // const measurementUnit = document.createElement("input");
