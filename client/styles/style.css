@@ -306,11 +306,12 @@ body {
 .instructionsRows {
     display: flex;
     flex-direction: row;
+    user-select: none;
 }
 
-.instructionsRows:hover {
+/* .instructionsRows:hover {
     background-color: rgb(172, 172, 172);
-}
+} */
 
 #listContainer {
     display: flex;
