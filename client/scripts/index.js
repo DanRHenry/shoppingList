@@ -1129,7 +1129,7 @@ async function populateRecipeList() {
     const recipeStepLabel = document.createElement("div");
     recipeStepLabel.className = "recipeStepLabels";
     recipeStepLabel.textContent = "Step 1: ";
-    recipeStepLabel.id = "currentRecipeStep";
+    // recipeStepLabel.id = "currentRecipeStep";
 
     const recipeStep = document.createElement("input");
     recipeStep.placeholder = "step:";
@@ -1144,17 +1144,12 @@ async function populateRecipeList() {
     recipeStepRow.append(recipeStepLabel, recipeStep, submitRecipeStepBtn);
 
     function handleSubmitRecipeStep() {
+      // const currentRecipeStep = document.getElementById("currentRecipeStep");
+
+      // currentRecipeStep.removeAttribute("id")
+
       const oldBtns = document.getElementsByClassName("submitRecipeStepBtn")
       oldBtns[oldBtns.length-1].removeEventListener("click", handleSubmitRecipeStep)
-
-      const oldStep = document.getElementsByClassName("recipeStepLabels")
-
-      // console.log("oldStep: ",oldStep)
-
-      // console.log("last step",oldStep[oldStep.length -1])
-
-      // const oldNum = oldStep[oldStep.length -1].textContent[oldStep[oldStep.length -1].textContent.length -3]
-      // console.log("oldnum: ", oldNum)
 
       const recipeStepRow = document.createElement("div");
       recipeStepRow.className = "recipeStepRows";
@@ -1162,19 +1157,12 @@ async function populateRecipeList() {
       const recipeStepLabel = document.createElement("div");
       recipeStepLabel.className = "recipeStepLabels";
 
-      // console.log(currentRecipeStep.textContent)
-
-      // console.log(num)
-
-      // currentRecipeStep.id = "";
-
-      recipeStepLabel.id = "currentRecipeStep";
-
-      console.log('here')
-
       const recipeStep = document.createElement("input");
       recipeStep.placeholder = "step:";
       recipeStep.className = "recipeSteps";
+
+      console.log("recipeStepRows: ",document.getElementsByClassName("recipeStepRows"))
+
 
       const submitRecipeStepBtn = document.createElement("button");
       submitRecipeStepBtn.className = "submitRecipeStepBtn";
@@ -1188,26 +1176,15 @@ async function populateRecipeList() {
 
       
       newRecipeBtn.before(recipeStepRow);
-
-      const currentRecipeStep = document.getElementById("currentRecipeStep");
-
-      console.log(currentRecipeStep)
-
-      currentRecipeStep.removeAttribute("id")
-
-      console.log(currentRecipeStep)
-      let num = (currentRecipeStep.textContent, currentRecipeStep.textContent[currentRecipeStep.textContent.length -3])
-      num = +num
-
-      num+= 1
-      
-      console.log(num)
-      // console.log(currentRecipeStep.textContent)
-      recipeStepLabel.textContent = `Step ${num}:`;
-
     }
 
-    // const measurementUnit = document.createElement("input");
+const recipeStepLabels = document.getElementsByClassName("recipeStepLabels")
+
+for (let i = 0; i < recipeStepLabels.length; i++) {
+  recipeStepLabels[i].id = `step_${i}`
+
+}
+
     const measurementUnit = document.createElement("select");
     measurementUnit.setAttribute("list", "unitOptions");
     measurementUnit.className = "measurementUnit";
