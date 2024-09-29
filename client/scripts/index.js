@@ -368,7 +368,8 @@ async function handleNewRecipeSubmit(e) {
   newRecipe.time = timeInput;
   newRecipe.temperature = temperatureInput;
   newRecipe.ingredients = [];
-  newRecipe.instructions = recipeInstructionsInput;
+
+  newRecipe.instructions = [recipeInstructionsInput];
 
   for (let i = 1; i < newIngredients.length; i++) {
     const newIngredient = {};
@@ -378,6 +379,11 @@ async function handleNewRecipeSubmit(e) {
     newIngredient.newIngredientCalorieInput =
       newIngredientCalorieInputs[i].textContent;
     newRecipe.ingredients.push(newIngredient);
+  }
+
+  const recipeSteps = document.getElementsByClassName("recipeSteps")
+  for (let i = 0; i < recipeSteps.length; i++) {
+    newRecipe.instructions.push(recipeSteps[i].value)
   }
 
   // console.log(newRecipe);
@@ -1455,10 +1461,25 @@ async function populateRecipeList() {
       const instructionsContainer = document.createElement("div");
       instructionsContainer.id = "instructionsContainer";
 
+      const currentRecipeInstructions = recipeInfo.instructions
+
+      const currentRecipeDescription = recipeInfo.instructions[0]
+
       const instructions = document.createElement("div");
-      instructions.id = "instructions";
-      instructions.textContent = recipeInfo.instructions;
+      instructions.className = "instructionsText";
+      instructions.id = "currentRecipeDescription"
+      instructions.textContent = currentRecipeDescription;
       instructionsContainer.append(instructions);
+
+      for (let i = 1; i < currentRecipeInstructions.length; i++) {
+        const instructions = document.createElement("div");
+        instructions.className = "instructionsText";
+        instructions.textContent = `Step ${i}: ${currentRecipeInstructions[i]}`
+        instructionsContainer.append(instructions);
+      }
+    
+
+
 
       recipeText.append(recipeName, temp, time, listContainer);
       document
