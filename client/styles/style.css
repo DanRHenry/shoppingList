@@ -314,6 +314,24 @@ body {
     width: fit-content;
 }
 
+.recipeStepRows {
+    display: flex;
+    flex-direction: row;
+    width: 87%;
+    margin-top: 3px;
+}
+
+.recipeStepLabels{
+    margin-left: .5em;
+    margin-right: 1em;
+    width: 4em;
+}
+
+.recipeSteps {
+    width: 100%;
+    text-indent: 3px;
+}
+
 #recipeItem {
     align-items: center;
     max-width: 100%;

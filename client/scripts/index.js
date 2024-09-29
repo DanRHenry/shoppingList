@@ -1064,7 +1064,7 @@ async function populateRecipeList() {
       } else {
         console.log("missing input");
       }
-            await getKnownRecipeIngredients(ingredientInputForm)
+      await getKnownRecipeIngredients(ingredientInputForm);
     }
 
     function convertMeasurementUnitsToFlOz(
@@ -1122,7 +1122,68 @@ async function populateRecipeList() {
         .getElementById("addRecipeIngredientsToShoppingListBtn")
         ?.remove();
     }
-    // const measurementUnit = document.createElement("input");
+
+    const recipeStepRow = document.createElement("div");
+    recipeStepRow.className = "recipeStepRows";
+
+    const recipeStepLabel = document.createElement("div");
+    recipeStepLabel.className = "recipeStepLabels";
+    recipeStepLabel.textContent = "Step 1: ";
+    // recipeStepLabel.id = "currentRecipeStep";
+
+    const recipeStep = document.createElement("input");
+    recipeStep.placeholder = "step:";
+    recipeStep.className = "recipeSteps";
+    recipeStep.id = "step_1"
+
+    const submitRecipeStepBtn = document.createElement("button");
+    submitRecipeStepBtn.className = "submitRecipeStepBtn";
+    submitRecipeStepBtn.textContent = "+";
+    submitRecipeStepBtn.addEventListener("click", handleSubmitRecipeStep);
+
+    recipeStepRow.append(recipeStepLabel, recipeStep, submitRecipeStepBtn);
+
+    function handleSubmitRecipeStep() {
+      const oldBtns = document.getElementsByClassName("submitRecipeStepBtn")
+      oldBtns[oldBtns.length-1].removeEventListener("click", handleSubmitRecipeStep)
+      oldBtns[oldBtns.length-1].remove()
+
+      const recipeStepRow = document.createElement("div");
+      recipeStepRow.className = "recipeStepRows";
+
+      const recipeStepLabel = document.createElement("div");
+      recipeStepLabel.className = "recipeStepLabels";
+
+      const recipeStep = document.createElement("input");
+      recipeStep.placeholder = "step:";
+      recipeStep.className = "recipeSteps";
+
+      console.log("recipeStepRows: ",document.getElementsByClassName("recipeStepRows"))
+
+
+      const submitRecipeStepBtn = document.createElement("button");
+      submitRecipeStepBtn.className = "submitRecipeStepBtn";
+      submitRecipeStepBtn.textContent = "+";
+      submitRecipeStepBtn.addEventListener("click", handleSubmitRecipeStep);
+
+      recipeStepRow.append(recipeStepLabel, recipeStep, submitRecipeStepBtn);
+
+      const newRecipeBtn = document.getElementById("newRecipeInputBtn") 
+      console.log(newRecipeBtn.textContent)
+
+      
+      newRecipeBtn.before(recipeStepRow);
+      const recipeStepLabels = document.getElementsByClassName("recipeStepLabels")
+
+      for (let i = 0; i < recipeStepLabels.length; i++) {
+        console.log("recipeStepLabel: ", recipeStepLabel)
+        recipeStepLabels[i].id = `step_${i+1}`
+        recipeStepLabels[i].textContent = `Step ${i+1}:`
+    }
+
+
+}
+
     const measurementUnit = document.createElement("select");
     measurementUnit.setAttribute("list", "unitOptions");
     measurementUnit.className = "measurementUnit";
@@ -1162,7 +1223,16 @@ async function populateRecipeList() {
 
     //todo add new units to the back end (change the match for added unit, "one")
 
-    const unitOptions = ["tsp", "tbsp", "fl oz", "cup", "pint", "qt", "gal", "one"];
+    const unitOptions = [
+      "tsp",
+      "tbsp",
+      "fl oz",
+      "cup",
+      "pint",
+      "qt",
+      "gal",
+      "one",
+    ];
 
     unitOptions.map((unit) => {
       const option = document.createElement("option");
@@ -1206,6 +1276,7 @@ async function populateRecipeList() {
       .append(
         newIngredientGrid,
         recipeInstructionsInputField,
+        recipeStepRow,
         newRecipeInputBtn
       );
 
@@ -1539,7 +1610,7 @@ const getKnownRecipeIngredients = async (ingredientInputForm) => {
   const fetchedIngredients = data.getAllRecipeIngredients;
 
   for (let i = 0; i < fetchedIngredients.length; i++) {
-    console.log(fetchedIngredients[i].recipeIngredientName)
+    console.log(fetchedIngredients[i].recipeIngredientName);
   }
 
   if (fetchedIngredients) {
@@ -1558,7 +1629,7 @@ const getKnownRecipeIngredients = async (ingredientInputForm) => {
       ingredientOption.value = listing.recipeIngredientName;
       ingredientDataList.append(ingredientOption);
     });
-    document.getElementById("ingredientOptions")?.remove()
+    document.getElementById("ingredientOptions")?.remove();
     ingredientInputForm.append(ingredientDataList);
   }
 };
