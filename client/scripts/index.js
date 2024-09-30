@@ -1446,6 +1446,13 @@ async function populateRecipeList() {
       const ingredients = recipeInfo.ingredients;
       console.log("ingredients: ", ingredients);
 
+      let totalCalories = 0
+
+      for (let i = 0; i < ingredients.length; i++) {
+        totalCalories += Number(ingredients[i].newIngredientCalorieInput)
+      }
+
+      console.log("totalCalories: ",totalCalories)
       for (let i = 0; i < ingredients.length; i += 2) {
         const firstDiv = document.createElement("div");
         firstDiv.textContent = `${ingredients[i].amount} ${ingredients[i].measurementUnit} ${ingredients[i].name}`;
