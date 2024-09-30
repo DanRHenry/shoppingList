@@ -20,6 +20,10 @@ const RecipeSchema = new mongoose.Schema({
     instructions: {
         type: Array,
         required: true
+    },
+    numberOfServings: {
+        type: Number,
+        required: true
     }
 })
 

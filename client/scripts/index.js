@@ -355,6 +355,8 @@ async function handleNewRecipeSubmit(e) {
     "recipeInstructionsInputField"
   ).value;
 
+  const numberOfServingsInput = document.getElementById("numberOfServingsInput")
+
   const newIngredients = document.getElementsByClassName("newIngredients");
   const newIngredientAmtInputs = document.getElementsByClassName(
     "newIngredientAmtInputs"
@@ -370,6 +372,7 @@ async function handleNewRecipeSubmit(e) {
   newRecipe.time = timeInput;
   newRecipe.temperature = temperatureInput;
   newRecipe.ingredients = [];
+  newRecipe.numberOfServings = numberOfServingsInput;
 
   newRecipe.instructions = [recipeInstructionsInput];
 
@@ -931,6 +934,13 @@ async function populateRecipeList() {
     }
     if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
       document.getElementById("addRecipeIngredientsToShoppingListBtn").remove();
+      const recipeStepRows = document.getElementsByClassName("recipeStepRows")
+
+      // for (let i = 0; i < recipeStepRows.length; i++) {
+      //   recipeStepRows[i].remove()
+      // }
+
+      // recipeStepRows
     }
 
     // const mainContent = document.getElementsByClassName('mainContent');
@@ -1122,6 +1132,21 @@ async function populateRecipeList() {
     recipeTempInputField.id = "recipeTempInputField";
     recipeTempInputField.placeholder = "Temperature";
 
+    const numOfServingsRow = document.createElement("div")
+    const numOfServingsLabel = document.createElement("div")
+    numOfServingsLabel.id = "numOfServingsLabel"
+    numOfServingsLabel.textContent = "Servings: "
+
+
+    const numberOfServingsInputField = document.createElement("input")
+    numberOfServingsInputField.type = "number"
+    numberOfServingsInputField.id = "numberOfServingsInputField"
+    numberOfServingsInputField.placeholder = "Servings"
+    numberOfServingsInputField.min = "1"
+    numberOfServingsInputField.value = 1
+
+    numOfServingsRow.append(numOfServingsLabel, numberOfServingsInputField)
+
     const recipeInstructionsInputField = document.createElement("textarea");
     recipeInstructionsInputField.id = "recipeInstructionsInputField";
     recipeInstructionsInputField.placeholder = "Description";
@@ -1306,7 +1331,7 @@ async function populateRecipeList() {
 
     const timeAndTemp = document.createElement("div");
     timeAndTemp.id = "timeAndTemp";
-    timeAndTemp.append(recipeCookTimeInputField, recipeTempInputField);
+    timeAndTemp.append(recipeCookTimeInputField, recipeTempInputField, numOfServingsRow);
 
     recipeTableBody.append(ingredientInputForm, timeAndTemp);
 
@@ -1424,11 +1449,11 @@ async function populateRecipeList() {
       const recipeName = document.createElement("h2");
       recipeName.textContent = recipeInfo.recipeName;
 
-      const temp = document.createElement("div");
+      const temp = document.createElement("li");
       temp.textContent = `Temp: ${recipeInfo.temperature}`;
       temp.className = "temperatureDivs"
 
-      const time = document.createElement("div");
+      const time = document.createElement("li");
       time.textContent = `Time: ${recipeInfo.time}`;
       time.className = "timeDivs"
 
@@ -1444,15 +1469,7 @@ async function populateRecipeList() {
       column_two.id = "recipeIngredientsColumn_2";
 
       const ingredients = recipeInfo.ingredients;
-      console.log("ingredients: ", ingredients);
 
-      let totalCalories = 0
-
-      for (let i = 0; i < ingredients.length; i++) {
-        totalCalories += Number(ingredients[i].newIngredientCalorieInput)
-      }
-
-      console.log("totalCalories: ",totalCalories)
       for (let i = 0; i < ingredients.length; i += 2) {
         const firstDiv = document.createElement("div");
         firstDiv.textContent = `${ingredients[i].amount} ${ingredients[i].measurementUnit} ${ingredients[i].name}`;
@@ -1512,8 +1529,35 @@ async function populateRecipeList() {
       }
 
 
+      console.log("ingredients: ", ingredients);
 
-      recipeText.append(recipeName, temp, time, listContainer);
+      let totalCaloriesAmt = 0
+
+      for (let i = 0; i < ingredients.length; i++) {
+        totalCaloriesAmt += Number(ingredients[i].newIngredientCalorieInput)
+      }
+
+      console.log("totalCalories: ",totalCaloriesAmt)
+      
+      const totalCalories = document.createElement("li")
+      totalCalories.id = "totalCalories"
+      totalCalories.textContent = `Total Calories: ${totalCaloriesAmt.toLocaleString()}`;
+
+      const caloriesPerServing = document.createElement("li")
+      caloriesPerServing.id = "caloriesPerServing"
+      const calsPerServing = "placeholder"
+      caloriesPerServing.textContent = `Calories Per Serving: ${calsPerServing}`
+
+      const numberOfServings = document.createElement("li")
+      numberOfServings.id = "numberOfServings";
+      const noOfServings = "placeholder"
+      numberOfServings.textContent = `Number of Servings: ${noOfServings}`
+
+      const generalRecipeInfo = document.createElement("ul")
+      generalRecipeInfo.id = "generalRecipeInfo";
+      generalRecipeInfo.append(temp, time, totalCalories, numberOfServings, caloriesPerServing)
+
+      recipeText.append(recipeName, generalRecipeInfo,listContainer);
       document
         .getElementById("recipeWindowContent")
         .append(instructionsContainer);
@@ -1568,6 +1612,12 @@ async function populateRecipeList() {
         ?.remove();
       document.getElementById("newRecipeInputBtn")?.remove();
 
+      const recipeStepRows = document.getElementsByClassName("recipeStepRows")
+
+      for (let i = recipeStepRows.length -1; i >= 0; i--) {
+        recipeStepRows[i].remove()
+      }
+      
       const checkboxHeader = document.createElement("th");
       checkboxHeader.textContent = "Select";
 

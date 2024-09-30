@@ -11,14 +11,15 @@ const serverError = (res, error) => {
 // ------------------------ POST ----------------------
 
 router.post("/storeRecipe", async (req, res) => {
-  console.log("req.body: ", req.body)
+  // console.log("req.body: ", req.body)
   try {
     const recipeInfo = new Recipe({
       recipeName: req.body.recipeName,
       ingredients: req.body.ingredients,
       time: req.body.time,
       temperature: req.body.temperature,
-      instructions: req.body.instructions
+      instructions: req.body.instructions,
+      numberOfServings: req.body.numberOfServings
     });
 
     const newRecipeInfo = await recipeInfo.save();

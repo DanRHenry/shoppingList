@@ -206,6 +206,16 @@ body {
     text-align: center;
 }
 
+
+
+#numberOfServingsInputField, #numOfServingsLabel {
+    display: inline;
+}
+
+#numberOfServingsInputField{
+    width: 3em;
+}
+
 .newIngredientQtys {
     width: 1.5em;
     margin-right: .5em;
@@ -320,13 +330,17 @@ body {
     /* margin-left: 2em; */
 }
 
-.temperatureDivs {
+/* #generalRecipeInfo {
+    display: block;
+} */
+
+.temperatureDivs, .timeDivs, #totalCalories, #caloriesPerServing, #numberOfServings {
     margin-left: 8%;
 }
 
-.timeDivs {
+/* .timeDivs {
     margin-left: 8%;
-}
+} */
 
 #recipeIngredientsColumn_1 {
     margin-top: 1em;
