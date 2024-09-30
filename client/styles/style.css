@@ -320,6 +320,14 @@ body {
     /* margin-left: 2em; */
 }
 
+.temperatureDivs {
+    margin-left: 8%;
+}
+
+.timeDivs {
+    margin-left: 8%;
+}
+
 #recipeIngredientsColumn_1 {
     margin-top: 1em;
     /* align-self: center; */

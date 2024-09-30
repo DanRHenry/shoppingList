@@ -1426,9 +1426,11 @@ async function populateRecipeList() {
 
       const temp = document.createElement("div");
       temp.textContent = `Temp: ${recipeInfo.temperature}`;
+      temp.className = "temperatureDivs"
 
       const time = document.createElement("div");
       time.textContent = `Time: ${recipeInfo.time}`;
+      time.className = "timeDivs"
 
       const listContainer = document.createElement("div");
       listContainer.id = "listContainer";
