@@ -1433,11 +1433,11 @@ async function populateRecipeList() {
       const listContainer = document.createElement("div");
       listContainer.id = "listContainer";
 
-      const column_one = document.createElement("ul");
+      const column_one = document.createElement("div");
       column_one.className = "recipeIngredientsColumns";
       column_one.id = "recipeIngredientsColumn_1";
 
-      const column_two = document.createElement("ul");
+      const column_two = document.createElement("div");
       column_two.className = "recipeIngredientsColumns";
       column_two.id = "recipeIngredientsColumn_2";
 
