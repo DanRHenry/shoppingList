@@ -355,8 +355,9 @@ async function handleNewRecipeSubmit(e) {
     "recipeInstructionsInputField"
   ).value;
 
-  const numberOfServingsInput = document.getElementById("numberOfServingsInput")
+  const numberOfServingsInput = document.getElementById("numberOfServingsInputField").value
 
+  // console.log("numberOfServingsInput: ", numberOfServingsInput)
   const newIngredients = document.getElementsByClassName("newIngredients");
   const newIngredientAmtInputs = document.getElementsByClassName(
     "newIngredientAmtInputs"
@@ -388,7 +389,9 @@ async function handleNewRecipeSubmit(e) {
 
   const recipeSteps = document.getElementsByClassName("recipeSteps")
   for (let i = 0; i < recipeSteps.length; i++) {
-    newRecipe.instructions.push(recipeSteps[i].value)
+    if (recipeSteps[i].value.trim().length > 0) {
+      newRecipe.instructions.push(recipeSteps[i].value)
+    }
   }
 
   // console.log(newRecipe);
@@ -443,9 +446,10 @@ async function postNewIngredient(item, qty) {
 }
 
 async function postNewRecipe(newRecipeInformation) {
-  const { ingredients, instructions, recipeName, temperature, time } =
+  const { ingredients, instructions, recipeName, temperature, time, numberOfServings } =
     newRecipeInformation;
 
+    console.log("newRecipeInformation: ", newRecipeInformation)
   const URL = `${serverURL}/recipe/storeRecipe`;
 
   if ((await checkForExistingRecipe(recipeName)) === "Found!") {
@@ -458,6 +462,7 @@ async function postNewRecipe(newRecipeInformation) {
         temperature: temperature,
         ingredients: ingredients,
         instructions: instructions,
+        numberOfServings: numberOfServings
       };
 
       // const res = await fetch(URL, {
@@ -710,11 +715,13 @@ function populateShoppingList(items) {
     }
     const itemQuantity = document.createElement("td");
     itemQuantity.className = "qty";
+
     const qtyInput = document.createElement("input");
     qtyInput.placeholder = "1";
     qtyInput.type = "number";
     qtyInput.min = "1";
     qtyInput.value = 1;
+    
     itemQuantity.append(qtyInput);
     mainContent.append(itemQuantity);
 
@@ -1420,7 +1427,7 @@ async function populateRecipeList() {
 
       const recipeInfo = await data();
 
-      console.log(recipeInfo);
+      // console.log(recipeInfo);
       const recipeWindow = document.getElementById("recipeWindow");
       const recipeWindowContent = document.getElementById(
         "recipeWindowContent"
@@ -1529,7 +1536,7 @@ async function populateRecipeList() {
       }
 
 
-      console.log("ingredients: ", ingredients);
+      // console.log("ingredients: ", ingredients);
 
       let totalCaloriesAmt = 0
 
@@ -1537,21 +1544,43 @@ async function populateRecipeList() {
         totalCaloriesAmt += Number(ingredients[i].newIngredientCalorieInput)
       }
 
-      console.log("totalCalories: ",totalCaloriesAmt)
+      // console.log("totalCalories: ",totalCaloriesAmt)
       
       const totalCalories = document.createElement("li")
       totalCalories.id = "totalCalories"
       totalCalories.textContent = `Total Calories: ${totalCaloriesAmt.toLocaleString()}`;
 
+      const noOfServingsInput = document.createElement("input")
+      noOfServingsInput.id = "noOfServingsInput";
+      noOfServingsInput.value = recipeInfo.numberOfServings;
+      noOfServingsInput.type = "number"
+      noOfServingsInput.min = "1"
+      noOfServingsInput.addEventListener("change", handleNoOfServingsChange)
+
+      function handleNoOfServingsChange () {
+        // console.log("totalCaloriesAmt: ", totalCaloriesAmt)
+        // console.log("noOfServingsInput.value: ", noOfServingsInput.value)
+        const calsPerServing = (totalCaloriesAmt / noOfServingsInput.value).toFixed(0)
+        document.getElementById("caloriesPerServing").textContent =  `Calories Per Serving: ${calsPerServing}`
+      }
+
+      // console.log("recipeInfo: ", recipeInfo)
       const caloriesPerServing = document.createElement("li")
       caloriesPerServing.id = "caloriesPerServing"
-      const calsPerServing = "placeholder"
+
+      const calsPerServing = (totalCaloriesAmt / noOfServingsInput.value).toFixed(0)
       caloriesPerServing.textContent = `Calories Per Serving: ${calsPerServing}`
+
+
+      
 
       const numberOfServings = document.createElement("li")
       numberOfServings.id = "numberOfServings";
-      const noOfServings = "placeholder"
-      numberOfServings.textContent = `Number of Servings: ${noOfServings}`
+      numberOfServings.textContent = "Number of servings: "
+      numberOfServings.append(noOfServingsInput)
+
+      // const noOfServings = recipeInfo.numberOfServings;
+      // numberOfServings.textContent = `Number of Servings: ${noOfServings}`
 
       const generalRecipeInfo = document.createElement("ul")
       generalRecipeInfo.id = "generalRecipeInfo";
@@ -1712,9 +1741,9 @@ const getKnownRecipeIngredients = async (ingredientInputForm) => {
 
   const fetchedIngredients = data.getAllRecipeIngredients;
 
-  for (let i = 0; i < fetchedIngredients.length; i++) {
-    console.log(fetchedIngredients[i].recipeIngredientName);
-  }
+  // for (let i = 0; i < fetchedIngredients.length; i++) {
+  //   console.log(fetchedIngredients[i].recipeIngredientName);
+  // }
 
   if (fetchedIngredients) {
     let ingredientDataList = document.createElement("datalist");

@@ -216,6 +216,10 @@ body {
     width: 3em;
 }
 
+#noOfServingsInput {
+    width: 3em;
+}
+
 .newIngredientQtys {
     width: 1.5em;
     margin-right: .5em;
