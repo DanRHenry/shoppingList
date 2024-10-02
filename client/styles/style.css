@@ -256,13 +256,14 @@ body {
     /* align-self: center; */
     left: 3%;
     top: 2.5%;
-    overflow-y: auto;
+    /* overflow-y: auto; */
 }
 
 #recipeWindowContent {
     background-color: gray;
     visibility: hidden;
     border: 2px solid black;
+    overflow-y: auto;
     /* display: flex; */
     /* flex-direction: column; */
 }
