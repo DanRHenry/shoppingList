@@ -1437,7 +1437,8 @@ async function populateRecipeList() {
         "closeRecipeWindowBtn"
       );
 
-      recipeWindow.style.height = "95vh";
+      recipeWindow.removeAttribute("style")
+      // recipeWindow.style.height = "95vh";
       recipeWindow.style.width = "95vw";
 
       recipeWindowContent.style.height = "93vh";
