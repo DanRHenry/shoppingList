@@ -1560,6 +1560,10 @@ async function populateRecipeList() {
       function handleNoOfServingsChange () {
         // console.log("totalCaloriesAmt: ", totalCaloriesAmt)
         // console.log("noOfServingsInput.value: ", noOfServingsInput.value)
+        if (noOfServingsInput.value < 1) {
+          noOfServingsInput.value = 1;
+          return;
+        }
         const calsPerServing = (totalCaloriesAmt / noOfServingsInput.value).toFixed(0)
         document.getElementById("caloriesPerServing").textContent =  `Calories Per Serving: ${calsPerServing}`
       }
