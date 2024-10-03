@@ -1249,13 +1249,15 @@ async function populateRecipeList() {
         "fl oz": 1,
       };
 
-      console.log(measurementUnit.value);
+      // console.log(measurementUnit.value);
       if (conversionObject[measurementUnit.value]) {
         const newValue =
           body.calories * conversionObject[measurementUnit.value];
         console.log(newValue.toFixed(0));
         newIngredientCalorieInputs.value =
           +newValue.toFixed(0) * +newIngredientAmtInputs.value;
+      } else if (measurementUnit.value === "whole") {
+        +newIngredientCalorieInputs.
       }
     }
 
@@ -1271,7 +1273,8 @@ async function populateRecipeList() {
       "pint",
       "qt",
       "gal",
-      "one",
+      "whole",
+      "half",
     ];
 
     unitOptions.map((unit) => {
@@ -1347,22 +1350,12 @@ async function populateRecipeList() {
       const data = await checkForExistingRecipeIngredient(
         ingredientInput.value
       );
-      // console.log(data.findIngredient.calories)
       const body = data.findIngredient;
 
       if (data.message === "Found!") {
-        // console.log("the item has been found")
-        // console.log(body);
         measurementUnit.value = "fl oz";
-        // console.log("measurementUnit", measurementUnit)
         newIngredientAmtInputs.value = 1;
         newIngredientCalorieInputs.value = body.calories.toFixed(0);
-        /* 
-      newIngredientAmtInputs,
-      measurementUnit,
-      newIngredientCalorieInputs,
-*/
-        //
       } else {
         console.log("the recipe ingredient was not found");
       }
