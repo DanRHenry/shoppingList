@@ -1464,9 +1464,20 @@ async function populateRecipeList() {
         "recipeWindowContent"
       );
       // recipeWindowContent.innerHTML = ""
-      const closeRecipeWindowBtn = document.getElementById(
-        "closeRecipeWindowBtn"
-      );
+      const recipeButtonContainer = document.createElement("div")
+      recipeButtonContainer.id = "recipeButtonContainer"
+
+      // const closeRecipeWindowBtn = document.getElementById(
+      //   "closeRecipeWindowBtn"
+      // );
+      const closeRecipeWindowBtn = document.createElement("button")
+      closeRecipeWindowBtn.id = "closeRecipeWindowBtn"
+      closeRecipeWindowBtn.textContent = "Close"
+
+      closeRecipeWindowBtn.addEventListener("click", handleCloseRecipeWindow);
+
+
+      recipeButtonContainer.append(closeRecipeWindowBtn)
 
       // recipeWindow.removeAttribute("style")
       // recipeWindow.style.height = "95vh";
@@ -1478,9 +1489,9 @@ async function populateRecipeList() {
       recipeWindowContent.style.width = "93vw";
       recipeWindowContent.style.visibility = "visible";
 
-      closeRecipeWindowBtn.style.visibility = "visible";
+      // closeRecipeWindowBtn.style.visibility = "visible";
 
-      closeRecipeWindowBtn.addEventListener("click", handleCloseRecipeWindow);
+      // closeRecipeWindowBtn.addEventListener("click", handleCloseRecipeWindow);
 
       //todo - change this recipetext to data fetched
 
@@ -1634,6 +1645,7 @@ async function populateRecipeList() {
         caloriesPerServing
       );
 
+      instructionsContainer.append(recipeButtonContainer)
       recipeText.append(recipeName, generalRecipeInfo, listContainer);
       document
         .getElementById("recipeWindowContent")
@@ -1663,11 +1675,11 @@ async function populateRecipeList() {
       recipeWindowContent.style.width = "0";
       recipeWindowContent.style.visibility = "hidden";
 
-      closeRecipeWindowBtn.style.visibility = "hidden";
-      closeRecipeWindowBtn.removeEventListener(
-        "click",
-        handleCloseRecipeWindow
-      );
+      // closeRecipeWindowBtn.style.visibility = "hidden";
+      // closeRecipeWindowBtn.removeEventListener(
+      //   "click",
+      //   handleCloseRecipeWindow
+      // );
     }
 
     function handleRecipeCheckboxClick() {
