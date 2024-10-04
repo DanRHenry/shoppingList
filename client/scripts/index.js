@@ -1,6 +1,5 @@
-// const serverURL = "http://127.0.0.1:3498/api/shoppinglist";
-const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
-
+const serverURL = "http://127.0.0.1:3498/api/shoppinglist";
+// const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
 
 // https://developers.google.com/identity/sign-in/web/sign-getElementsByName("email")
 // https://stackoverflow.com/questions/2264072/detect-a-finger-swipe-through-javascript-on-the-iphone-and-android
@@ -244,7 +243,6 @@ Source code is available on Github
   }
 })(window, document);
 
-
 const loginForm = document.getElementById("login-form");
 
 const loginBtn = document.getElementById("login-Btn");
@@ -355,7 +353,9 @@ async function handleNewRecipeSubmit(e) {
     "recipeInstructionsInputField"
   ).value;
 
-  const numberOfServingsInput = document.getElementById("numberOfServingsInputField").value
+  const numberOfServingsInput = document.getElementById(
+    "numberOfServingsInputField"
+  ).value;
 
   // console.log("numberOfServingsInput: ", numberOfServingsInput)
   const newIngredients = document.getElementsByClassName("newIngredients");
@@ -387,10 +387,10 @@ async function handleNewRecipeSubmit(e) {
     newRecipe.ingredients.push(newIngredient);
   }
 
-  const recipeSteps = document.getElementsByClassName("recipeSteps")
+  const recipeSteps = document.getElementsByClassName("recipeSteps");
   for (let i = 0; i < recipeSteps.length; i++) {
     if (recipeSteps[i].value.trim().length > 0) {
-      newRecipe.instructions.push(recipeSteps[i].value)
+      newRecipe.instructions.push(recipeSteps[i].value);
     }
   }
 
@@ -446,10 +446,16 @@ async function postNewIngredient(item, qty) {
 }
 
 async function postNewRecipe(newRecipeInformation) {
-  const { ingredients, instructions, recipeName, temperature, time, numberOfServings } =
-    newRecipeInformation;
+  const {
+    ingredients,
+    instructions,
+    recipeName,
+    temperature,
+    time,
+    numberOfServings,
+  } = newRecipeInformation;
 
-    console.log("newRecipeInformation: ", newRecipeInformation)
+  console.log("newRecipeInformation: ", newRecipeInformation);
   const URL = `${serverURL}/recipe/storeRecipe`;
 
   if ((await checkForExistingRecipe(recipeName)) === "Found!") {
@@ -462,7 +468,7 @@ async function postNewRecipe(newRecipeInformation) {
         temperature: temperature,
         ingredients: ingredients,
         instructions: instructions,
-        numberOfServings: numberOfServings
+        numberOfServings: numberOfServings,
       };
 
       // const res = await fetch(URL, {
@@ -721,7 +727,7 @@ function populateShoppingList(items) {
     qtyInput.type = "number";
     qtyInput.min = "1";
     qtyInput.value = 1;
-    
+
     itemQuantity.append(qtyInput);
     mainContent.append(itemQuantity);
 
@@ -941,7 +947,7 @@ async function populateRecipeList() {
     }
     if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
       document.getElementById("addRecipeIngredientsToShoppingListBtn").remove();
-      const recipeStepRows = document.getElementsByClassName("recipeStepRows")
+      const recipeStepRows = document.getElementsByClassName("recipeStepRows");
 
       // for (let i = 0; i < recipeStepRows.length; i++) {
       //   recipeStepRows[i].remove()
@@ -995,6 +1001,9 @@ async function populateRecipeList() {
       const newIngredientCalorieInput = document.getElementById(
         "newIngredientCalorieInput"
       );
+      if (newIngredientCalorieInput.value === "?") {
+        return;
+      }
       if (
         ingredientNameInput.value &&
         ingredientAmtInput.value &&
@@ -1021,6 +1030,14 @@ async function populateRecipeList() {
         ingredientObject.measurementUnitInput = measurementUnitToSend;
         ingredientObject.newIngredientCalorieInput = caloriesToSend;
 
+        console.log("measurementUnitToSend: ", measurementUnitToSend)
+        if (measurementUnitToSend === "whole" || measurementUnitToSend === "half" || measurementUnitToSend === "quarter") {
+          ingredientObject.whole = true
+        } else {
+          ingredientObject.whole = false
+        }
+
+        console.log("ingredientObject.whole: ", ingredientObject.whole)
         ingredientsInformation.push(ingredientObject);
 
         const URL = `${serverURL}/recipeingredient/storeRecipeIngredient`;
@@ -1097,6 +1114,7 @@ async function populateRecipeList() {
       ingredientAmtInput,
       newIngredientCalorieInput
     ) {
+      console.log("measurementUnitInput.value: ", measurementUnitInput.value)
       const conversionObject = {
         gal: 128,
         qt: 32,
@@ -1122,7 +1140,7 @@ async function populateRecipeList() {
       } else {
         return {
           caloriesToSend: +newIngredientCalorieInput.value,
-          measurementUnitToSend: +ingredientAmtInput.value,
+          measurementUnitToSend: measurementUnitInput.value,
         };
       }
     }
@@ -1139,20 +1157,19 @@ async function populateRecipeList() {
     recipeTempInputField.id = "recipeTempInputField";
     recipeTempInputField.placeholder = "Temperature";
 
-    const numOfServingsRow = document.createElement("div")
-    const numOfServingsLabel = document.createElement("div")
-    numOfServingsLabel.id = "numOfServingsLabel"
-    numOfServingsLabel.textContent = "Servings: "
+    const numOfServingsRow = document.createElement("div");
+    const numOfServingsLabel = document.createElement("div");
+    numOfServingsLabel.id = "numOfServingsLabel";
+    numOfServingsLabel.textContent = "Servings: ";
 
+    const numberOfServingsInputField = document.createElement("input");
+    numberOfServingsInputField.type = "number";
+    numberOfServingsInputField.id = "numberOfServingsInputField";
+    numberOfServingsInputField.placeholder = "Servings";
+    numberOfServingsInputField.min = "1";
+    numberOfServingsInputField.value = 1;
 
-    const numberOfServingsInputField = document.createElement("input")
-    numberOfServingsInputField.type = "number"
-    numberOfServingsInputField.id = "numberOfServingsInputField"
-    numberOfServingsInputField.placeholder = "Servings"
-    numberOfServingsInputField.min = "1"
-    numberOfServingsInputField.value = 1
-
-    numOfServingsRow.append(numOfServingsLabel, numberOfServingsInputField)
+    numOfServingsRow.append(numOfServingsLabel, numberOfServingsInputField);
 
     const recipeInstructionsInputField = document.createElement("textarea");
     recipeInstructionsInputField.id = "recipeInstructionsInputField";
@@ -1174,7 +1191,7 @@ async function populateRecipeList() {
     const recipeStep = document.createElement("input");
     recipeStep.placeholder = "step:";
     recipeStep.className = "recipeSteps";
-    recipeStep.id = "step_1"
+    recipeStep.id = "step_1";
 
     const submitRecipeStepBtn = document.createElement("button");
     submitRecipeStepBtn.className = "submitRecipeStepBtn";
@@ -1184,9 +1201,12 @@ async function populateRecipeList() {
     recipeStepRow.append(recipeStepLabel, recipeStep, submitRecipeStepBtn);
 
     function handleSubmitRecipeStep() {
-      const oldBtns = document.getElementsByClassName("submitRecipeStepBtn")
-      oldBtns[oldBtns.length-1].removeEventListener("click", handleSubmitRecipeStep)
-      oldBtns[oldBtns.length-1].remove()
+      const oldBtns = document.getElementsByClassName("submitRecipeStepBtn");
+      oldBtns[oldBtns.length - 1].removeEventListener(
+        "click",
+        handleSubmitRecipeStep
+      );
+      oldBtns[oldBtns.length - 1].remove();
 
       const recipeStepRow = document.createElement("div");
       recipeStepRow.className = "recipeStepRows";
@@ -1198,8 +1218,10 @@ async function populateRecipeList() {
       recipeStep.placeholder = "step:";
       recipeStep.className = "recipeSteps";
 
-      console.log("recipeStepRows: ",document.getElementsByClassName("recipeStepRows"))
-
+      console.log(
+        "recipeStepRows: ",
+        document.getElementsByClassName("recipeStepRows")
+      );
 
       const submitRecipeStepBtn = document.createElement("button");
       submitRecipeStepBtn.className = "submitRecipeStepBtn";
@@ -1208,21 +1230,19 @@ async function populateRecipeList() {
 
       recipeStepRow.append(recipeStepLabel, recipeStep, submitRecipeStepBtn);
 
-      const newRecipeBtn = document.getElementById("newRecipeInputBtn") 
-      console.log(newRecipeBtn.textContent)
+      const newRecipeBtn = document.getElementById("newRecipeInputBtn");
+      console.log(newRecipeBtn.textContent);
 
-      
       newRecipeBtn.before(recipeStepRow);
-      const recipeStepLabels = document.getElementsByClassName("recipeStepLabels")
+      const recipeStepLabels =
+        document.getElementsByClassName("recipeStepLabels");
 
       for (let i = 0; i < recipeStepLabels.length; i++) {
-        console.log("recipeStepLabel: ", recipeStepLabel)
-        recipeStepLabels[i].id = `step_${i+1}`
-        recipeStepLabels[i].textContent = `Step ${i+1}:`
+        console.log("recipeStepLabel: ", recipeStepLabel);
+        recipeStepLabels[i].id = `step_${i + 1}`;
+        recipeStepLabels[i].textContent = `Step ${i + 1}:`;
+      }
     }
-
-
-}
 
     const measurementUnit = document.createElement("select");
     measurementUnit.setAttribute("list", "unitOptions");
@@ -1249,19 +1269,28 @@ async function populateRecipeList() {
         "fl oz": 1,
       };
 
-      console.log(measurementUnit.value);
-      if (conversionObject[measurementUnit.value]) {
-        const newValue =
-          body.calories * conversionObject[measurementUnit.value];
-        console.log(newValue.toFixed(0));
-        newIngredientCalorieInputs.value =
-          +newValue.toFixed(0) * +newIngredientAmtInputs.value;
-      }
+      if (body.whole === false) {
+        console.log("here 1")
+
+        if (conversionObject[measurementUnit.value]) {
+          const newValue =
+            body.calories * conversionObject[measurementUnit.value];
+          newIngredientCalorieInputs.value =
+            +newValue.toFixed(0) * +newIngredientAmtInputs.value;
+          }
+
+        } else if (body.whole === true) {
+        }
+        if (measurementUnit.value === "whole") {
+          newIngredientCalorieInputs.value = (body.calories).toFixed(0);
+        } else if (measurementUnit.value === "half") {
+          newIngredientCalorieInputs.value = (body.calories * 0.5).toFixed(0);
+        } else if (measurementUnit.value === "quarter") {
+          newIngredientCalorieInputs.value = (body.calories * .25).toFixed(0)
+        } else {
+          newIngredientCalorieInputs.value = "?"
+        }
     }
-
-    //todo use this for ingredient names, fetched from the backend list of all known ingredients
-
-    //todo add new units to the back end (change the match for added unit, "one")
 
     const unitOptions = [
       "tsp",
@@ -1271,7 +1300,9 @@ async function populateRecipeList() {
       "pint",
       "qt",
       "gal",
-      "one",
+      "whole",
+      "half",
+      "quarter"
     ];
 
     unitOptions.map((unit) => {
@@ -1338,7 +1369,11 @@ async function populateRecipeList() {
 
     const timeAndTemp = document.createElement("div");
     timeAndTemp.id = "timeAndTemp";
-    timeAndTemp.append(recipeCookTimeInputField, recipeTempInputField, numOfServingsRow);
+    timeAndTemp.append(
+      recipeCookTimeInputField,
+      recipeTempInputField,
+      numOfServingsRow
+    );
 
     recipeTableBody.append(ingredientInputForm, timeAndTemp);
 
@@ -1347,22 +1382,18 @@ async function populateRecipeList() {
       const data = await checkForExistingRecipeIngredient(
         ingredientInput.value
       );
-      // console.log(data.findIngredient.calories)
       const body = data.findIngredient;
 
+      console.log("data: ", data)
       if (data.message === "Found!") {
-        // console.log("the item has been found")
-        // console.log(body);
+        if (data.findIngredient.whole === true) {
+          measurementUnit.value = "whole"
+          console.log(measurementUnit.value)
+        } else if (data.findIngredient.whole === false) {
         measurementUnit.value = "fl oz";
-        // console.log("measurementUnit", measurementUnit)
+      }
         newIngredientAmtInputs.value = 1;
         newIngredientCalorieInputs.value = body.calories.toFixed(0);
-        /* 
-      newIngredientAmtInputs,
-      measurementUnit,
-      newIngredientCalorieInputs,
-*/
-        //
       } else {
         console.log("the recipe ingredient was not found");
       }
@@ -1439,11 +1470,11 @@ async function populateRecipeList() {
 
       // recipeWindow.removeAttribute("style")
       // recipeWindow.style.height = "95vh";
-      recipeWindow.style.height = "200vh"
+      recipeWindow.style.height = "200vh";
       recipeWindow.style.width = "95vw";
 
       // recipeWindowContent.style.height = "93vh";
-      recipeWindowContent.style.height = "fit-content"
+      recipeWindowContent.style.height = "fit-content";
       recipeWindowContent.style.width = "93vw";
       recipeWindowContent.style.visibility = "visible";
 
@@ -1461,11 +1492,11 @@ async function populateRecipeList() {
 
       const temp = document.createElement("li");
       temp.textContent = `Temp: ${recipeInfo.temperature}`;
-      temp.className = "temperatureDivs"
+      temp.className = "temperatureDivs";
 
       const time = document.createElement("li");
       time.textContent = `Time: ${recipeInfo.time}`;
-      time.className = "timeDivs"
+      time.className = "timeDivs";
 
       const listContainer = document.createElement("div");
       listContainer.id = "listContainer";
@@ -1499,101 +1530,111 @@ async function populateRecipeList() {
       const instructionsContainer = document.createElement("div");
       instructionsContainer.id = "instructionsContainer";
 
-      const currentRecipeInstructions = recipeInfo.instructions
+      const currentRecipeInstructions = recipeInfo.instructions;
 
-      const currentRecipeDescription = recipeInfo.instructions[0]
+      const currentRecipeDescription = recipeInfo.instructions[0];
 
       const instructions = document.createElement("div");
       instructions.className = "instructionsText";
-      instructions.id = "currentRecipeDescription"
+      instructions.id = "currentRecipeDescription";
       instructions.textContent = currentRecipeDescription;
       instructionsContainer.append(instructions);
 
       for (let i = 1; i < currentRecipeInstructions.length; i++) {
-        const instructionsRow = document.createElement("div")
-        instructionsRow.className = "instructionsRows"
+        const instructionsRow = document.createElement("div");
+        instructionsRow.className = "instructionsRows";
 
-        const instructionsCheckbox = document.createElement("input")
-        instructionsCheckbox.type = "checkbox"
-        instructionsCheckbox.className = "instructionsCheckboxes"
-        instructionsCheckbox.addEventListener("click", handleInstructionsStepClick)
+        const instructionsCheckbox = document.createElement("input");
+        instructionsCheckbox.type = "checkbox";
+        instructionsCheckbox.className = "instructionsCheckboxes";
+        instructionsCheckbox.addEventListener(
+          "click",
+          handleInstructionsStepClick
+        );
 
         const instructions = document.createElement("div");
         instructions.className = "instructionsText";
-        instructions.textContent = `Step ${i}: ${currentRecipeInstructions[i]}`
+        instructions.textContent = `Step ${i}: ${currentRecipeInstructions[i]}`;
         instructions.style.textDecoration = "none";
-        instructionsRow.append(instructionsCheckbox, instructions)
+        instructionsRow.append(instructionsCheckbox, instructions);
 
         instructionsContainer.append(instructionsRow);
 
-        function handleInstructionsStepClick () {
+        function handleInstructionsStepClick() {
           if (instructions.style.textDecoration === "line-through") {
             instructions.style.textDecoration = "none";
             instructions.style.color = "white";
-
           } else if (instructions.style.textDecoration === "none") {
             instructions.style.textDecoration = "line-through";
-            instructions.style.color = "black"
+            instructions.style.color = "black";
           }
         }
       }
 
-
       // console.log("ingredients: ", ingredients);
 
-      let totalCaloriesAmt = 0
+      let totalCaloriesAmt = 0;
 
       for (let i = 0; i < ingredients.length; i++) {
-        totalCaloriesAmt += Number(ingredients[i].newIngredientCalorieInput)
+        totalCaloriesAmt += Number(ingredients[i].newIngredientCalorieInput);
       }
 
       // console.log("totalCalories: ",totalCaloriesAmt)
-      
-      const totalCalories = document.createElement("li")
-      totalCalories.id = "totalCalories"
+
+      const totalCalories = document.createElement("li");
+      totalCalories.id = "totalCalories";
       totalCalories.textContent = `Total Calories: ${totalCaloriesAmt.toLocaleString()}`;
 
-      const noOfServingsInput = document.createElement("input")
+      const noOfServingsInput = document.createElement("input");
       noOfServingsInput.id = "noOfServingsInput";
       noOfServingsInput.value = recipeInfo.numberOfServings;
-      noOfServingsInput.type = "number"
-      noOfServingsInput.min = "1"
-      noOfServingsInput.addEventListener("change", handleNoOfServingsChange)
+      noOfServingsInput.type = "number";
+      noOfServingsInput.min = "1";
+      noOfServingsInput.addEventListener("change", handleNoOfServingsChange);
 
-      function handleNoOfServingsChange () {
+      function handleNoOfServingsChange() {
         // console.log("totalCaloriesAmt: ", totalCaloriesAmt)
         // console.log("noOfServingsInput.value: ", noOfServingsInput.value)
         if (noOfServingsInput.value < 1) {
           noOfServingsInput.value = 1;
           return;
         }
-        const calsPerServing = (totalCaloriesAmt / noOfServingsInput.value).toFixed(0)
-        document.getElementById("caloriesPerServing").textContent =  `Calories Per Serving: ${calsPerServing}`
+        const calsPerServing = (
+          totalCaloriesAmt / noOfServingsInput.value
+        ).toFixed(0);
+        document.getElementById(
+          "caloriesPerServing"
+        ).textContent = `Calories Per Serving: ${calsPerServing}`;
       }
 
       // console.log("recipeInfo: ", recipeInfo)
-      const caloriesPerServing = document.createElement("li")
-      caloriesPerServing.id = "caloriesPerServing"
+      const caloriesPerServing = document.createElement("li");
+      caloriesPerServing.id = "caloriesPerServing";
 
-      const calsPerServing = (totalCaloriesAmt / noOfServingsInput.value).toFixed(0)
-      caloriesPerServing.textContent = `Calories Per Serving: ${calsPerServing}`
+      const calsPerServing = (
+        totalCaloriesAmt / noOfServingsInput.value
+      ).toFixed(0);
+      caloriesPerServing.textContent = `Calories Per Serving: ${calsPerServing}`;
 
-
-      
-
-      const numberOfServings = document.createElement("li")
+      const numberOfServings = document.createElement("li");
       numberOfServings.id = "numberOfServings";
-      numberOfServings.textContent = "Number of servings: "
-      numberOfServings.append(noOfServingsInput)
+      numberOfServings.textContent = "Number of servings: ";
+      numberOfServings.append(noOfServingsInput);
 
       // const noOfServings = recipeInfo.numberOfServings;
       // numberOfServings.textContent = `Number of Servings: ${noOfServings}`
 
-      const generalRecipeInfo = document.createElement("ul")
+      const generalRecipeInfo = document.createElement("ul");
       generalRecipeInfo.id = "generalRecipeInfo";
-      generalRecipeInfo.append(temp, time, totalCalories, numberOfServings, caloriesPerServing)
+      generalRecipeInfo.append(
+        temp,
+        time,
+        totalCalories,
+        numberOfServings,
+        caloriesPerServing
+      );
 
-      recipeText.append(recipeName, generalRecipeInfo,listContainer);
+      recipeText.append(recipeName, generalRecipeInfo, listContainer);
       document
         .getElementById("recipeWindowContent")
         .append(instructionsContainer);
@@ -1648,12 +1689,12 @@ async function populateRecipeList() {
         ?.remove();
       document.getElementById("newRecipeInputBtn")?.remove();
 
-      const recipeStepRows = document.getElementsByClassName("recipeStepRows")
+      const recipeStepRows = document.getElementsByClassName("recipeStepRows");
 
-      for (let i = recipeStepRows.length -1; i >= 0; i--) {
-        recipeStepRows[i].remove()
+      for (let i = recipeStepRows.length - 1; i >= 0; i--) {
+        recipeStepRows[i].remove();
       }
-      
+
       const checkboxHeader = document.createElement("th");
       checkboxHeader.textContent = "Select";
 
