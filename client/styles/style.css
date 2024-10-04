@@ -249,7 +249,8 @@ body {
 {
     height: 0;
     width: 0;
-    position: fixed;
+  /*  position: fixed; */
+    position: absolute;
 }
 
 #recipeWindow {
@@ -290,6 +291,8 @@ body {
     margin: 1em;
     display: flex;
     flex-direction: column;
+    min-height: fit-content;
+    overflow-y: auto;
 }
 
 #currentRecipeDescription{

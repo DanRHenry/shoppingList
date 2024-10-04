@@ -1484,7 +1484,7 @@ async function populateRecipeList() {
       // recipeWindow.style.minHeight = "100vh";
       recipeWindow.style.width = "95vw";
 
-      recipeWindowContent.style.minHeight = "93vh";
+      // recipeWindowContent.style.minHeight = "93vh";
       recipeWindowContent.style.height = "fit-content";
       recipeWindowContent.style.width = "93vw";
       recipeWindowContent.style.visibility = "visible";
