@@ -1,6 +1,11 @@
 // const serverURL = "http://127.0.0.1:3498/api/shoppinglist";
 const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
 
+/* 
+Known bugs:
+  When the recipe window is open, view recipe buttons are still clickable, which screws up the contents if clicked
+*/
+// 
 // https://developers.google.com/identity/sign-in/web/sign-getElementsByName("email")
 // https://stackoverflow.com/questions/2264072/detect-a-finger-swipe-through-javascript-on-the-iphone-and-android
 // https://github.com/john-doherty/swiped-events/blob/master/src/swiped-events.js
@@ -1031,8 +1036,15 @@ async function populateRecipeList() {
         ingredientObject.newIngredientCalorieInput = caloriesToSend;
 
         console.log("measurementUnitToSend: ", measurementUnitToSend)
-        if (measurementUnitToSend === "whole" || measurementUnitToSend === "half" || measurementUnitToSend === "quarter") {
+        if (measurementUnitToSend === "whole"){
+          ingredientObject.whole = true;
+          ingredientObject.newIngredientCalorieInput = caloriesToSend
+        } else if (measurementUnitToSend === "half") {
+          ingredientObject.whole = true;
+          ingredientObject.newIngredientCalorieInput = caloriesToSend * 2
+        } else if (measurementUnitToSend === "quarter") {
           ingredientObject.whole = true
+          ingredientObject.newIngredientCalorieInput = caloriesToSend * 4
         } else {
           ingredientObject.whole = false
         }
