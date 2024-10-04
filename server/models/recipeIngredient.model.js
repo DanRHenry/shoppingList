@@ -9,10 +9,10 @@ const RecipeIngredientSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    // recipe: {
-    //     type: Array,
-    //     required: true
-    // }
+    whole: {
+        type: Boolean,
+        required: true
+    }
 })
 
 /* 
