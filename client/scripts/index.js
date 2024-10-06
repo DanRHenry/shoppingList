@@ -1,5 +1,7 @@
 // const serverURL = "http://127.0.0.1:3498/api/shoppinglist";
-const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
+// const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
+import {serverURL} from "../helpers/serverURL.js"
+// console.log("here")
 
 /* 
 Known bugs:
