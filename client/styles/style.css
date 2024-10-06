@@ -3,6 +3,22 @@ body {
     background-color: whitesmoke;
 }
 
+#title_page {
+    height: 100vh;
+    width: 100%;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    /* flex-direction: row; */
+    align-items: center;
+    background-color: blue;
+    /* transition: background-color 1s; */
+}
+
+#load_page {
+    margin: auto;
+    /* align-self: center; */
+}
 /* #main {
     width: 100%;
 } */
@@ -199,7 +215,7 @@ body {
 }
 
 #recipeCookTimeInputField, #recipeTempInputField {
-    width: 6em;
+    width: 7em;
     text-align: center;
 }
 
@@ -241,20 +257,34 @@ body {
     text-indent: 3em;
 }
 
-#recipeWindow, 
+/* #recipeWindow,  */
 #recipeWindowContent 
 {
     height: 0;
     width: 0;
   /*  position: fixed; */
     position: absolute;
+    top: 2.5%;
+    left: 3%;
 }
 
 #recipeWindow {
+    display: none;
     /* align-self: center; */
-    left: 3%;
-    top: 2.5%;
-    /* overflow-y: auto; */
+    /* height: 0; */
+    /* width: 0; */
+    height: 100%;
+    /* height: auto; */
+    width: 100%;
+    position: absolute;
+    /* opacity: 0; */
+    /* left: 3%; */
+    /* top: 2.5%; */
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0);
+    /* background-color: red; */
+    margin: 0;
 }
 
 #recipeWindowContent {
@@ -262,6 +292,7 @@ body {
     visibility: hidden;
     border: 2px solid black;
     overflow-y: auto;
+    padding: 1em;
     /* display: flex; */
     /* flex-direction: column; */
 }

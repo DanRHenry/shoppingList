@@ -5,7 +5,7 @@ import {serverURL} from "../helpers/serverURL.js"
 
 /* 
 Known bugs:
-  When the recipe window is open, view recipe buttons are still clickable, which screws up the contents if clicked
+When the new recipe button is clicked, the fields load in badly
 */
 
 // https://developers.google.com/identity/sign-in/web/sign-getElementsByName("email")
@@ -70,6 +70,7 @@ function createShoppingListSection() {
   shoppingListContainer.append(shoppingListTable);
 
   return document.getElementsByTagName("body")[0].append(shoppingListContainer);
+  // return(shoppingListContainer)
 }
 
 function createRecipesContainer() {
@@ -85,6 +86,7 @@ function createRecipesContainer() {
   recipesContainer.append(recipesContainerHeaders, recipesSelections);
 
   return document.getElementsByTagName("body")[0].append(recipesContainer);
+  // return (recipesContainer)
 }
 
 function createRecipeContent() {
@@ -106,6 +108,7 @@ function createRecipeContent() {
   recipeContent.append(recipeContentHeaders, recipeItem);
 
   return document.getElementsByTagName("body")[0].append(recipeContent);
+  // return(recipeContent)
 }
 
 function createRecipeWindow() {
@@ -123,23 +126,27 @@ function createRecipeWindow() {
   recipeWindow.append(recipeWindowContent);
 
   return document.getElementsByTagName("body")[0].append(recipeWindow);
+  // return(recipeWindow)
 }
 
 function loadPageContents() {
+  document.getElementById("load_page").remove()
+  // document.getElementById("title_page").style.transition("backgroundColor 2s ease-out")
+  document.getElementById("title_page").style.backgroundColor = "white"
+  setTimeout(() => {
+    document.getElementById("title_page").remove()  
+  }, 1000);
+  
   // await document.getElementsByTagName("body").append(
   createShoppingListSection();
   createRecipesContainer();
-  createRecipeContent();
-  createRecipeWindow();
-
-  console.log(document.getElementsByTagName("body")[0]);
-
-  // )
-
-  console.log("body: ", document.getElementsByTagName("body"));
-
+  
   fetchShoppingList();
+  createRecipeWindow();
+  createRecipeContent();
 }
+
+// document.getElementById("load_page").addEventListener("click", loadPageContents)
 loadPageContents();
 
 function handleShoppingListContainerClick() {
@@ -518,20 +525,6 @@ function populateShoppingList(items) {
 
     shoppingListTableBody.append(shoppingListItems);
   }
-
-  const mainContent = document.createElement("tr");
-  mainContent.className = "mainContent";
-
-  const itemInput = document.createElement("input");
-  itemInput.type = "text";
-  itemInput.required = true;
-  mainContent.append(itemInput);
-
-  const qtyInput = document.createElement("input");
-  qtyInput.id = "qtyInput";
-  qtyInput.type = "number";
-  qtyInput.placeholder = "qty";
-  mainContent.append(qtyInput);
 }
 
 function addShoppingListInput() {
@@ -567,16 +560,6 @@ function addShoppingListInput() {
     }
   }
 
-  const qty = document.createElement("td");
-  qty.className = "qty";
-  const qtyInput = document.createElement("input");
-  qtyInput.id = "qtyInput";
-  qtyInput.type = "text";
-  qtyInput.placeholder = "1";
-  qtyInput.style = "text-align: center";
-  qty.append(qtyInput);
-
-  // const removeSelectedItemsRow = document.createElement("tr");
   const removeSelectedItems = document.createElement("td");
   removeSelectedItems.id = "removeSelectedItemsContainer";
 
@@ -588,19 +571,15 @@ function addShoppingListInput() {
   removeSelectedItemsBtn.id = "removeSelectedItems";
   removeSelectedItemsBtn.textContent = "Remove";
   removeSelectedItems.append(removeSelectedItemsBtn);
-  // removeSelectedItemsRow.append(removeSelectedItems);
-
-  // shoppingListTableBody.append(removeSelectedItemsRow);
   
   shoppingListTableInputLine.append(removeSelectedItems, item, addNewItemBtn);
-  // check.append(addNewItemBtn);
 
   shoppingListTableBody.append(shoppingListTableInputLine);
 }
 
 function handlePostNewItem() {
   const item = document.getElementById("itemInput").value;
-  const qty = document.getElementById("qtyInput").value;
+  const qty = 1
   if (item.length > 0) {
     postNewIngredient(item, qty);
   }
@@ -733,16 +712,29 @@ async function populateRecipeList() {
   }
 
   async function handleNewRecipeClick() {
-    if (document.getElementById("newIngredientGrid")) {
-      return;
-    }
-    if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
-      document.getElementById("addRecipeIngredientsToShoppingListBtn").remove();
+
+    // createRecipeContent()
+    // if (document.getElementById("newIngredientGrid")) {
+    //   return;
+    // }
+
+    const mainContent = document.getElementsByClassName("mainContent")
+
+    for (let i = mainContent.length; i > 0; i--) {
+      // console.log(mainContent[i-1])
+      mainContent[i -1].remove()
     }
 
+    document.getElementById("addRecipeIngredientsToShoppingListBtn")?.remove()
+    // if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
+    //   document.getElementById("addRecipeIngredientsToShoppingListBtn").remove();
+    // }
+
     const ingredientsInformation = [];
-    const recipeTableBody = document.getElementById("recipeTableBody");
-    recipeTableBody.innerHTML = "";
+    // document.getElementById("recipeTableBody")?.remove()
+    // const recipeTableBody = document.getElementById("recipeTableBody");
+    // recipeTableBody.innerHTML = "";
+    removeNewRecipeInputFields()
 
     const ingredientInputForm = document.createElement("div");
     ingredientInputForm.id = "ingredientInputForm";
@@ -1017,7 +1009,7 @@ async function populateRecipeList() {
       recipeStepRow.append(recipeStepLabel, recipeStep, submitRecipeStepBtn);
 
       const newRecipeBtn = document.getElementById("newRecipeInputBtn");
-      console.log(newRecipeBtn.textContent);
+      // console.log(newRecipeBtn.textContent);
 
       newRecipeBtn.before(recipeStepRow);
       const recipeStepLabels =
@@ -1138,6 +1130,8 @@ async function populateRecipeList() {
     newIngredientContainer.id = "newIngredientContainer";
     newIngredientContainer.className = "newIngredientContainers";
 
+
+
     newIngredientGrid.append(
       newIngredientInput,
       newIngredientAmtInputs,
@@ -1158,29 +1152,9 @@ async function populateRecipeList() {
       numOfServingsRow
     );
 
-    recipeTableBody.append(ingredientInputForm, timeAndTemp);
+            // createRecipeContent()
 
-    const ingredientInput = document.getElementById("newIngredientInput");
-    ingredientInput.addEventListener("change", async () => {
-      const data = await checkForExistingRecipeIngredient(
-        ingredientInput.value
-      );
-      const body = data.findIngredient;
-
-      console.log("data: ", data);
-      if (data.message === "Found!") {
-        if (data.findIngredient.whole === true) {
-          measurementUnit.value = "whole";
-          console.log(measurementUnit.value);
-        } else if (data.findIngredient.whole === false) {
-          measurementUnit.value = "fl oz";
-        }
-        newIngredientAmtInputs.value = 1;
-        newIngredientCalorieInputs.value = body.calories.toFixed(0);
-      } else {
-        console.log("the recipe ingredient was not found");
-      }
-    });
+    document.getElementById("recipeTableBody").append(ingredientInputForm, timeAndTemp);
   }
 
   recipes.map((recipe) => {
@@ -1192,12 +1166,12 @@ async function populateRecipeList() {
     recipeCheckbox.className = "recipeCheckbox";
     recipeCheck.append(recipeCheckbox);
 
-    const entry = document.createElement("td");
-    entry.className = "recipeName";
-    entry.value = recipe.recipeName;
-    entry.textContent = recipe.recipeName;
-    entry.style.textDecoration = "none";
-    entry.addEventListener("click", handleRecipeClick);
+    const recipeName = document.createElement("td");
+    recipeName.className = "recipeName";
+    recipeName.value = recipe.recipeName;
+    recipeName.textContent = recipe.recipeName;
+    recipeName.style.textDecoration = "none";
+    recipeName.addEventListener("click", handleRecipeClick);
 
     const showRecipeBtn = document.createElement("button");
     showRecipeBtn.className = "button";
@@ -1206,11 +1180,15 @@ async function populateRecipeList() {
 
     const recipeGroup = document.createElement("tr");
     recipeGroup.className = "recipeGroup";
-    recipeGroup.append(recipeCheck, entry, showRecipeBtn);
+    recipeGroup.append(recipeCheck, recipeName, showRecipeBtn);
 
     recipeListTableBody.append(recipeGroup);
 
     async function handleShowRecipeClick() {
+      removeNewRecipeInputFields()
+
+      // ingredientInputForm.innerHTML = "";
+      // document.getElementById("recipeItem").innerHTML = "";
       const data = async () => {
         const URL = `${serverURL}/recipe/find`;
 
@@ -1237,6 +1215,7 @@ async function populateRecipeList() {
       const recipeInfo = await data();
 
       const recipeWindow = document.getElementById("recipeWindow");
+      recipeWindow.style.display = "block"
       const recipeWindowContent = document.getElementById(
         "recipeWindowContent"
       );
@@ -1251,7 +1230,7 @@ async function populateRecipeList() {
 
       recipeButtonContainer.append(closeRecipeWindowBtn);
 
-      recipeWindow.style.width = "95vw";
+      // recipeWindow.style.width = "95vw";
 
       recipeWindowContent.style.height = "fit-content";
       recipeWindowContent.style.minHeight = "95vh";
@@ -1413,19 +1392,20 @@ async function populateRecipeList() {
 
     function handleCloseRecipeWindow() {
       document.getElementById("instructionsContainer")?.remove();
-      recipeWindow.style.height = "0";
-      recipeWindow.style.width = "0";
+      // recipeWindow.style.height = "0";
+      // recipeWindow.style.width = "0";
 
-      recipeWindowContent.style.height = "0";
-      recipeWindowContent.style.width = "0";
-      recipeWindowContent.style.visibility = "hidden";
+      // recipeWindowContent.style.height = "0";
+      // recipeWindowContent.style.width = "0";
+      // recipeWindowContent.style.visibility = "hidden";
+      recipeWindow.style.display = "none"
     }
 
     function handleRecipeCheckboxClick() {
-      if (entry.style.textDecoration === "line-through") {
-        entry.style.textDecoration = "none";
-      } else if (entry.style.textDecoration === "none") {
-        entry.style.textDecoration = "line-through";
+      if (recipeName.style.textDecoration === "line-through") {
+        recipeName.style.textDecoration = "none";
+      } else if (recipeName.style.textDecoration === "none") {
+        recipeName.style.textDecoration = "line-through";
       }
     }
 
@@ -1433,6 +1413,12 @@ async function populateRecipeList() {
       const recipeTableBody = document.getElementById("recipeTableBody");
       recipeTableBody.innerHTML = "";
 
+      const mainContent = document.getElementsByClassName("mainContent")
+
+      for (const item of mainContent) {
+        item.remove()
+      }
+      
       document.getElementById("recipeInstructionsInputField")?.remove();
       document.getElementById("newIngredientGrid")?.remove();
       document
@@ -1453,13 +1439,13 @@ async function populateRecipeList() {
       ingredientHeader.textContent = "Ingredient";
 
       recipe.ingredients.map((item) => {
-        console.log(
-          "item: ",
-          item.amount,
-          item.measurementUnit,
-          item.name,
-          item.newIngredientCalorieInput
-        );
+        // console.log(
+        //   "item: ",
+        //   item.amount,
+        //   item.measurementUnit,
+        //   item.name,
+        //   item.newIngredientCalorieInput
+        // );
 
         const mainContent = document.createElement("tr");
         mainContent.className = "mainContent";
@@ -1525,6 +1511,19 @@ async function populateRecipeList() {
   });
 }
 
+function removeNewRecipeInputFields() {
+  document.getElementById("ingredientInputForm")?.remove();      
+  document.getElementById("timeAndTemp")?.remove()
+  document.getElementById("addRecipeIngredientsToShoppingListBtnContainer")?.remove()
+  document.getElementById("newIngredientGrid")?.remove()
+  document.getElementById("recipeInstructionsInputField")?.remove()
+  const recipeStepRows = document.getElementsByClassName("recipeStepRows")
+
+  for (const row of recipeStepRows) {
+    row?.remove()
+  }
+  document.getElementById("newRecipeInputBtn")?.remove()
+}
 const getKnownRecipeIngredients = async (ingredientInputForm) => {
   const URL = `${serverURL}/recipeingredient/`;
 
@@ -1569,9 +1568,6 @@ async function handleAddRecipeIngredientsToShoppingList() {
   const button = document.getElementById(
     "addRecipeIngredientsToShoppingListBtn"
   );
-  // button.style.backgroundColor = "black"
-  // button.style.color = "white"
-  // button.textContent = "Submitting"
   button.removeEventListener("click", handleAddRecipeIngredientsToShoppingList);
 
   setTimeout(() => {
