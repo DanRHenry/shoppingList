@@ -1,21 +1,13 @@
 body {
-    /* display: grid; */
-    /* grid-template-rows: 40vh auto auto; */
-    /* grid-template-rows: 50vh 25vh 25vh; */
-    /* gap: 0; */
-    /* grid-template-rows: 50% 25% 25%; */
     margin: 0;
     background-color: whitesmoke;
-    /* background-color: red; */
 }
 
-#main {
-    /* display: grid; */
-    /* grid-template-rows: 50vh 25vh 25vh; */
+/* #main {
     width: 100%;
-}
+} */
 
-#applicationContainer{
+#shoppingListContainer{
     display: flex;
     flex-direction: column;
     background-color: rgb(182, 182, 182);
@@ -24,12 +16,8 @@ body {
 }
 
 #recipeIngredients,  #recipesContainer {
-    overflow-y: scroll;
+    overflow-y: auto;
 }
-/* #applicationContainer {
-    position: relative;
-    top: 0;
-} */
 
 
 #family {
@@ -85,12 +73,11 @@ body {
     width: 5.5em;
 }
 
-.check {
-    height: 1em;
-    margin-top: 1em;
+#checkboxHeader:hover {
+    color: white;
 }
 
-.mainContent, .recipeGroup{
+.mainContent,.shoppingListTableInputLine, .shoppingListItems, .recipeGroup{
     text-align: center;
     padding-left: 10em;
     margin-left: 10em;
@@ -107,11 +94,11 @@ body {
     background-color: white;
 }
 
-.mainContent:nth-child(odd) {
+.mainContent:nth-child(odd),.shoppingListTableInputLine:nth-child(odd), .shoppingListItems:nth-child(odd) {
     background-color: white;
 }
 
-.mainContent:hover, .recipeGroup:hover {
+.mainContent:hover, .shoppingListItems:hover, .recipeGroup:hover {
     background-color: gray;
     color: white;
 }
@@ -142,11 +129,11 @@ body {
     overflow: auto;
 }
 
-.qty {
+/* .qty {
     width: 5.5em;
-}
+} */
 
-.qty, #qtyInput, .qty > input {
+.qty, #qtyInput, .qty > input, #addNewItem {
     width: 3em;
 }
 
@@ -161,13 +148,23 @@ body {
     padding-bottom: 1em;
 }
 
+.recipeCheck, .shoppingListCheckBoxes, .ingredientCheck {
+    padding-left: 1em;
+}
+
+/* .check {
+    height: 1em;
+    margin-top: 1em;
+} */
+
+
 #addRecipe, #deleteRecipe, #newIngredientInputFieldBtn, #newRecipeInputBtn {
     /* margin-bottom: 1em; */
     border: 2px solid gray;
     border-radius: .5em;
 }
 
-.button:hover {
+.button:hover, #removeSelectedItems:hover {
     background-color: gray;
     color: white;
 }
@@ -463,8 +460,8 @@ width: 100%;
 }
 
 .measurementUnit {
-    text-align: center;
-    min-width: 3em;
+    /* text-align: center; */
+    /* min-width: 6rem; */
 }
 
 #newIngredientGrid {

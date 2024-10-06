@@ -5,248 +5,10 @@ const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
 Known bugs:
   When the recipe window is open, view recipe buttons are still clickable, which screws up the contents if clicked
 */
-// 
+
 // https://developers.google.com/identity/sign-in/web/sign-getElementsByName("email")
 // https://stackoverflow.com/questions/2264072/detect-a-finger-swipe-through-javascript-on-the-iphone-and-android
 // https://github.com/john-doherty/swiped-events/blob/master/src/swiped-events.js
-/* 
-I merged a few of the answers here into a script that uses CustomEvent to fire swiped events in the DOM. Add the 0.7k swiped-events.min.js script to your page and listen for swiped events:
-
-swiped
-document.addEventListener('swiped', function(e) {
-    console.log(e.target); // the element that was swiped
-    console.log(e.detail.dir); // swiped direction
-});
-swiped-left
-document.addEventListener('swiped-left', function(e) {
-    console.log(e.target); // the element that was swiped
-});
-
-swiped-right
-document.addEventListener('swiped-right', function(e) {
-    console.log(e.target); // the element that was swiped
-});
-swiped-up
-document.addEventListener('swiped-up', function(e) {
-    console.log(e.target); // the element that was swiped
-});
-swiped-down
-document.addEventListener('swiped-down', function(e) {
-    console.log(e.target); // the element that was swiped
-});
-You can also attach directly to an element:
-
-document.getElementById('myBox').addEventListener('swiped-down', function(e) {
-    console.log(e.target); // the element that was swiped
-});
-/*
-
-
-
-/*
-Optional config
-You can specify the following attributes to tweak how swipe interaction functions in your page (these are optional).
-
-<div data-swipe-threshold="10"
-     data-swipe-timeout="1000"
-     data-swipe-ignore="false">
-      Swiper, get swiping!
-</div>
-To set defaults application wide, set config attributes on topmost element:
-
-<body data-swipe-threshold="100" data-swipe-timeout="250">
-    <div>Swipe me</div>
-    <div>or me</div>
-</body>
-Source code is available on Github
-*/
-
-/*!
- * swiped-events.js - v@version@
- * Pure JavaScript swipe events
- * https://github.com/john-doherty/swiped-events
- * @inspiration https://stackoverflow.com/questions/16348031/disable-scrolling-when-touch-moving-certain-element
- * @author John Doherty <www.johndoherty.info>
- * @license MIT
- */
-(function (window, document) {
-  "use strict";
-
-  // patch CustomEvent to allow constructor creation (IE/Chrome)
-  if (typeof window.CustomEvent !== "function") {
-    window.CustomEvent = function (event, params) {
-      params = params || {
-        bubbles: false,
-        cancelable: false,
-        detail: undefined,
-      };
-
-      var evt = document.createEvent("CustomEvent");
-      evt.initCustomEvent(
-        event,
-        params.bubbles,
-        params.cancelable,
-        params.detail
-      );
-      return evt;
-    };
-
-    window.CustomEvent.prototype = window.Event.prototype;
-  }
-
-  document.addEventListener("touchstart", handleTouchStart, false);
-  document.addEventListener("touchmove", handleTouchMove, false);
-  document.addEventListener("touchend", handleTouchEnd, false);
-
-  var xDown = null;
-  var yDown = null;
-  var xDiff = null;
-  var yDiff = null;
-  var timeDown = null;
-  var startEl = null;
-  var touchCount = 0;
-
-  /**
-   * Fires swiped event if swipe detected on touchend
-   * @param {object} e - browser event object
-   * @returns {void}
-   */
-  function handleTouchEnd(e) {
-    // if the user released on a different target, cancel!
-    if (startEl !== e.target) return;
-
-    var swipeThreshold = parseInt(
-      getNearestAttribute(startEl, "data-swipe-threshold", "20"),
-      10
-    ); // default 20 units
-    var swipeUnit = getNearestAttribute(startEl, "data-swipe-unit", "px"); // default px
-    var swipeTimeout = parseInt(
-      getNearestAttribute(startEl, "data-swipe-timeout", "500"),
-      10
-    ); // default 500ms
-    var timeDiff = Date.now() - timeDown;
-    var eventType = "";
-    var changedTouches = e.changedTouches || e.touches || [];
-
-    if (swipeUnit === "vh") {
-      swipeThreshold = Math.round(
-        (swipeThreshold / 100) * document.documentElement.clientHeight
-      ); // get percentage of viewport height in pixels
-    }
-    if (swipeUnit === "vw") {
-      swipeThreshold = Math.round(
-        (swipeThreshold / 100) * document.documentElement.clientWidth
-      ); // get percentage of viewport height in pixels
-    }
-
-    if (Math.abs(xDiff) > Math.abs(yDiff)) {
-      // most significant
-      if (Math.abs(xDiff) > swipeThreshold && timeDiff < swipeTimeout) {
-        if (xDiff > 0) {
-          eventType = "swiped-left";
-        } else {
-          eventType = "swiped-right";
-        }
-      }
-    } else if (Math.abs(yDiff) > swipeThreshold && timeDiff < swipeTimeout) {
-      if (yDiff > 0) {
-        eventType = "swiped-up";
-      } else {
-        eventType = "swiped-down";
-      }
-    }
-
-    if (eventType !== "") {
-      var eventData = {
-        dir: eventType.replace(/swiped-/, ""),
-        touchType: (changedTouches[0] || {}).touchType || "direct",
-        fingers: touchCount, // Number of fingers used
-        xStart: parseInt(xDown, 10),
-        xEnd: parseInt((changedTouches[0] || {}).clientX || -1, 10),
-        yStart: parseInt(yDown, 10),
-        yEnd: parseInt((changedTouches[0] || {}).clientY || -1, 10),
-      };
-
-      // fire `swiped` event event on the element that started the swipe
-      startEl.dispatchEvent(
-        new CustomEvent("swiped", {
-          bubbles: true,
-          cancelable: true,
-          detail: eventData,
-        })
-      );
-
-      // fire `swiped-dir` event on the element that started the swipe
-      startEl.dispatchEvent(
-        new CustomEvent(eventType, {
-          bubbles: true,
-          cancelable: true,
-          detail: eventData,
-        })
-      );
-    }
-
-    // reset values
-    xDown = null;
-    yDown = null;
-    timeDown = null;
-  }
-  /**
-   * Records current location on touchstart event
-   * @param {object} e - browser event object
-   * @returns {void}
-   */
-  function handleTouchStart(e) {
-    // if the element has data-swipe-ignore="true" we stop listening for swipe events
-    if (e.target.getAttribute("data-swipe-ignore") === "true") return;
-
-    startEl = e.target;
-
-    timeDown = Date.now();
-    xDown = e.touches[0].clientX;
-    yDown = e.touches[0].clientY;
-    xDiff = 0;
-    yDiff = 0;
-    touchCount = e.touches.length;
-  }
-
-  /**
-   * Records location diff in px on touchmove event
-   * @param {object} e - browser event object
-   * @returns {void}
-   */
-  function handleTouchMove(e) {
-    if (!xDown || !yDown) return;
-
-    var xUp = e.touches[0].clientX;
-    var yUp = e.touches[0].clientY;
-
-    xDiff = xDown - xUp;
-    yDiff = yDown - yUp;
-  }
-
-  /**
-   * Gets attribute off HTML element or nearest parent
-   * @param {object} el - HTML element to retrieve attribute from
-   * @param {string} attributeName - name of the attribute
-   * @param {any} defaultValue - default value to return if no match found
-   * @returns {any} attribute value or defaultValue
-   */
-  function getNearestAttribute(el, attributeName, defaultValue) {
-    // walk up the dom tree looking for attributeName
-    while (el && el !== document.documentElement) {
-      var attributeValue = el.getAttribute(attributeName);
-
-      if (attributeValue) {
-        return attributeValue;
-      }
-
-      el = el.parentNode;
-    }
-
-    return defaultValue;
-  }
-})(window, document);
 
 const loginForm = document.getElementById("login-form");
 
@@ -291,60 +53,106 @@ async function login(e) {
     console.log(error);
   }
 }
-//remove this later
-loadPageContents();
-function loadPageContents() {
-  fetchShoppingList();
 
-  // populateRecipeList();
+function createShoppingListSection() {
+  const shoppingListContainer = document.createElement("div");
+  shoppingListContainer.id = "shoppingListContainer";
+  const shoppingListTable = document.createElement("table");
+  const shoppingListTableBody = document.createElement("tbody");
+  shoppingListTableBody.id = "shoppingListTableBody";
 
-  // const applicationContainer = document.getElementById("applicationContainer")
-  // applicationContainer.addEventListener("click", handleApplicationContainerClick)
-  // const recipeContent = document.getElementById("recipeContent")
-  // recipeContent.addEventListener("click", handleRecipeContentClick)
-  // const recipesContainer = document.getElementById("recipesContainer")
-  // recipesContainer.addEventListener("click", handleRecipesContainerClick)
+  const br = document.createElement("br");
+
+  shoppingListTableBody.append(br);
+  shoppingListTable.append(shoppingListTableBody);
+  shoppingListContainer.append(shoppingListTable);
+
+  return document.getElementsByTagName("body")[0].append(shoppingListContainer);
 }
 
-function handleApplicationContainerClick() {
-  const applicationContainer = document.getElementById("applicationContainer");
+function createRecipesContainer() {
+  const recipesContainer = document.createElement("div");
+  recipesContainer.id = "recipesContainer";
+  const recipesContainerHeaders = document.createElement("div");
+  recipesContainerHeaders.className = "headers";
+  recipesContainerHeaders.textContent = "Recipes";
+
+  const recipesSelections = document.createElement("div");
+  recipesSelections.id = "selections";
+
+  recipesContainer.append(recipesContainerHeaders, recipesSelections);
+
+  return document.getElementsByTagName("body")[0].append(recipesContainer);
+}
+
+function createRecipeContent() {
+  const recipeContent = document.createElement("div");
+  recipeContent.id = "recipeContent";
+
+  const recipeContentHeaders = document.createElement("div");
+  recipeContentHeaders.className = "headers";
+  recipeContentHeaders.textContent = "Recipe Ingredients";
+
+  const recipeItem = document.createElement("div");
+  recipeItem.id = "recipeItem";
+
+  const recipeTableBody = document.createElement("div");
+  recipeTableBody.id = "recipeTableBody";
+
+  recipeItem.append(recipeTableBody);
+
+  recipeContent.append(recipeContentHeaders, recipeItem);
+
+  return document.getElementsByTagName("body")[0].append(recipeContent);
+}
+
+function createRecipeWindow() {
+  const recipeWindow = document.createElement("div");
+  recipeWindow.id = "recipeWindow";
+
+  const recipeWindowContent = document.createElement("div");
+  recipeWindowContent.id = "recipeWindowContent";
+
+  const recipeText = document.createElement("div");
+  recipeText.id = "recipeText";
+
+  recipeWindowContent.append(recipeText);
+
+  recipeWindow.append(recipeWindowContent);
+
+  return document.getElementsByTagName("body")[0].append(recipeWindow);
+}
+
+function loadPageContents() {
+  // await document.getElementsByTagName("body").append(
+  createShoppingListSection();
+  createRecipesContainer();
+  createRecipeContent();
+  createRecipeWindow();
+
+  console.log(document.getElementsByTagName("body")[0]);
+
+  // )
+
+  console.log("body: ", document.getElementsByTagName("body"));
+
+  fetchShoppingList();
+}
+loadPageContents();
+
+function handleShoppingListContainerClick() {
+  const shoppingListContainer = document.getElementById(
+    "shoppingListContainer"
+  );
   const recipeContent = document.getElementById("recipeContent");
   const recipesContainer = document.getElementById("recipesContainer");
 
-  // const applicationContainerContents = applicationContainer.innerHTML;
-  const recipeContentContents = recipeContent.innerHTML;
-  const recipesContainerContent = recipesContainer.innerHTML;
-
-  // recipeContent.innerHTML = ""
   recipeContent.style.height = "0";
 
-  // recipesContainer.innerHTML = ""
   recipesContainer.style.height = "0";
 
-  applicationContainer.style.height = "100vh";
+  shoppingListContainer.style.height = "100vh";
 }
-
-function handleRecipeContentClick() {
-  const applicationContainer = document.getElementById("applicationContainer");
-  const recipeContent = document.getElementById("recipeContent");
-  const recipesContainer = document.getElementById("recipesContainer");
-
-  const applicationContainerContents = applicationContainer.innerHTML;
-  const recipeContentContents = recipeContent.innerHTML;
-  const recipesContainerContent = recipesContainer.innerHTML;
-}
-
-function handleRecipesContainerClick() {
-  const applicationContainer = document.getElementById("applicationContainer");
-  const recipeContent = document.getElementById("recipeContent");
-  const recipesContainer = document.getElementById("recipesContainer");
-
-  const applicationContainerContents = applicationContainer.innerHTML;
-  const recipeContentContents = recipeContent.innerHTML;
-  const recipesContainerContent = recipesContainer.innerHTML;
-}
-
-//todo - this is where the new recipe ingredients, qty, etc need to go
 
 async function handleNewRecipeSubmit(e) {
   await e.preventDefault();
@@ -362,7 +170,6 @@ async function handleNewRecipeSubmit(e) {
     "numberOfServingsInputField"
   ).value;
 
-  // console.log("numberOfServingsInput: ", numberOfServingsInput)
   const newIngredients = document.getElementsByClassName("newIngredients");
   const newIngredientAmtInputs = document.getElementsByClassName(
     "newIngredientAmtInputs"
@@ -399,16 +206,9 @@ async function handleNewRecipeSubmit(e) {
     }
   }
 
-  // console.log(newRecipe);
-
-  // console.log(nameInput)
-  // console.log("nameInput: ", nameInput, typeof nameInput)
-  // console.log("newRecipe: ",newRecipe)
-  // console.log(await checkForExistingRecipe(nameInput))
   if ((await checkForExistingRecipe(nameInput)) === "Found!") {
     return;
   }
-  // const nameObject = {nameInput: nameInput}
   await postNewRecipe(newRecipe);
   await populateRecipeList();
 }
@@ -476,7 +276,6 @@ async function postNewRecipe(newRecipeInformation) {
         numberOfServings: numberOfServings,
       };
 
-      // const res = await fetch(URL, {
       await fetch(URL, {
         method: "POST",
         mode: "cors",
@@ -520,7 +319,6 @@ async function checkForExistingIngredient(item) {
 async function checkForExistingRecipeIngredient(item) {
   const URL = `${serverURL}/recipeingredient/find`;
 
-  // console.log("item: ", item);
   const ingredientQuery = {
     ingredientName: item,
   };
@@ -539,11 +337,8 @@ async function checkForExistingRecipeIngredient(item) {
 
     const res = await fetch(URL, reqOptions);
     const data = await res.json();
-    // console.log("data.message: ", data.message)
     return data;
-  } catch (error) {
-    // console.log(error);
-  }
+  } catch (error) {}
 }
 
 async function checkForExistingRecipe(item) {
@@ -565,11 +360,8 @@ async function checkForExistingRecipe(item) {
   try {
     const res = await fetch(URL, reqOptions);
     const data = await res.json();
-    // console.log(data)
     return data.message;
-  } catch (error) {
-    // console.log(error);
-  }
+  } catch (error) {}
 }
 
 function checkForToken() {
@@ -678,31 +470,12 @@ function populateShoppingList(items) {
 
   shoppingListTableBody.append(headers);
 
-  const removeSelectedItemsRow = document.createElement("tr");
-  const removeSelectedItems = document.createElement("td");
-  removeSelectedItems.id = "removeSelectedItemsContainer";
-
-  const removeSelectedItemsBtn = document.createElement("button");
-  removeSelectedItemsBtn.addEventListener(
-    "click",
-    handleRemovingShoppingListItems
-  );
-  removeSelectedItemsBtn.id = "removeSelectedItems";
-  removeSelectedItemsBtn.textContent = "Remove";
-  removeSelectedItems.append(removeSelectedItemsBtn);
-  removeSelectedItemsRow.append(removeSelectedItems);
-
-  shoppingListTableBody.append(removeSelectedItemsRow);
-
   for (let ingredient of items) {
-    // console.log(ingredient)
-
-    const mainContent = document.createElement("tr");
-    mainContent.className = "mainContent";
+    const shoppingListItems = document.createElement("tr");
+    shoppingListItems.className = "shoppingListItems";
 
     const check = document.createElement("td");
     check.className = "check";
-    mainContent.append(check);
     const checkBox = document.createElement("input");
     checkBox.type = "checkbox";
     checkBox.className = "shoppingListCheckBoxes";
@@ -712,7 +485,6 @@ function populateShoppingList(items) {
     item.className = "item";
     item.textContent = ingredient.ingredientName;
     item.style.textDecoration = "none";
-    mainContent.append(item);
 
     checkBox.addEventListener("click", handleShoppingListCheckboxClick);
 
@@ -726,6 +498,11 @@ function populateShoppingList(items) {
     }
     const itemQuantity = document.createElement("td");
     itemQuantity.className = "qty";
+    itemQuantity.addEventListener("change", handleUpdatingItemQuantity)
+
+    async function handleUpdatingItemQuantity() {
+      const URL = `${serverURL}/ingredient/updateIngredient`
+    }
 
     const qtyInput = document.createElement("input");
     qtyInput.placeholder = "1";
@@ -734,9 +511,10 @@ function populateShoppingList(items) {
     qtyInput.value = 1;
 
     itemQuantity.append(qtyInput);
-    mainContent.append(itemQuantity);
 
-    shoppingListTableBody.append(mainContent);
+    shoppingListItems.append(check, item, itemQuantity);
+
+    shoppingListTableBody.append(shoppingListItems);
   }
 
   const mainContent = document.createElement("tr");
@@ -758,19 +536,17 @@ function addShoppingListInput() {
   const shoppingListTableBody = document.getElementById(
     "shoppingListTableBody"
   );
-  const mainContent = document.createElement("tr");
-  mainContent.className = "mainContent";
+  const shoppingListTableInputLine = document.createElement("tr");
+  shoppingListTableInputLine.className = "shoppingListTableInputLine";
 
   const check = document.createElement("td");
   check.className = "check";
-  mainContent.append(check);
 
   const addNewItemBtn = document.createElement("button");
   addNewItemBtn.id = "addNewItem";
   addNewItemBtn.className = "button";
-  addNewItemBtn.textContent = "Add";
+  addNewItemBtn.textContent = "+";
   addNewItemBtn.addEventListener("click", handlePostNewItem);
-  check.append(addNewItemBtn);
 
   const item = document.createElement("td");
   item.className = "item";
@@ -783,17 +559,11 @@ function addShoppingListInput() {
 
   itemInput.addEventListener("keypress", handlPostNewItemKeypress);
   function handlPostNewItemKeypress(e) {
-    // If the user presses the "Enter" key on the keyboard
     if (e.key === "Enter" || e.keyCode === "13" || e.keyCode === "9") {
-      // Cancel the default action, if needed
       e.preventDefault();
-      // Trigger the button element with a click
       handlePostNewItem();
-      // document.getElementById("myBtn").click();
     }
   }
-
-  mainContent.append(item);
 
   const qty = document.createElement("td");
   qty.className = "qty";
@@ -803,9 +573,27 @@ function addShoppingListInput() {
   qtyInput.placeholder = "1";
   qtyInput.style = "text-align: center";
   qty.append(qtyInput);
-  mainContent.append(qty);
 
-  shoppingListTableBody.append(mainContent);
+  // const removeSelectedItemsRow = document.createElement("tr");
+  const removeSelectedItems = document.createElement("td");
+  removeSelectedItems.id = "removeSelectedItemsContainer";
+
+  const removeSelectedItemsBtn = document.createElement("button");
+  removeSelectedItemsBtn.addEventListener(
+    "click",
+    handleRemovingShoppingListItems
+  );
+  removeSelectedItemsBtn.id = "removeSelectedItems";
+  removeSelectedItemsBtn.textContent = "Remove";
+  removeSelectedItems.append(removeSelectedItemsBtn);
+  // removeSelectedItemsRow.append(removeSelectedItems);
+
+  // shoppingListTableBody.append(removeSelectedItemsRow);
+  
+  shoppingListTableInputLine.append(removeSelectedItems, item, addNewItemBtn);
+  // check.append(addNewItemBtn);
+
+  shoppingListTableBody.append(shoppingListTableInputLine);
 }
 
 function handlePostNewItem() {
@@ -848,7 +636,6 @@ async function handleRemovingShoppingListItems() {
         });
         const data = await res.json();
         if (data.message === "The ingredient was successfully deleted!") {
-          // console.log("the item was deleted")
         }
       } catch (error) {
         console.log(error);
@@ -870,7 +657,6 @@ async function fetchRecipeList() {
       },
     });
     const data = await res.json();
-    // console.log(data);
     return data.getAllRecipes;
   } catch (error) {
     console.log(error);
@@ -879,8 +665,7 @@ async function fetchRecipeList() {
 
 async function populateRecipeList() {
   const recipes = await fetchRecipeList();
-  // console.log("recipes: ",recipes)
-  //   console.log(recipes);
+
   const selections = document.getElementById("selections");
   selections.innerHTML = "";
 
@@ -936,7 +721,6 @@ async function populateRecipeList() {
           if (data.message === "The recipe was successfully deleted!") {
             console.log("the recipe was deleted");
             await populateRecipeList();
-            //delete previous recipe info
             document.getElementsByClassName("mainContent")?.remove();
           }
         } catch (error) {
@@ -952,16 +736,7 @@ async function populateRecipeList() {
     }
     if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
       document.getElementById("addRecipeIngredientsToShoppingListBtn").remove();
-      const recipeStepRows = document.getElementsByClassName("recipeStepRows");
-
-      // for (let i = 0; i < recipeStepRows.length; i++) {
-      //   recipeStepRows[i].remove()
-      // }
-
-      // recipeStepRows
     }
-
-    // const mainContent = document.getElementsByClassName('mainContent');
 
     const ingredientsInformation = [];
     const recipeTableBody = document.getElementById("recipeTableBody");
@@ -1035,21 +810,21 @@ async function populateRecipeList() {
         ingredientObject.measurementUnitInput = measurementUnitToSend;
         ingredientObject.newIngredientCalorieInput = caloriesToSend;
 
-        console.log("measurementUnitToSend: ", measurementUnitToSend)
-        if (measurementUnitToSend === "whole"){
+        console.log("measurementUnitToSend: ", measurementUnitToSend);
+        if (measurementUnitToSend === "whole") {
           ingredientObject.whole = true;
-          ingredientObject.newIngredientCalorieInput = caloriesToSend
+          ingredientObject.newIngredientCalorieInput = caloriesToSend;
         } else if (measurementUnitToSend === "half") {
           ingredientObject.whole = true;
-          ingredientObject.newIngredientCalorieInput = caloriesToSend * 2
+          ingredientObject.newIngredientCalorieInput = caloriesToSend * 2;
         } else if (measurementUnitToSend === "quarter") {
-          ingredientObject.whole = true
-          ingredientObject.newIngredientCalorieInput = caloriesToSend * 4
+          ingredientObject.whole = true;
+          ingredientObject.newIngredientCalorieInput = caloriesToSend * 4;
         } else {
-          ingredientObject.whole = false
+          ingredientObject.whole = false;
         }
 
-        console.log("ingredientObject.whole: ", ingredientObject.whole)
+        console.log("ingredientObject.whole: ", ingredientObject.whole);
         ingredientsInformation.push(ingredientObject);
 
         const URL = `${serverURL}/recipeingredient/storeRecipeIngredient`;
@@ -1096,14 +871,12 @@ async function populateRecipeList() {
         editBtn.textContent = "Edit";
         editBtn.addEventListener("click", handleEditRecipeIngredient);
         editBtn.removeEventListener("click", handleEditRecipeIngredient);
-        // submittedIngredientContainer.append(
         newIngredientGrid.append(
           submittedIngredient,
           submittedIngredientAmt,
           submittedMeasurementUnit,
           submittedIngredientCals,
           editBtn
-          // newIngredientFieldBtn
         );
 
         function handleEditRecipeIngredient() {
@@ -1126,7 +899,7 @@ async function populateRecipeList() {
       ingredientAmtInput,
       newIngredientCalorieInput
     ) {
-      console.log("measurementUnitInput.value: ", measurementUnitInput.value)
+      console.log("measurementUnitInput.value: ", measurementUnitInput.value);
       const conversionObject = {
         gal: 128,
         qt: 32,
@@ -1198,7 +971,6 @@ async function populateRecipeList() {
     const recipeStepLabel = document.createElement("div");
     recipeStepLabel.className = "recipeStepLabels";
     recipeStepLabel.textContent = "Step 1: ";
-    // recipeStepLabel.id = "currentRecipeStep";
 
     const recipeStep = document.createElement("input");
     recipeStep.placeholder = "step:";
@@ -1282,26 +1054,23 @@ async function populateRecipeList() {
       };
 
       if (body.whole === false) {
-        console.log("here 1")
-
         if (conversionObject[measurementUnit.value]) {
           const newValue =
             body.calories * conversionObject[measurementUnit.value];
           newIngredientCalorieInputs.value =
             +newValue.toFixed(0) * +newIngredientAmtInputs.value;
-          }
-
-        } else if (body.whole === true) {
         }
-        if (measurementUnit.value === "whole") {
-          newIngredientCalorieInputs.value = (body.calories).toFixed(0);
-        } else if (measurementUnit.value === "half") {
-          newIngredientCalorieInputs.value = (body.calories * 0.5).toFixed(0);
-        } else if (measurementUnit.value === "quarter") {
-          newIngredientCalorieInputs.value = (body.calories * .25).toFixed(0)
-        } else {
-          newIngredientCalorieInputs.value = "?"
-        }
+      } else if (body.whole === true) {
+      }
+      if (measurementUnit.value === "whole") {
+        newIngredientCalorieInputs.value = body.calories.toFixed(0);
+      } else if (measurementUnit.value === "half") {
+        newIngredientCalorieInputs.value = (body.calories * 0.5).toFixed(0);
+      } else if (measurementUnit.value === "quarter") {
+        newIngredientCalorieInputs.value = (body.calories * 0.25).toFixed(0);
+      } else {
+        newIngredientCalorieInputs.value = "?";
+      }
     }
 
     const unitOptions = [
@@ -1314,7 +1083,7 @@ async function populateRecipeList() {
       "gal",
       "whole",
       "half",
-      "quarter"
+      "quarter",
     ];
 
     unitOptions.map((unit) => {
@@ -1396,14 +1165,14 @@ async function populateRecipeList() {
       );
       const body = data.findIngredient;
 
-      console.log("data: ", data)
+      console.log("data: ", data);
       if (data.message === "Found!") {
         if (data.findIngredient.whole === true) {
-          measurementUnit.value = "whole"
-          console.log(measurementUnit.value)
+          measurementUnit.value = "whole";
+          console.log(measurementUnit.value);
         } else if (data.findIngredient.whole === false) {
-        measurementUnit.value = "fl oz";
-      }
+          measurementUnit.value = "fl oz";
+        }
         newIngredientAmtInputs.value = 1;
         newIngredientCalorieInputs.value = body.calories.toFixed(0);
       } else {
@@ -1436,13 +1205,8 @@ async function populateRecipeList() {
     const recipeGroup = document.createElement("tr");
     recipeGroup.className = "recipeGroup";
     recipeGroup.append(recipeCheck, entry, showRecipeBtn);
-    // recipeGroup.append(entry);
-    // recipeGroup.append(showRecipeBtn);
-    //append show recipe button here
 
     recipeListTableBody.append(recipeGroup);
-
-    // console.log("entry: ", entry.textContent)
 
     async function handleShowRecipeClick() {
       const data = async () => {
@@ -1470,43 +1234,27 @@ async function populateRecipeList() {
 
       const recipeInfo = await data();
 
-      // console.log(recipeInfo);
       const recipeWindow = document.getElementById("recipeWindow");
       const recipeWindowContent = document.getElementById(
         "recipeWindowContent"
       );
-      // recipeWindowContent.innerHTML = ""
-      const recipeButtonContainer = document.createElement("div")
-      recipeButtonContainer.id = "recipeButtonContainer"
+      const recipeButtonContainer = document.createElement("div");
+      recipeButtonContainer.id = "recipeButtonContainer";
 
-      // const closeRecipeWindowBtn = document.getElementById(
-      //   "closeRecipeWindowBtn"
-      // );
-      const closeRecipeWindowBtn = document.createElement("button")
-      closeRecipeWindowBtn.id = "closeRecipeWindowBtn"
-      closeRecipeWindowBtn.textContent = "Close"
+      const closeRecipeWindowBtn = document.createElement("button");
+      closeRecipeWindowBtn.id = "closeRecipeWindowBtn";
+      closeRecipeWindowBtn.textContent = "Close";
 
       closeRecipeWindowBtn.addEventListener("click", handleCloseRecipeWindow);
 
+      recipeButtonContainer.append(closeRecipeWindowBtn);
 
-      recipeButtonContainer.append(closeRecipeWindowBtn)
-
-      // recipeWindow.removeAttribute("style")
-      // recipeWindow.style.height = "95vh";
-      // recipeWindow.style.minHeight = "100vh";
       recipeWindow.style.width = "95vw";
 
-      // recipeWindowContent.style.minHeight = "93vh";
       recipeWindowContent.style.height = "fit-content";
-      recipeWindowContent.style.minHeight = "95vh"
+      recipeWindowContent.style.minHeight = "95vh";
       recipeWindowContent.style.width = "93vw";
       recipeWindowContent.style.visibility = "visible";
-
-      // closeRecipeWindowBtn.style.visibility = "visible";
-
-      // closeRecipeWindowBtn.addEventListener("click", handleCloseRecipeWindow);
-
-      //todo - change this recipetext to data fetched
 
       const recipeText = document.getElementById("recipeText");
       recipeText.innerHTML = "";
@@ -1617,8 +1365,6 @@ async function populateRecipeList() {
       noOfServingsInput.addEventListener("change", handleNoOfServingsChange);
 
       function handleNoOfServingsChange() {
-        // console.log("totalCaloriesAmt: ", totalCaloriesAmt)
-        // console.log("noOfServingsInput.value: ", noOfServingsInput.value)
         if (noOfServingsInput.value < 1) {
           noOfServingsInput.value = 1;
           return;
@@ -1631,7 +1377,6 @@ async function populateRecipeList() {
         ).textContent = `Calories Per Serving: ${calsPerServing}`;
       }
 
-      // console.log("recipeInfo: ", recipeInfo)
       const caloriesPerServing = document.createElement("li");
       caloriesPerServing.id = "caloriesPerServing";
 
@@ -1645,9 +1390,6 @@ async function populateRecipeList() {
       numberOfServings.textContent = "Number of servings: ";
       numberOfServings.append(noOfServingsInput);
 
-      // const noOfServings = recipeInfo.numberOfServings;
-      // numberOfServings.textContent = `Number of Servings: ${noOfServings}`
-
       const generalRecipeInfo = document.createElement("ul");
       generalRecipeInfo.id = "generalRecipeInfo";
       generalRecipeInfo.append(
@@ -1658,23 +1400,11 @@ async function populateRecipeList() {
         caloriesPerServing
       );
 
-      instructionsContainer.append(recipeButtonContainer)
+      instructionsContainer.append(recipeButtonContainer);
       recipeText.append(recipeName, generalRecipeInfo, listContainer);
       document
         .getElementById("recipeWindowContent")
         .append(instructionsContainer);
-      /* 
-        <div>Recipe Name Here</div>
-          <div>Temp</div>
-          <div>Time</div>
-          <ul>
-            <li>Ingredient 1</li>
-            <li>Ingredient 2</li>
-          </ul>
-          <div id="instructions">
-
-          </div>
-      */
     }
 
     recipeCheckbox.addEventListener("click", handleRecipeCheckboxClick);
@@ -1687,12 +1417,6 @@ async function populateRecipeList() {
       recipeWindowContent.style.height = "0";
       recipeWindowContent.style.width = "0";
       recipeWindowContent.style.visibility = "hidden";
-
-      // closeRecipeWindowBtn.style.visibility = "hidden";
-      // closeRecipeWindowBtn.removeEventListener(
-      //   "click",
-      //   handleCloseRecipeWindow
-      // );
     }
 
     function handleRecipeCheckboxClick() {
