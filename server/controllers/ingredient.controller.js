@@ -35,6 +35,14 @@ router.post("/storeIngredient", async (req, res) => {
   }
 });
 
+// -------------------------- Patch -------------------------
+
+// router.patch("/updateIngredient", async (req, res) => {
+//   try {
+//     const { name } = req.body;
+    
+//   }
+// })
 // ------------------------- Find One -----------------------
 
 router.post("/find", async (req, res) => {

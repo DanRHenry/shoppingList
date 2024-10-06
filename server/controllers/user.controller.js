@@ -57,14 +57,14 @@ router.post("/signup", async (req, res) => {
 */
 
 router.post("/login", async (req, res) => {
-  console.log("req:", req)
+  // console.log("req:", req)
   res.header("Access-Control-Allow-Origin", "*");
   // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 //   console.log("connected to login")
 //   console.log('req.body',req.body)
   try {
     const { email, password, family } = req.body;
-    console.log("email:",email, "password:",password, "family:", family)
+    // console.log("email:",email, "password:",password, "family:", family)
     const user = await User.findOne({ email: email });
 
     console.log("user:",user)
@@ -72,7 +72,7 @@ router.post("/login", async (req, res) => {
     if (!user.family === family) throw new Error("You're not in a family");
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-    console.log("passwordMatch",passwordMatch)
+    // console.log("passwordMatch",passwordMatch)
     if (!passwordMatch) throw new Error("Email or password does not match.");
 
     const token = jwt.sign({ id: user._id }, SECRET, {
