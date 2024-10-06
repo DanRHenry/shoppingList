@@ -1202,7 +1202,7 @@ async function populateRecipeList() {
     const showRecipeBtn = document.createElement("button");
     showRecipeBtn.className = "button";
     showRecipeBtn.addEventListener("click", handleShowRecipeClick);
-    showRecipeBtn.textContent = "View Recipe";
+    showRecipeBtn.textContent = "View";
 
     const recipeGroup = document.createElement("tr");
     recipeGroup.className = "recipeGroup";
