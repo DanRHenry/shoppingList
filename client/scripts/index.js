@@ -40,6 +40,9 @@ function checkForToken() {
 
 function loadShoppingList() {
   removeRecipeIngredients();
+  if (document.getElementById("addRecipeIngredientsToShoppingListBtnContainer")) {
+    document.getElementById("addRecipeIngredientsToShoppingListBtnContainer").remove()
+  }
   document.getElementById("newIngredientSection")?.remove()
   createShoppingListSection();
   fetchShoppingList();
@@ -329,7 +332,7 @@ async function handleNewRecipeSubmit(e) {
 }
 
 async function postNewIngredient(item, qty) {
-  console.log("item:", item);
+  // console.log("item:", item);
   // console.log("token: ",token)
   const URL = `${serverURL}/ingredient/storeIngredient`;
 
@@ -412,7 +415,7 @@ async function postNewRecipe(newRecipeInformation) {
 }
 
 async function checkForExistingIngredient(item) {
-  console.log("checking for ", item)
+  // console.log("checking for ", item)
   const URL = `${serverURL}/ingredient/find`;
 
   const ingredientQuery = {
@@ -558,7 +561,7 @@ async function fetchShoppingList() {
     if (document.getElementById("shoppingListContainer")) {
       populateShoppingList(data.getAllIngredients);
     }
-    console.log("adding input now...")
+    // console.log("adding input now...")
     if (!document.getElementById("shoppingListTableInputLine")) {
     addShoppingListInput();
   }
@@ -775,10 +778,14 @@ async function fetchRecipeList() {
 }
 
 async function populateRecipeList() {
+  // document.getElementById("selections")?.removeChild()
+  console.log("here")
+
   const recipes = await fetchRecipeList();
 
   const selections = document.getElementById("selections");
-  // selections.innerHTML = "";
+
+  selections.innerHTML = "";
 
   const recipeListTable = document.createElement("table");
   recipeListTable.id = "recipeListTable";
@@ -787,497 +794,500 @@ async function populateRecipeList() {
   recipeListTableBody.id = "recipeListTableBody";
   recipeListTable.append(recipeListTableBody);
 
-  const addRecipeContainer = document.createElement("div");
-  addRecipeContainer.id = "addRecipeContainer";
-
-  const addRecipeBtn = document.createElement("button");
-  addRecipeBtn.id = "addRecipe";
-  addRecipeBtn.className = "button";
-  addRecipeBtn.textContent = "New Recipe";
-
   if (selections) {
-    selections.append(recipeListTable, addRecipeContainer);
-  }
-  // selections.append(addRecipeContainer);
-  addRecipeContainer.append(addRecipeBtn);
-  addRecipeBtn.addEventListener("click", handleNewRecipeClick);
-
-  const deleteRecipeBtn = document.createElement("button");
-  deleteRecipeBtn.id = "deleteRecipe";
-  deleteRecipeBtn.className = "button";
-  deleteRecipeBtn.textContent = "Delete Recipe";
-  addRecipeContainer.append(deleteRecipeBtn);
-  deleteRecipeBtn.addEventListener("click", handleDeleteRecipe);
-
-  async function handleDeleteRecipe(e) {
-    e.preventDefault();
-    const recipeCheckboxes = document.getElementsByClassName("recipeCheckbox");
-    const recipeName = document.getElementsByClassName("recipeName");
-
-    for (let i = 0; i < recipeCheckboxes.length; i++) {
-      if (recipeCheckboxes[i].checked === true) {
-        console.log(recipeCheckboxes[i].checked);
-        console.log(recipeName[i].textContent);
-        const URL = `${serverURL}/recipe/delete/`;
-        let delItem = {};
-        delItem.recipeName = recipeName[i].textContent;
-        try {
-          const res = await fetch(URL, {
-            method: "DELETE",
-            mode: "cors",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: token,
-            },
-            body: JSON.stringify(delItem),
-          });
-          const data = await res.json();
-          if (data.message === "The recipe was successfully deleted!") {
-            console.log("the recipe was deleted");
-            await populateRecipeList();
-            document.getElementsByClassName("mainContent")?.remove();
+        selections.append(recipeListTable);
+        const addRecipeBtn = document.createElement("button");
+        addRecipeBtn.id = "addRecipe";
+        addRecipeBtn.className = "button";
+        addRecipeBtn.textContent = "New Recipe";
+      
+        const addRecipeContainer = document.createElement("div");
+        addRecipeContainer.id = "addRecipeContainer";
+      
+        selections.append(addRecipeContainer);
+        addRecipeContainer.append(addRecipeBtn);
+        addRecipeBtn.addEventListener("click", handleNewRecipeClick);
+      
+        const deleteRecipeBtn = document.createElement("button");
+        deleteRecipeBtn.id = "deleteRecipe";
+        deleteRecipeBtn.className = "button";
+        deleteRecipeBtn.textContent = "Delete Recipe";
+        addRecipeContainer.append(deleteRecipeBtn);
+        deleteRecipeBtn.addEventListener("click", handleDeleteRecipe);
+      
+        async function handleDeleteRecipe(e) {
+          e.preventDefault();
+          const recipeCheckboxes = document.getElementsByClassName("recipeCheckbox");
+          const recipeName = document.getElementsByClassName("recipeName");
+      
+          for (let i = 0; i < recipeCheckboxes.length; i++) {
+            if (recipeCheckboxes[i].checked === true) {
+              console.log(recipeCheckboxes[i].checked);
+              console.log(recipeName[i].textContent);
+              const URL = `${serverURL}/recipe/delete/`;
+              let delItem = {};
+              delItem.recipeName = recipeName[i].textContent;
+              try {
+                const res = await fetch(URL, {
+                  method: "DELETE",
+                  mode: "cors",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token,
+                  },
+                  body: JSON.stringify(delItem),
+                });
+                const data = await res.json();
+                if (data.message === "The recipe was successfully deleted!") {
+                  console.log("the recipe was deleted");
+                  await populateRecipeList();
+                  document.getElementsByClassName("mainContent")?.remove();
+                }
+              } catch (error) {
+                console.log(error);
+              }
+            }
           }
-        } catch (error) {
-          console.log(error);
         }
-      }
-    }
-  }
-
-  async function handleNewRecipeClick() {
-    const mainContent = document.getElementsByClassName("mainContent");
-
-    for (let i = mainContent.length; i > 0; i--) {
-      mainContent[i - 1].remove();
-    }
-
-    document.getElementById("addRecipeIngredientsToShoppingListBtn")?.remove();
-    document.getElementById("newIngredientSection")?.remove()
-    const ingredientsInformation = [];
-    removeNewRecipeInputFields();
-
-    const ingredientInputForm = document.createElement("div");
-    ingredientInputForm.id = "ingredientInputForm";
-
-    const newRecipeNameInput = document.createElement("input");
-    newRecipeNameInput.type = "text";
-    newRecipeNameInput.id = "newRecipeNameInput";
-    newRecipeNameInput.placeholder = "New Recipe Name";
-    newRecipeNameInput.required = true;
-
-    const newIngredientInput = document.createElement("input");
-    newIngredientInput.className = "newIngredients";
-    newIngredientInput.id = "newIngredientInput";
-    newIngredientInput.setAttribute("list", "ingredientOptions");
-    newIngredientInput.placeholder = "Name";
-    newIngredientInput.required = true;
-
-    const newIngredientMeasure = document.createElement("input");
-    newIngredientMeasure.className = "newIngredientMeasure";
-
-    const newIngredientFieldBtn = document.createElement("button");
-    newIngredientFieldBtn.id = "newIngredientInputFieldBtn";
-    newIngredientFieldBtn.classList = ("button", "newIngredientFieldBtns");
-    newIngredientFieldBtn.addEventListener(
-      "click",
-      handleIngredientInputSubmit
-    );
-
-    async function handleIngredientInputSubmit(e) {
-      e.preventDefault();
-      const ingredientNameInput = document.getElementById("newIngredientInput");
-      const ingredientAmtInput = document.getElementById(
-        "newIngredientAmtInput"
-      );
-      const measurementUnitInput = document.getElementById(
-        "measurementUnitInput"
-      );
-      const newIngredientCalorieInput = document.getElementById(
-        "newIngredientCalorieInput"
-      );
-      if (newIngredientCalorieInput.value === "?") {
-        return;
-      }
-      if (
-        ingredientNameInput.value &&
-        ingredientAmtInput.value &&
-        measurementUnitInput.value &&
-        newIngredientCalorieInput.value
-      ) {
-        convertMeasurementUnitsToFlOz(
-          measurementUnitInput,
-          ingredientAmtInput,
-          newIngredientCalorieInput
-        );
-
-        //todo push this information to the ingredients array that will be sent to the back end when the recipe is actually submitted
-        const ingredientObject = {};
-        const { measurementUnitToSend, caloriesToSend } =
-          convertMeasurementUnitsToFlOz(
+      
+        async function handleNewRecipeClick() {
+          const mainContent = document.getElementsByClassName("mainContent");
+      
+          for (let i = mainContent.length; i > 0; i--) {
+            mainContent[i - 1].remove();
+          }
+      
+          document.getElementById("addRecipeIngredientsToShoppingListBtn")?.remove();
+          document.getElementById("newIngredientSection")?.remove()
+          const ingredientsInformation = [];
+          removeNewRecipeInputFields();
+      
+          const ingredientInputForm = document.createElement("div");
+          ingredientInputForm.id = "ingredientInputForm";
+      
+          const newRecipeNameInput = document.createElement("input");
+          newRecipeNameInput.type = "text";
+          newRecipeNameInput.id = "newRecipeNameInput";
+          newRecipeNameInput.placeholder = "New Recipe Name";
+          newRecipeNameInput.required = true;
+      
+          const newIngredientInput = document.createElement("input");
+          newIngredientInput.className = "newIngredients";
+          newIngredientInput.id = "newIngredientInput";
+          newIngredientInput.setAttribute("list", "ingredientOptions");
+          newIngredientInput.placeholder = "Name";
+          newIngredientInput.required = true;
+      
+          const newIngredientMeasure = document.createElement("input");
+          newIngredientMeasure.className = "newIngredientMeasure";
+      
+          const newIngredientFieldBtn = document.createElement("button");
+          newIngredientFieldBtn.id = "newIngredientInputFieldBtn";
+          newIngredientFieldBtn.classList = ("button", "newIngredientFieldBtns");
+          newIngredientFieldBtn.addEventListener(
+            "click",
+            handleIngredientInputSubmit
+          );
+      
+          async function handleIngredientInputSubmit(e) {
+            e.preventDefault();
+            const ingredientNameInput = document.getElementById("newIngredientInput");
+            const ingredientAmtInput = document.getElementById(
+              "newIngredientAmtInput"
+            );
+            const measurementUnitInput = document.getElementById(
+              "measurementUnitInput"
+            );
+            const newIngredientCalorieInput = document.getElementById(
+              "newIngredientCalorieInput"
+            );
+            if (newIngredientCalorieInput.value === "?") {
+              return;
+            }
+            if (
+              ingredientNameInput.value &&
+              ingredientAmtInput.value &&
+              measurementUnitInput.value &&
+              newIngredientCalorieInput.value
+            ) {
+              convertMeasurementUnitsToFlOz(
+                measurementUnitInput,
+                ingredientAmtInput,
+                newIngredientCalorieInput
+              );
+      
+              //todo push this information to the ingredients array that will be sent to the back end when the recipe is actually submitted
+              const ingredientObject = {};
+              const { measurementUnitToSend, caloriesToSend } =
+                convertMeasurementUnitsToFlOz(
+                  measurementUnitInput,
+                  ingredientAmtInput,
+                  newIngredientCalorieInput
+                );
+      
+              ingredientObject.ingredientName = ingredientNameInput.value;
+              ingredientObject.ingredientAmt = ingredientAmtInput.value;
+              ingredientObject.measurementUnitInput = measurementUnitToSend;
+              ingredientObject.newIngredientCalorieInput = caloriesToSend;
+      
+              console.log("measurementUnitToSend: ", measurementUnitToSend);
+              if (measurementUnitToSend === "whole") {
+                ingredientObject.whole = true;
+                ingredientObject.newIngredientCalorieInput = caloriesToSend;
+              } else if (measurementUnitToSend === "half") {
+                ingredientObject.whole = true;
+                ingredientObject.newIngredientCalorieInput = caloriesToSend * 2;
+              } else if (measurementUnitToSend === "quarter") {
+                ingredientObject.whole = true;
+                ingredientObject.newIngredientCalorieInput = caloriesToSend * 4;
+              } else {
+                ingredientObject.whole = false;
+              }
+      
+              console.log("ingredientObject.whole: ", ingredientObject.whole);
+              ingredientsInformation.push(ingredientObject);
+      
+              const URL = `${serverURL}/recipeingredient/storeRecipeIngredient`;
+      
+              //todo insert an alternate fetch to patch an update to an existing ingredient, rather than posting another one
+      
+              try {
+                const res = await fetch(URL, {
+                  method: "POST",
+                  mode: "cors",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(ingredientObject),
+                  Authorization: token,
+                });
+                const data = await res.json();
+                if (data.message === "Success! RecipeIngredient Saved!") {
+                  console.log("Success! RecipeIngredient Saved!");
+                }
+              } catch (error) {
+                console.log(error.message);
+              }
+      
+              const submittedIngredient = document.createElement("div");
+              submittedIngredient.textContent = ingredientNameInput.value;
+              submittedIngredient.className = "newIngredients";
+      
+              const submittedIngredientAmt = document.createElement("div");
+              submittedIngredientAmt.textContent = ingredientAmtInput.value;
+              submittedIngredientAmt.className = "newIngredientAmtInputs";
+      
+              const submittedMeasurementUnit = document.createElement("div");
+              submittedMeasurementUnit.textContent = measurementUnit.value;
+              submittedMeasurementUnit.className = "measurementUnit";
+      
+              const submittedIngredientCals = document.createElement("div");
+              submittedIngredientCals.textContent = newIngredientCalorieInputs.value;
+              submittedIngredientCals.className = "newIngredientCalorieInputs";
+              submittedIngredientCals.setAttribute("number", true);
+      
+              const editBtn = document.createElement("button");
+              editBtn.id = "recipeIngredientEdit";
+              editBtn.className = "newIngredientFieldBtns";
+              editBtn.textContent = "Edit";
+              editBtn.addEventListener("click", handleEditRecipeIngredient);
+              editBtn.removeEventListener("click", handleEditRecipeIngredient);
+              newIngredientGrid.append(
+                submittedIngredient,
+                submittedIngredientAmt,
+                submittedMeasurementUnit,
+                submittedIngredientCals,
+                editBtn
+              );
+      
+              function handleEditRecipeIngredient() {
+                alert(
+                  "This will be used to switch the line to inputs, and the text content to the previous values"
+                );
+              }
+              ingredientNameInput.value = "";
+              ingredientAmtInput.value = "";
+              measurementUnitInput.value = "";
+              newIngredientCalorieInput.value = "";
+            } else {
+              console.log("missing input");
+            }
+            await getKnownRecipeIngredients(ingredientInputForm);
+          }
+      
+          function convertMeasurementUnitsToFlOz(
             measurementUnitInput,
             ingredientAmtInput,
             newIngredientCalorieInput
-          );
-
-        ingredientObject.ingredientName = ingredientNameInput.value;
-        ingredientObject.ingredientAmt = ingredientAmtInput.value;
-        ingredientObject.measurementUnitInput = measurementUnitToSend;
-        ingredientObject.newIngredientCalorieInput = caloriesToSend;
-
-        console.log("measurementUnitToSend: ", measurementUnitToSend);
-        if (measurementUnitToSend === "whole") {
-          ingredientObject.whole = true;
-          ingredientObject.newIngredientCalorieInput = caloriesToSend;
-        } else if (measurementUnitToSend === "half") {
-          ingredientObject.whole = true;
-          ingredientObject.newIngredientCalorieInput = caloriesToSend * 2;
-        } else if (measurementUnitToSend === "quarter") {
-          ingredientObject.whole = true;
-          ingredientObject.newIngredientCalorieInput = caloriesToSend * 4;
-        } else {
-          ingredientObject.whole = false;
-        }
-
-        console.log("ingredientObject.whole: ", ingredientObject.whole);
-        ingredientsInformation.push(ingredientObject);
-
-        const URL = `${serverURL}/recipeingredient/storeRecipeIngredient`;
-
-        //todo insert an alternate fetch to patch an update to an existing ingredient, rather than posting another one
-
-        try {
-          const res = await fetch(URL, {
-            method: "POST",
-            mode: "cors",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(ingredientObject),
-            Authorization: token,
-          });
-          const data = await res.json();
-          if (data.message === "Success! RecipeIngredient Saved!") {
-            console.log("Success! RecipeIngredient Saved!");
+          ) {
+            console.log("measurementUnitInput.value: ", measurementUnitInput.value);
+            const conversionObject = {
+              gal: 128,
+              qt: 32,
+              pint: 16,
+              cup: 8,
+              tbsp: 0.5,
+              tsp: 1.6666667,
+              "fl oz": 1,
+            };
+      
+            if (conversionObject[measurementUnitInput.value]) {
+              const convertedUnits =
+                conversionObject[measurementUnitInput.value] *
+                +ingredientAmtInput.value;
+      
+              const convertedCalories =
+                +newIngredientCalorieInputs.value / convertedUnits;
+      
+              return {
+                caloriesToSend: convertedCalories,
+                measurementUnitToSend: "fl oz",
+              };
+            } else {
+              return {
+                caloriesToSend: +newIngredientCalorieInput.value,
+                measurementUnitToSend: measurementUnitInput.value,
+              };
+            }
           }
-        } catch (error) {
-          console.log(error.message);
-        }
-
-        const submittedIngredient = document.createElement("div");
-        submittedIngredient.textContent = ingredientNameInput.value;
-        submittedIngredient.className = "newIngredients";
-
-        const submittedIngredientAmt = document.createElement("div");
-        submittedIngredientAmt.textContent = ingredientAmtInput.value;
-        submittedIngredientAmt.className = "newIngredientAmtInputs";
-
-        const submittedMeasurementUnit = document.createElement("div");
-        submittedMeasurementUnit.textContent = measurementUnit.value;
-        submittedMeasurementUnit.className = "measurementUnit";
-
-        const submittedIngredientCals = document.createElement("div");
-        submittedIngredientCals.textContent = newIngredientCalorieInputs.value;
-        submittedIngredientCals.className = "newIngredientCalorieInputs";
-        submittedIngredientCals.setAttribute("number", true);
-
-        const editBtn = document.createElement("button");
-        editBtn.id = "recipeIngredientEdit";
-        editBtn.className = "newIngredientFieldBtns";
-        editBtn.textContent = "Edit";
-        editBtn.addEventListener("click", handleEditRecipeIngredient);
-        editBtn.removeEventListener("click", handleEditRecipeIngredient);
-        newIngredientGrid.append(
-          submittedIngredient,
-          submittedIngredientAmt,
-          submittedMeasurementUnit,
-          submittedIngredientCals,
-          editBtn
-        );
-
-        function handleEditRecipeIngredient() {
-          alert(
-            "This will be used to switch the line to inputs, and the text content to the previous values"
+      
+          newIngredientFieldBtn.textContent = "Add ";
+      
+          const recipeCookTimeInputField = document.createElement("input");
+          recipeCookTimeInputField.type = "string";
+          recipeCookTimeInputField.id = "recipeCookTimeInputField";
+          recipeCookTimeInputField.placeholder = "Time to Make";
+      
+          const recipeTempInputField = document.createElement("input");
+          recipeTempInputField.type = "string";
+          recipeTempInputField.id = "recipeTempInputField";
+          recipeTempInputField.placeholder = "Temperature";
+      
+          const numOfServingsRow = document.createElement("div");
+          const numOfServingsLabel = document.createElement("div");
+          numOfServingsLabel.id = "numOfServingsLabel";
+          numOfServingsLabel.textContent = "Servings: ";
+      
+          const numberOfServingsInputField = document.createElement("input");
+          numberOfServingsInputField.type = "number";
+          numberOfServingsInputField.id = "numberOfServingsInputField";
+          numberOfServingsInputField.placeholder = "Servings";
+          numberOfServingsInputField.min = "1";
+          numberOfServingsInputField.value = 1;
+      
+          numOfServingsRow.append(numOfServingsLabel, numberOfServingsInputField);
+      
+          const recipeInstructionsInputField = document.createElement("textarea");
+          recipeInstructionsInputField.id = "recipeInstructionsInputField";
+          recipeInstructionsInputField.placeholder = "Description";
+          if (document.getElementById("ingredientInputForm")) {
+            document
+              .getElementById("addRecipeIngredientsToShoppingListBtn")
+              ?.remove();
+          }
+      
+          const recipeStepRow = document.createElement("div");
+          recipeStepRow.className = "recipeStepRows";
+      
+          const recipeStepLabel = document.createElement("div");
+          recipeStepLabel.className = "recipeStepLabels";
+          recipeStepLabel.textContent = "Step 1: ";
+      
+          const recipeStep = document.createElement("input");
+          recipeStep.placeholder = "step:";
+          recipeStep.className = "recipeSteps";
+          recipeStep.id = "step_1";
+      
+          const submitRecipeStepBtn = document.createElement("button");
+          submitRecipeStepBtn.className = "submitRecipeStepBtn";
+          submitRecipeStepBtn.textContent = "+";
+          submitRecipeStepBtn.addEventListener("click", handleSubmitRecipeStep);
+      
+          recipeStepRow.append(recipeStepLabel, recipeStep, submitRecipeStepBtn);
+      
+          function handleSubmitRecipeStep() {
+            const oldBtns = document.getElementsByClassName("submitRecipeStepBtn");
+            oldBtns[oldBtns.length - 1].removeEventListener(
+              "click",
+              handleSubmitRecipeStep
+            );
+            oldBtns[oldBtns.length - 1].remove();
+      
+            const recipeStepRow = document.createElement("div");
+            recipeStepRow.className = "recipeStepRows";
+      
+            const recipeStepLabel = document.createElement("div");
+            recipeStepLabel.className = "recipeStepLabels";
+      
+            const recipeStep = document.createElement("input");
+            recipeStep.placeholder = "step:";
+            recipeStep.className = "recipeSteps";
+      
+            console.log(
+              "recipeStepRows: ",
+              document.getElementsByClassName("recipeStepRows")
+            );
+      
+            const submitRecipeStepBtn = document.createElement("button");
+            submitRecipeStepBtn.className = "submitRecipeStepBtn";
+            submitRecipeStepBtn.textContent = "+";
+            submitRecipeStepBtn.addEventListener("click", handleSubmitRecipeStep);
+      
+            recipeStepRow.append(recipeStepLabel, recipeStep, submitRecipeStepBtn);
+      
+            const newRecipeBtn = document.getElementById("newRecipeInputBtn");
+            // console.log(newRecipeBtn.textContent);
+      
+            newRecipeBtn.before(recipeStepRow);
+            const recipeStepLabels =
+              document.getElementsByClassName("recipeStepLabels");
+      
+            for (let i = 0; i < recipeStepLabels.length; i++) {
+              console.log("recipeStepLabel: ", recipeStepLabel);
+              recipeStepLabels[i].id = `step_${i + 1}`;
+              recipeStepLabels[i].textContent = `Step ${i + 1}:`;
+            }
+          }
+      
+          const measurementUnit = document.createElement("select");
+          measurementUnit.setAttribute("list", "unitOptions");
+          measurementUnit.className = "measurementUnit";
+          measurementUnit.id = "measurementUnitInput"; //todo - remove this when adding a new ingredient line
+          measurementUnit.placeholder = "unit";
+          measurementUnit.addEventListener("change", handleMeasurementUnitChange);
+      
+          async function handleMeasurementUnitChange() {
+            const data = await checkForExistingRecipeIngredient(
+              newIngredientInput.value
+            );
+            const body = data.findIngredient;
+      
+            console.log("body: ", body);
+      
+            const conversionObject = {
+              gal: 128,
+              qt: 32,
+              pint: 16,
+              cup: 8,
+              tbsp: 0.5,
+              tsp: 1.6666667,
+              "fl oz": 1,
+            };
+      
+            if (body.whole === false) {
+              if (conversionObject[measurementUnit.value]) {
+                const newValue =
+                  body.calories * conversionObject[measurementUnit.value];
+                newIngredientCalorieInputs.value =
+                  +newValue.toFixed(0) * +newIngredientAmtInputs.value;
+              }
+            } else if (body.whole === true) {
+            }
+            if (measurementUnit.value === "whole") {
+              newIngredientCalorieInputs.value = body.calories.toFixed(0);
+            } else if (measurementUnit.value === "half") {
+              newIngredientCalorieInputs.value = (body.calories * 0.5).toFixed(0);
+            } else if (measurementUnit.value === "quarter") {
+              newIngredientCalorieInputs.value = (body.calories * 0.25).toFixed(0);
+            } else {
+              newIngredientCalorieInputs.value = "?";
+            }
+          }
+      
+          const unitOptions = [
+            "tsp",
+            "tbsp",
+            "fl oz",
+            "cup",
+            "pint",
+            "qt",
+            "gal",
+            "whole",
+            "half",
+            "quarter",
+          ];
+      
+          unitOptions.map((unit) => {
+            const option = document.createElement("option");
+            option.value = unit;
+            option.textContent = unit;
+            measurementUnit.append(option);
+          });
+      
+          let ingredientDataList = document.createElement("datalist");
+          ingredientDataList.id = "ingredientOptions";
+      
+          const unitOption = document.createElement("option");
+      
+          const newRecipeInputBtn = document.createElement("input");
+          newRecipeInputBtn.type = "submit";
+          newRecipeInputBtn.id = "newRecipeInputBtn";
+          newRecipeInputBtn.addEventListener("click", handleNewRecipeSubmit);
+      
+          const newIngredientAmtInputs = document.createElement("input");
+          newIngredientAmtInputs.placeholder = "qty";
+          newIngredientAmtInputs.type = "number";
+          newIngredientAmtInputs.className = "newIngredientAmtInputs";
+          newIngredientAmtInputs.min = 0;
+          newIngredientAmtInputs.id = "newIngredientAmtInput";
+          newIngredientAmtInputs.addEventListener(
+            "change",
+            handleMeasurementUnitChange
           );
+      
+          const newIngredientCalorieInputs = document.createElement("input");
+          newIngredientCalorieInputs.className = "newIngredientCalorieInputs";
+          newIngredientCalorieInputs.placeholder = "Cal";
+          newIngredientCalorieInputs.id = "newIngredientCalorieInput";
+          newIngredientCalorieInputs.setAttribute("number", true);
+      
+          const newIngredientGrid = document.createElement("div");
+          newIngredientGrid.id = "newIngredientGrid";
+      
+          const newIngredientSection = document.createElement('div')
+          newIngredientSection.id = "newIngredientSection"
+      
+          newIngredientSection.append(
+            newIngredientGrid,
+            recipeInstructionsInputField,
+            recipeStepRow,
+            newRecipeInputBtn
+          )
+      
+          document.getElementById("recipesContainer").after(
+            newIngredientSection
+          );
+      
+          const newIngredientContainer = document.createElement("tr");
+          newIngredientContainer.id = "newIngredientContainer";
+          newIngredientContainer.className = "newIngredientContainers";
+      
+          newIngredientGrid.append(
+            newIngredientInput,
+            newIngredientAmtInputs,
+            measurementUnit,
+            newIngredientCalorieInputs,
+            newIngredientFieldBtn
+          );
+      
+          ingredientInputForm.append(unitOption, newRecipeNameInput);
+      
+          const timeAndTemp = document.createElement("div");
+          timeAndTemp.id = "timeAndTemp";
+          timeAndTemp.append(
+            recipeCookTimeInputField,
+            recipeTempInputField,
+            numOfServingsRow
+          );
+      
+          document
+            .getElementById("newIngredientGrid")
+            .before(ingredientInputForm, timeAndTemp);
         }
-        ingredientNameInput.value = "";
-        ingredientAmtInput.value = "";
-        measurementUnitInput.value = "";
-        newIngredientCalorieInput.value = "";
-      } else {
-        console.log("missing input");
-      }
-      await getKnownRecipeIngredients(ingredientInputForm);
-    }
 
-    function convertMeasurementUnitsToFlOz(
-      measurementUnitInput,
-      ingredientAmtInput,
-      newIngredientCalorieInput
-    ) {
-      console.log("measurementUnitInput.value: ", measurementUnitInput.value);
-      const conversionObject = {
-        gal: 128,
-        qt: 32,
-        pint: 16,
-        cup: 8,
-        tbsp: 0.5,
-        tsp: 1.6666667,
-        "fl oz": 1,
-      };
-
-      if (conversionObject[measurementUnitInput.value]) {
-        const convertedUnits =
-          conversionObject[measurementUnitInput.value] *
-          +ingredientAmtInput.value;
-
-        const convertedCalories =
-          +newIngredientCalorieInputs.value / convertedUnits;
-
-        return {
-          caloriesToSend: convertedCalories,
-          measurementUnitToSend: "fl oz",
-        };
-      } else {
-        return {
-          caloriesToSend: +newIngredientCalorieInput.value,
-          measurementUnitToSend: measurementUnitInput.value,
-        };
-      }
-    }
-
-    newIngredientFieldBtn.textContent = "Add ";
-
-    const recipeCookTimeInputField = document.createElement("input");
-    recipeCookTimeInputField.type = "string";
-    recipeCookTimeInputField.id = "recipeCookTimeInputField";
-    recipeCookTimeInputField.placeholder = "Time to Make";
-
-    const recipeTempInputField = document.createElement("input");
-    recipeTempInputField.type = "string";
-    recipeTempInputField.id = "recipeTempInputField";
-    recipeTempInputField.placeholder = "Temperature";
-
-    const numOfServingsRow = document.createElement("div");
-    const numOfServingsLabel = document.createElement("div");
-    numOfServingsLabel.id = "numOfServingsLabel";
-    numOfServingsLabel.textContent = "Servings: ";
-
-    const numberOfServingsInputField = document.createElement("input");
-    numberOfServingsInputField.type = "number";
-    numberOfServingsInputField.id = "numberOfServingsInputField";
-    numberOfServingsInputField.placeholder = "Servings";
-    numberOfServingsInputField.min = "1";
-    numberOfServingsInputField.value = 1;
-
-    numOfServingsRow.append(numOfServingsLabel, numberOfServingsInputField);
-
-    const recipeInstructionsInputField = document.createElement("textarea");
-    recipeInstructionsInputField.id = "recipeInstructionsInputField";
-    recipeInstructionsInputField.placeholder = "Description";
-    if (document.getElementById("ingredientInputForm")) {
-      document
-        .getElementById("addRecipeIngredientsToShoppingListBtn")
-        ?.remove();
-    }
-
-    const recipeStepRow = document.createElement("div");
-    recipeStepRow.className = "recipeStepRows";
-
-    const recipeStepLabel = document.createElement("div");
-    recipeStepLabel.className = "recipeStepLabels";
-    recipeStepLabel.textContent = "Step 1: ";
-
-    const recipeStep = document.createElement("input");
-    recipeStep.placeholder = "step:";
-    recipeStep.className = "recipeSteps";
-    recipeStep.id = "step_1";
-
-    const submitRecipeStepBtn = document.createElement("button");
-    submitRecipeStepBtn.className = "submitRecipeStepBtn";
-    submitRecipeStepBtn.textContent = "+";
-    submitRecipeStepBtn.addEventListener("click", handleSubmitRecipeStep);
-
-    recipeStepRow.append(recipeStepLabel, recipeStep, submitRecipeStepBtn);
-
-    function handleSubmitRecipeStep() {
-      const oldBtns = document.getElementsByClassName("submitRecipeStepBtn");
-      oldBtns[oldBtns.length - 1].removeEventListener(
-        "click",
-        handleSubmitRecipeStep
-      );
-      oldBtns[oldBtns.length - 1].remove();
-
-      const recipeStepRow = document.createElement("div");
-      recipeStepRow.className = "recipeStepRows";
-
-      const recipeStepLabel = document.createElement("div");
-      recipeStepLabel.className = "recipeStepLabels";
-
-      const recipeStep = document.createElement("input");
-      recipeStep.placeholder = "step:";
-      recipeStep.className = "recipeSteps";
-
-      console.log(
-        "recipeStepRows: ",
-        document.getElementsByClassName("recipeStepRows")
-      );
-
-      const submitRecipeStepBtn = document.createElement("button");
-      submitRecipeStepBtn.className = "submitRecipeStepBtn";
-      submitRecipeStepBtn.textContent = "+";
-      submitRecipeStepBtn.addEventListener("click", handleSubmitRecipeStep);
-
-      recipeStepRow.append(recipeStepLabel, recipeStep, submitRecipeStepBtn);
-
-      const newRecipeBtn = document.getElementById("newRecipeInputBtn");
-      // console.log(newRecipeBtn.textContent);
-
-      newRecipeBtn.before(recipeStepRow);
-      const recipeStepLabels =
-        document.getElementsByClassName("recipeStepLabels");
-
-      for (let i = 0; i < recipeStepLabels.length; i++) {
-        console.log("recipeStepLabel: ", recipeStepLabel);
-        recipeStepLabels[i].id = `step_${i + 1}`;
-        recipeStepLabels[i].textContent = `Step ${i + 1}:`;
-      }
-    }
-
-    const measurementUnit = document.createElement("select");
-    measurementUnit.setAttribute("list", "unitOptions");
-    measurementUnit.className = "measurementUnit";
-    measurementUnit.id = "measurementUnitInput"; //todo - remove this when adding a new ingredient line
-    measurementUnit.placeholder = "unit";
-    measurementUnit.addEventListener("change", handleMeasurementUnitChange);
-
-    async function handleMeasurementUnitChange() {
-      const data = await checkForExistingRecipeIngredient(
-        newIngredientInput.value
-      );
-      const body = data.findIngredient;
-
-      console.log("body: ", body);
-
-      const conversionObject = {
-        gal: 128,
-        qt: 32,
-        pint: 16,
-        cup: 8,
-        tbsp: 0.5,
-        tsp: 1.6666667,
-        "fl oz": 1,
-      };
-
-      if (body.whole === false) {
-        if (conversionObject[measurementUnit.value]) {
-          const newValue =
-            body.calories * conversionObject[measurementUnit.value];
-          newIngredientCalorieInputs.value =
-            +newValue.toFixed(0) * +newIngredientAmtInputs.value;
-        }
-      } else if (body.whole === true) {
-      }
-      if (measurementUnit.value === "whole") {
-        newIngredientCalorieInputs.value = body.calories.toFixed(0);
-      } else if (measurementUnit.value === "half") {
-        newIngredientCalorieInputs.value = (body.calories * 0.5).toFixed(0);
-      } else if (measurementUnit.value === "quarter") {
-        newIngredientCalorieInputs.value = (body.calories * 0.25).toFixed(0);
-      } else {
-        newIngredientCalorieInputs.value = "?";
-      }
-    }
-
-    const unitOptions = [
-      "tsp",
-      "tbsp",
-      "fl oz",
-      "cup",
-      "pint",
-      "qt",
-      "gal",
-      "whole",
-      "half",
-      "quarter",
-    ];
-
-    unitOptions.map((unit) => {
-      const option = document.createElement("option");
-      option.value = unit;
-      option.textContent = unit;
-      measurementUnit.append(option);
-    });
-
-    let ingredientDataList = document.createElement("datalist");
-    ingredientDataList.id = "ingredientOptions";
-
-    const unitOption = document.createElement("option");
-
-    const newRecipeInputBtn = document.createElement("input");
-    newRecipeInputBtn.type = "submit";
-    newRecipeInputBtn.id = "newRecipeInputBtn";
-    newRecipeInputBtn.addEventListener("click", handleNewRecipeSubmit);
-
-    const newIngredientAmtInputs = document.createElement("input");
-    newIngredientAmtInputs.placeholder = "qty";
-    newIngredientAmtInputs.type = "number";
-    newIngredientAmtInputs.className = "newIngredientAmtInputs";
-    newIngredientAmtInputs.min = 0;
-    newIngredientAmtInputs.id = "newIngredientAmtInput";
-    newIngredientAmtInputs.addEventListener(
-      "change",
-      handleMeasurementUnitChange
-    );
-
-    const newIngredientCalorieInputs = document.createElement("input");
-    newIngredientCalorieInputs.className = "newIngredientCalorieInputs";
-    newIngredientCalorieInputs.placeholder = "Cal";
-    newIngredientCalorieInputs.id = "newIngredientCalorieInput";
-    newIngredientCalorieInputs.setAttribute("number", true);
-
-    const newIngredientGrid = document.createElement("div");
-    newIngredientGrid.id = "newIngredientGrid";
-
-    const newIngredientSection = document.createElement('div')
-    newIngredientSection.id = "newIngredientSection"
-
-    newIngredientSection.append(
-      newIngredientGrid,
-      recipeInstructionsInputField,
-      recipeStepRow,
-      newRecipeInputBtn
-    )
-
-    document.getElementById("recipesContainer").after(
-      newIngredientSection
-    );
-
-    const newIngredientContainer = document.createElement("tr");
-    newIngredientContainer.id = "newIngredientContainer";
-    newIngredientContainer.className = "newIngredientContainers";
-
-    newIngredientGrid.append(
-      newIngredientInput,
-      newIngredientAmtInputs,
-      measurementUnit,
-      newIngredientCalorieInputs,
-      newIngredientFieldBtn
-    );
-
-    ingredientInputForm.append(unitOption, newRecipeNameInput);
-
-    const timeAndTemp = document.createElement("div");
-    timeAndTemp.id = "timeAndTemp";
-    timeAndTemp.append(
-      recipeCookTimeInputField,
-      recipeTempInputField,
-      numOfServingsRow
-    );
-
-    document
-      .getElementById("newIngredientGrid")
-      .before(ingredientInputForm, timeAndTemp);
   }
+
+
 
   recipes.map((recipe) => {
     const recipeCheck = document.createElement("td");
@@ -1307,6 +1317,8 @@ async function populateRecipeList() {
     recipeListTableBody.append(recipeGroup);
 
     async function handleShowRecipeClick() {
+
+      //todo either addRecipeIngredientsToShoppingListBtnContainer or addRecipeIngredientsToShoppingListBtn are being removed by this click
       removeNewRecipeInputFields();
 
       const data = async () => {
@@ -1591,6 +1603,11 @@ async function populateRecipeList() {
         }
       });
 
+          // selections.append(recipeListTable, addRecipeContainer);
+          // selections.append(addRecipeContainer);
+
+
+
       const addRecipeIngredientsToShoppingListBtnContainer =
         document.createElement("div");
       addRecipeIngredientsToShoppingListBtnContainer.id =
@@ -1617,9 +1634,11 @@ async function populateRecipeList() {
           .remove();
       }
       document
-        .getElementById("recipeListTableBody")
-        //todo change this if needed from after to append
-        .after(addRecipeIngredientsToShoppingListBtnContainer);
+        // .getElementById("recipeListTableBody")
+        // //todo change this if needed from after to append
+        // .after(addRecipeIngredientsToShoppingListBtnContainer);
+
+        document.getElementsByClassName("mainContent")[document.getElementsByClassName("mainContent").length -1].after(addRecipeIngredientsToShoppingListBtnContainer)
       document
         .getElementById("addRecipeIngredientsToShoppingListBtnContainer")
         .append(addRecipeIngredientsToShoppingListBtn);
@@ -1710,6 +1729,7 @@ async function handleAddRecipeIngredientsToShoppingList() {
   }
   // setTimeout(() => {
   await fetchShoppingList();
+
   // }, 500);
 }
 
