@@ -579,6 +579,8 @@ function populateShoppingList(items) {
 
     function handleShoppingListCheckboxClick() {
       console.log("click");
+      // console.log(item)
+      // console.log(item.style.textDecoration)
       if (item.style.textDecoration === "line-through") {
         item.style.textDecoration = "none";
       } else if (item.style.textDecoration === "none") {
@@ -677,7 +679,7 @@ function handleSelectAllClick() {
   for (let i = 0; i < shoppingListCheckBoxes.length; i++) {
     shoppingListCheckBoxes[i].checked = selectAllFlag;
     if (selectAllFlag === false) {
-      document.getElementsByClassName("item")[i].style.textDecoration = ""
+      document.getElementsByClassName("item")[i].style.textDecoration = "none"
     } else {
       document.getElementsByClassName("item")[i].style.textDecoration = "line-through"
     }
