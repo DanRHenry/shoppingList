@@ -21,6 +21,7 @@ const switchBtn = document.getElementById("switchBtn");
 const email = document.getElementById("emailInput");
 const password = document.getElementById("passwordInput");
 const family = document.getElementById("familyInput");
+let selectAllFlag = false
 
 const loginWelcomeSection = document.getElementById("loginWelcomeSection");
 let token;
@@ -39,6 +40,7 @@ function checkForToken() {
 }
 
 function loadShoppingList() {
+  selectAllFlag = false
   removeRecipeIngredients();
   document.getElementById("addRecipeIngredientsToShoppingListBtnContainer")?.remove()
   document.getElementById("newIngredientSection")?.remove()
@@ -667,8 +669,6 @@ function handlePostNewItem() {
   }
 }
 
-let selectAllFlag = true
-
 function handleSelectAllClick() {
   selectAllFlag = !selectAllFlag
   const shoppingListCheckBoxes = document.getElementsByClassName(
@@ -676,6 +676,11 @@ function handleSelectAllClick() {
   );
   for (let i = 0; i < shoppingListCheckBoxes.length; i++) {
     shoppingListCheckBoxes[i].checked = selectAllFlag;
+    if (selectAllFlag === false) {
+      document.getElementsByClassName("item")[i].style.textDecoration = ""
+    } else {
+      document.getElementsByClassName("item")[i].style.textDecoration = "line-through"
+    }
   }
 }
 
