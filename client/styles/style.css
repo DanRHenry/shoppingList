@@ -302,7 +302,7 @@ body {
 }
 
 #newRecipeNameInput, .ingredients {
-    width: 40%;
+    width: 70%;
     text-align: center;
     margin-top: 1em;
 }
@@ -506,9 +506,19 @@ body {
 }
 
 
+#newIngredientSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: gray;
+}
+
 #newIngredientGrid{
-    max-width: fit-content;
-    width: 86%;
+    align-self: center;
+    /* margin: auto; */
+    /* max-width: fit-content; */
+    min-width: 85%;
+    width: 85%;
 }
 
 #recipeTableBody {

@@ -39,13 +39,14 @@ function checkForToken() {
 }
 
 function loadShoppingList() {
-  removeRecipeIngredients()
+  removeRecipeIngredients();
+  document.getElementById("newIngredientSection")?.remove()
   createShoppingListSection();
   fetchShoppingList();
 }
 
 function loadRecipesList() {
-  removeRecipeIngredients()
+  removeRecipeIngredients();
   // createRecipeContent(); // adds headers
   createRecipesContainer();
   createRecipeWindow();
@@ -130,7 +131,7 @@ function createShoppingListSection() {
   const shoppingListContainer = document.createElement("div");
   shoppingListContainer.id = "shoppingListContainer";
   const shoppingListTable = document.createElement("table");
-  shoppingListTable.id = "shoppingListTable"
+  shoppingListTable.id = "shoppingListTable";
   const shoppingListTableBody = document.createElement("tbody");
   shoppingListTableBody.id = "shoppingListTableBody";
 
@@ -254,19 +255,19 @@ document.getElementById("loginSection")?.addEventListener("submit", login);
 // document.getElementById("load_page").addEventListener("click", loadPageContents)
 // loadPageContents();
 
-function handleShoppingListContainerClick() {
-  const shoppingListContainer = document.getElementById(
-    "shoppingListContainer"
-  );
-  const recipeContent = document.getElementById("recipeContent");
-  const recipesContainer = document.getElementById("recipesContainer");
+// function handleShoppingListContainerClick() {
+//   const shoppingListContainer = document.getElementById(
+//     "shoppingListContainer"
+//   );
+//   const recipeContent = document.getElementById("recipeContent");
+//   const recipesContainer = document.getElementById("recipesContainer");
 
-  recipeContent.style.height = "0";
+//   recipeContent.style.height = "0";
 
-  recipesContainer.style.height = "0";
+//   recipesContainer.style.height = "0";
 
-  shoppingListContainer.style.height = "100vh";
-}
+//   shoppingListContainer.style.height = "100vh";
+// }
 
 async function handleNewRecipeSubmit(e) {
   await e.preventDefault();
@@ -329,19 +330,20 @@ async function handleNewRecipeSubmit(e) {
 
 async function postNewIngredient(item, qty) {
   console.log("item:", item);
+  // console.log("token: ",token)
   const URL = `${serverURL}/ingredient/storeIngredient`;
 
-  console.log(await checkForExistingIngredient(item));
+  // console.log(await checkForExistingIngredient(item));
 
-  if ((await checkForExistingIngredient(item)) === "Found!") {
-    document.getElementById(
-      "itemInput"
-    ).value = `The list already has ${item}.`;
-    setTimeout(() => {
-      document.getElementById("itemInput").value = "";
-    }, 3000);
+
+  if ((await checkForExistingIngredient(item)) === "Found!") 
+    {
+      console.log(await checkForExistingIngredient(item))
+      console.log("found")
     return;
-  } else {
+  } 
+  else 
+  {
     try {
       const newIngredient = {
         ingredientName: item,
@@ -363,6 +365,8 @@ async function postNewIngredient(item, qty) {
     }
   }
   await fetchShoppingList();
+  // loadShoppingList()
+
 }
 
 async function postNewRecipe(newRecipeInformation) {
@@ -408,6 +412,7 @@ async function postNewRecipe(newRecipeInformation) {
 }
 
 async function checkForExistingIngredient(item) {
+  console.log("checking for ", item)
   const URL = `${serverURL}/ingredient/find`;
 
   const ingredientQuery = {
@@ -419,15 +424,17 @@ async function checkForExistingIngredient(item) {
     mode: "cors",
     headers: new Headers({
       "Content-Type": "application/json",
+      Authorization: token
     }),
     body: JSON.stringify(ingredientQuery),
   };
 
   try {
-    //todo if the ingredient is found, populate the information on unit and calories, which can then be converted to the actual units and quantities used
-
     const res = await fetch(URL, reqOptions);
     const data = await res.json();
+    if (data.message === "Can't Find the Ingredient.") {
+      return;
+    }
     return data.message;
   } catch (error) {}
 }
@@ -544,18 +551,36 @@ async function fetchShoppingList() {
       },
     });
     const data = await res.json();
-    populateRecipeList(data);
-    populateShoppingList(data.getAllIngredients);
+    if (document.getElementById("recipesContainer")) {
+      populateRecipeList(data);
+    }
+
+    if (document.getElementById("shoppingListContainer")) {
+      populateShoppingList(data.getAllIngredients);
+    }
+    console.log("adding input now...")
+    if (!document.getElementById("shoppingListTableInputLine")) {
     addShoppingListInput();
+  }
   } catch (error) {
     console.log(error);
   }
 }
 
 function populateShoppingList(items) {
+  console.log("populateShoppingList function running...")
   const shoppingListTableBody = document.getElementById(
     "shoppingListTableBody"
   );
+  shoppingListTableBody.innerHTML = ""
+
+  const shoppingListItems = document.getElementsByClassName("shoppingListItems")
+
+  for (let i = shoppingListItems.length -1; i > 0; i --) {
+    shoppingListItems[i]?.remove()
+  }
+
+  document.getElementById("headers")?.remove()
   // shoppingListTableBody.innerHTML = "";
 
   const headers = document.createElement("tr");
@@ -681,6 +706,8 @@ function addShoppingListInput() {
 function handlePostNewItem() {
   const item = document.getElementById("itemInput").value;
   const qty = 1;
+  // console.log(item)
+  // console.log(item.length)
   if (item.length > 0) {
     postNewIngredient(item, qty);
   }
@@ -818,27 +845,15 @@ async function populateRecipeList() {
   }
 
   async function handleNewRecipeClick() {
-    // createRecipeContent()
-    // if (document.getElementById("newIngredientGrid")) {
-    //   return;
-    // }
-
     const mainContent = document.getElementsByClassName("mainContent");
 
     for (let i = mainContent.length; i > 0; i--) {
-      // console.log(mainContent[i-1])
       mainContent[i - 1].remove();
     }
 
     document.getElementById("addRecipeIngredientsToShoppingListBtn")?.remove();
-    // if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
-    //   document.getElementById("addRecipeIngredientsToShoppingListBtn").remove();
-    // }
-
+    document.getElementById("newIngredientSection")?.remove()
     const ingredientsInformation = [];
-    // document.getElementById("recipeTableBody")?.remove()
-    // const recipeTableBody = document.getElementById("recipeTableBody");
-    // recipeTableBody.innerHTML = "";
     removeNewRecipeInputFields();
 
     const ingredientInputForm = document.createElement("div");
@@ -1223,14 +1238,19 @@ async function populateRecipeList() {
     const newIngredientGrid = document.createElement("div");
     newIngredientGrid.id = "newIngredientGrid";
 
-    document
-      .getElementById("recipeItem")
-      .append(
-        newIngredientGrid,
-        recipeInstructionsInputField,
-        recipeStepRow,
-        newRecipeInputBtn
-      );
+    const newIngredientSection = document.createElement('div')
+    newIngredientSection.id = "newIngredientSection"
+
+    newIngredientSection.append(
+      newIngredientGrid,
+      recipeInstructionsInputField,
+      recipeStepRow,
+      newRecipeInputBtn
+    )
+
+    document.getElementById("recipesContainer").after(
+      newIngredientSection
+    );
 
     const newIngredientContainer = document.createElement("tr");
     newIngredientContainer.id = "newIngredientContainer";
@@ -1244,8 +1264,6 @@ async function populateRecipeList() {
       newIngredientFieldBtn
     );
 
-    await getKnownRecipeIngredients(ingredientInputForm);
-
     ingredientInputForm.append(unitOption, newRecipeNameInput);
 
     const timeAndTemp = document.createElement("div");
@@ -1256,11 +1274,9 @@ async function populateRecipeList() {
       numOfServingsRow
     );
 
-    // createRecipeContent()
-
     document
-      .getElementById("recipeTableBody")
-      .append(ingredientInputForm, timeAndTemp);
+      .getElementById("newIngredientGrid")
+      .before(ingredientInputForm, timeAndTemp);
   }
 
   recipes.map((recipe) => {
@@ -1293,8 +1309,6 @@ async function populateRecipeList() {
     async function handleShowRecipeClick() {
       removeNewRecipeInputFields();
 
-      // ingredientInputForm.innerHTML = "";
-      // document.getElementById("recipeItem").innerHTML = "";
       const data = async () => {
         const URL = `${serverURL}/recipe/find`;
 
@@ -1524,13 +1538,15 @@ async function populateRecipeList() {
       //   recipeTableBody.innerHTML = "";
       // }
 
-      removeRecipeIngredients()
+      removeRecipeIngredients();
       document.getElementById("recipeInstructionsInputField")?.remove();
       document.getElementById("newIngredientGrid")?.remove();
       document
         .getElementById("addRecipeIngredientsToShoppingListBtnContainer")
         ?.remove();
       document.getElementById("newRecipeInputBtn")?.remove();
+      document.getElementById("ingredientInputForm")?.remove();
+      document.getElementById("timeAndTemp")?.remove();
 
       const recipeStepRows = document.getElementsByClassName("recipeStepRows");
 
@@ -1545,13 +1561,6 @@ async function populateRecipeList() {
       ingredientHeader.textContent = "Ingredient";
 
       recipe.ingredients.map((item) => {
-        // console.log(
-        //   "item: ",
-        //   item.amount,
-        //   item.measurementUnit,
-        //   item.name,
-        //   item.newIngredientCalorieInput
-        // );
 
         const mainContent = document.createElement("tr");
         mainContent.className = "mainContent";
@@ -1569,9 +1578,7 @@ async function populateRecipeList() {
         ingredient.textContent = item.name;
         ingredient.style.textDecoration = "none";
         mainContent.append(check, ingredient);
-        // mainContent.append(ingredient);
         document.getElementById("recipesContainer").after(mainContent);
-        // recipeTableBody.append(mainContent);
 
         checkBox.addEventListener("click", handleIngredientListCheckboxClick);
 
@@ -1611,11 +1618,8 @@ async function populateRecipeList() {
       }
       document
         .getElementById("recipeListTableBody")
-        // .getElementById("recipeItem")
         //todo change this if needed from after to append
         .after(addRecipeIngredientsToShoppingListBtnContainer);
-
-      // .append(addRecipeIngredientsToShoppingListBtnContainer);
       document
         .getElementById("addRecipeIngredientsToShoppingListBtnContainer")
         .append(addRecipeIngredientsToShoppingListBtn);
@@ -1664,14 +1668,9 @@ const getKnownRecipeIngredients = async (ingredientInputForm) => {
 
   const fetchedIngredients = data.getAllRecipeIngredients;
 
-  // for (let i = 0; i < fetchedIngredients.length; i++) {
-  //   console.log(fetchedIngredients[i].recipeIngredientName);
-  // }
-
   if (fetchedIngredients) {
     let ingredientDataList = document.createElement("datalist");
     ingredientDataList.id = "ingredientOptions";
-    // document.getElementById("newIngredientInput")?.remove()
     const newIngredientInput = document.createElement("input");
     newIngredientInput.className = "newIngredients";
     newIngredientInput.id = "newIngredientInput";
@@ -1706,7 +1705,6 @@ async function handleAddRecipeIngredientsToShoppingList() {
 
   for (let i = 0; i < ingredientCollection.length; i++) {
     if (ingredientCheck[i].children[0].checked === true) {
-      // console.log(ingredientCollection[i].textContent)
       postNewIngredient(ingredientCollection[i].textContent, 0);
     }
   }

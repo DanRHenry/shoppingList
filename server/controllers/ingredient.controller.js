@@ -16,7 +16,7 @@ router.post("/storeIngredient", async (req, res) => {
       ingredientName: req.body.ingredientName,
       quantity: req.body.quantity,
       unit: req.body.unit,
-      calories: req.body.calories
+      calories: req.body.calories,
     });
 
     const newIngredientInfo = await ingredientInfo.save();
@@ -28,7 +28,7 @@ router.post("/storeIngredient", async (req, res) => {
       message: `Success! Ingredient Saved!:${req.body}`,
     });
   } catch (err) {
-    console.log(Ingredient)
+    console.log(Ingredient);
     res.status(500).json({
       ERROR: err.message,
     });
@@ -40,7 +40,7 @@ router.post("/storeIngredient", async (req, res) => {
 // router.patch("/updateIngredient", async (req, res) => {
 //   try {
 //     const { name } = req.body;
-    
+
 //   }
 // })
 // ------------------------- Find One -----------------------
@@ -48,50 +48,57 @@ router.post("/storeIngredient", async (req, res) => {
 router.post("/find", async (req, res) => {
   try {
     const { ingredientName } = req.body;
-    // console.log("IngredientName:",ingredientName)
-    const findIngredient = await Ingredient.findOne({ "ingredientName": ingredientName });
+    console.log("IngredientName:", ingredientName);
+    const findIngredient = await Ingredient.findOne({
+      ingredientName: ingredientName,
+    });
 
-    findIngredient
+    if (findIngredient) {
+      console.log("found");
+
+      res.status(200).json({
+        message: "Found!",
+        findIngredient,
+      });
+    } else {
+      console.log("not found")
+      res.status(404).json({
+        message: `Can't Find the Ingredient.`,
+      });
+    }
+  } catch (err) {
+    serverError(res, err);
+  }
+});
+
+// --------------------------Get All ---------------------
+router.get("/", async (req, res) => {
+  try {
+    const getAllIngredients = await Ingredient.find();
+    getAllIngredients
       ? res.status(200).json({
-          message: "Found!",
-          findIngredient,
+          message: "All Ingredients:",
+          getAllIngredients,
         })
       : res.status(404).json({
-          message: `Can't Find the Ingredient.`,
+          message: `No Questions Found!`,
         });
   } catch (err) {
     serverError(res, err);
   }
-})
-
-// --------------------------Get All ---------------------
-  router.get("/", async (req, res) => {
-    try {
-      const getAllIngredients = await Ingredient.find();
-      getAllIngredients
-        ? res.status(200).json({
-            message: "All Ingredients:",
-            getAllIngredients,
-          })
-        : res.status(404).json({
-            message: `No Questions Found!`,
-          });
-    } catch (err) {
-      serverError(res, err);
-    }
-  });
+});
 /* 
 ----------------------------- Delete Ingredient Endpoint ------------------------
 */
 router.delete("/delete/", async (req, res) => {
-// router.delete("/delete/:id", async (req, res) => {
+  // router.delete("/delete/:id", async (req, res) => {
   // res.header("Access-Control-Allow-Origin", "*");
   // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   // console.log("deleting...");
   try {
     //* Pull the ingredient's info from the req
     // const {id} = req.params;
-    const {ingredientName } = req.body;
+    const { ingredientName } = req.body;
 
     const ingredientID = { ingredientName: ingredientName };
     // const ingredientID = { _id: id };
