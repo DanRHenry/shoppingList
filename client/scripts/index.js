@@ -667,12 +667,15 @@ function handlePostNewItem() {
   }
 }
 
+let selectAllFlag = true
+
 function handleSelectAllClick() {
+  selectAllFlag = !selectAllFlag
   const shoppingListCheckBoxes = document.getElementsByClassName(
     "shoppingListCheckBoxes"
   );
   for (let i = 0; i < shoppingListCheckBoxes.length; i++) {
-    shoppingListCheckBoxes[i].checked = true;
+    shoppingListCheckBoxes[i].checked = selectAllFlag;
   }
 }
 
