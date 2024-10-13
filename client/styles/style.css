@@ -11,17 +11,61 @@ body {
     flex-direction: column;
     /* flex-direction: row; */
     align-items: center;
-    background-color: blue;
-    /* transition: background-color 1s; */
+    background-color: rgb(0, 0, 143);
+    transition: background-color 1s;
 }
 
+#loginSection{
+    display: flex;
+    flex-direction: column;
+    margin-top: 10em;
+    color: white;
+}
+
+#familyInputLabel, #familyInput {
+    visibility: hidden;
+}
+
+#subitLogin{
+    margin-top: 1em;
+    margin-bottom: 2em;
+    width: fit-content;
+    align-self: center;
+}
 #load_page {
     margin: auto;
-    /* align-self: center; */
 }
-/* #main {
+
+#menuPage {
+    position: absolute;
+    /* background-color: red; */
+    min-width: 100%;
+    min-height: 100%;
+}
+
+#navbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     width: 100%;
-} */
+    height: 4em;
+    border-bottom: 2px solid black;
+    border-bottom-left-radius: 1em;
+    border-bottom-right-radius: 1em;
+    /* background-color: blue; */
+}
+
+#navbar > button {
+    margin: auto;
+    width: 10em;
+    background-color: gray;
+    color: white;
+}
+
+#navbar > button:hover {
+    /* background-color: ; */
+    color: rgb(212, 212, 212);
+}
 
 #shoppingListContainer{
     display: flex;
@@ -29,6 +73,7 @@ body {
     background-color: rgb(182, 182, 182);
     overflow-y: auto;
     border-bottom: 3px solid gray;
+    min-height: 100%;
 }
 
 #recipeIngredients,  #recipesContainer {
@@ -53,6 +98,16 @@ body {
     display: flex;
     flex-direction: column;
     background-color: rgb(182, 182, 182);
+}
+
+#recipeListTable {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#recipeListTableBody {
+    width: 100%;
 }
 
 #recipeIngredients {

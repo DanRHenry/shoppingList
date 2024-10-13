@@ -1,7 +1,7 @@
 // const serverURL = "http://127.0.0.1:3498/api/shoppinglist";
 // const serverURL = "https://www.danhenrydev.com/api/shoppinglist";
-import {serverURL} from "../helpers/serverURL.js"
-// console.log("here")
+// import { url } from "inspector";
+import { serverURL } from "../helpers/serverURL.js";
 
 /* 
 Known bugs:
@@ -18,14 +18,62 @@ const loginBtn = document.getElementById("login-Btn");
 
 const switchBtn = document.getElementById("switchBtn");
 
-const email = document.getElementById("email");
-const password = document.getElementById("password");
-const family = document.getElementById("family");
+const email = document.getElementById("emailInput");
+const password = document.getElementById("passwordInput");
+const family = document.getElementById("familyInput");
 
 const loginWelcomeSection = document.getElementById("loginWelcomeSection");
+let token;
+sessionStorage.token ? (token = sessionStorage.token) : (token = "");
 
 checkForToken();
 
+function checkForToken() {
+  if (sessionStorage.token) {
+    document.getElementById("title_page").remove();
+    createMenuPage();
+    // loadPageContents();
+  } else {
+    return;
+  }
+}
+
+function loadShoppingList() {
+  removeRecipeIngredients()
+  createShoppingListSection();
+  fetchShoppingList();
+}
+
+function loadRecipesList() {
+  removeRecipeIngredients()
+  // createRecipeContent(); // adds headers
+  createRecipesContainer();
+  createRecipeWindow();
+  fetchShoppingList();
+}
+
+function createMenuPage() {
+  const menuPage = document.createElement("div");
+  menuPage.id = "menuPage";
+
+  const navbar = document.createElement("div");
+  navbar.id = "navbar";
+  menuPage.append(navbar);
+
+  const shoppingMenuBtn = document.createElement("button");
+  shoppingMenuBtn.textContent = "Shopping List";
+  shoppingMenuBtn.addEventListener("click", loadShoppingList);
+
+  const recipesMenuBtn = document.createElement("button");
+  recipesMenuBtn.textContent = "Recipes";
+  recipesMenuBtn.addEventListener("click", loadRecipesList);
+
+  const calorieCountingMenuBtn = document.createElement("button");
+  calorieCountingMenuBtn.textContent = "Calorie Counting";
+
+  navbar.append(shoppingMenuBtn, recipesMenuBtn, calorieCountingMenuBtn);
+  document.querySelector("body").append(menuPage);
+}
 async function login(e) {
   e.preventDefault();
 
@@ -35,7 +83,18 @@ async function login(e) {
   newLogin.family = family.value;
   newLogin.password = password.value;
 
-  const URL = `${serverURL}/user/login`;
+  let URL;
+  if (
+    (document.getElementById("loginRegisterToggleBtn").textContent = "Sign Up")
+  ) {
+    URL = `${serverURL}/user/login`;
+  } else if (
+    (document.getElementById("loginRegisterToggleBtn").textContent = "Log In")
+  ) {
+    URL = `${serverURL}/user/signup`;
+  }
+
+  console.log("url: ", URL);
 
   try {
     const res = await fetch(URL, {
@@ -49,6 +108,7 @@ async function login(e) {
     const data = await res.json();
     if (data.message === "Login successful!") {
       sessionStorage.token = data.token;
+      token = data.token;
       checkForToken();
     }
   } catch (error) {
@@ -56,24 +116,42 @@ async function login(e) {
   }
 }
 
+function removeExistingMenus() {
+  document.getElementById("shoppingListContainer")?.remove();
+
+  document.getElementById("recipesContainer")?.remove();
+
+  document.getElementById("recipeWindow")?.remove();
+
+  document.getElementById("recipeContent")?.remove();
+}
+
 function createShoppingListSection() {
   const shoppingListContainer = document.createElement("div");
   shoppingListContainer.id = "shoppingListContainer";
   const shoppingListTable = document.createElement("table");
+  shoppingListTable.id = "shoppingListTable"
   const shoppingListTableBody = document.createElement("tbody");
   shoppingListTableBody.id = "shoppingListTableBody";
 
-  const br = document.createElement("br");
+  // const br = document.createElement("br");
 
-  shoppingListTableBody.append(br);
+  // shoppingListTableBody.append(br);
+
   shoppingListTable.append(shoppingListTableBody);
+
   shoppingListContainer.append(shoppingListTable);
 
-  return document.getElementsByTagName("body")[0].append(shoppingListContainer);
+  // return document.getElementsByTagName("body")[0].append(shoppingListContainer);
   // return(shoppingListContainer)
+
+  removeExistingMenus();
+
+  return document.getElementById("navbar").after(shoppingListContainer);
 }
 
 function createRecipesContainer() {
+  removeExistingMenus();
   const recipesContainer = document.createElement("div");
   recipesContainer.id = "recipesContainer";
   const recipesContainerHeaders = document.createElement("div");
@@ -84,9 +162,10 @@ function createRecipesContainer() {
   recipesSelections.id = "selections";
 
   recipesContainer.append(recipesContainerHeaders, recipesSelections);
-
-  return document.getElementsByTagName("body")[0].append(recipesContainer);
+  // removeExistingMenus()
+  // return document.getElementsByTagName("body")[0].append(recipesContainer);
   // return (recipesContainer)
+  return document.getElementById("navbar").after(recipesContainer);
 }
 
 function createRecipeContent() {
@@ -107,8 +186,9 @@ function createRecipeContent() {
 
   recipeContent.append(recipeContentHeaders, recipeItem);
 
-  return document.getElementsByTagName("body")[0].append(recipeContent);
+  // return document.getElementsByTagName("body")[0].append(recipeContent);
   // return(recipeContent)
+  return document.getElementById("recipesContainer").after(recipeContent);
 }
 
 function createRecipeWindow() {
@@ -125,29 +205,54 @@ function createRecipeWindow() {
 
   recipeWindow.append(recipeWindowContent);
 
-  return document.getElementsByTagName("body")[0].append(recipeWindow);
+  // return document.getElementsByTagName("body")[0].append(recipeWindow);
   // return(recipeWindow)
+  return document.getElementById("navbar").after(recipeWindow);
 }
 
-function loadPageContents() {
-  document.getElementById("load_page").remove()
-  // document.getElementById("title_page").style.transition("backgroundColor 2s ease-out")
-  document.getElementById("title_page").style.backgroundColor = "white"
-  setTimeout(() => {
-    document.getElementById("title_page").remove()  
-  }, 1000);
-  
-  // await document.getElementsByTagName("body").append(
-  createShoppingListSection();
-  createRecipesContainer();
-  
-  fetchShoppingList();
-  createRecipeWindow();
-  createRecipeContent();
+document
+  .getElementById("loginRegisterToggleBtn")
+  ?.addEventListener("click", toggleLoginRegister);
+
+function toggleLoginRegister() {
+  const toggleLoginRegisterBtn = document.getElementById(
+    "loginRegisterToggleBtn"
+  );
+  // console.log(toggleLoginRegisterBtn.textContent)
+  if (toggleLoginRegisterBtn.textContent === "Sign Up") {
+    toggleLoginRegisterBtn.textContent = "Log In";
+    document.getElementById("familyInput").style.visibility = "visible";
+    document.getElementById("familyInputLabel").style.visibility = "visible";
+  } else {
+    toggleLoginRegisterBtn.textContent = "Sign Up";
+    document.getElementById("familyInput").style.visibility = "hidden";
+    document.getElementById("familyInputLabel").style.visibility = "hidden";
+  }
 }
+
+document.getElementById("loginSection")?.addEventListener("submit", login);
+
+// function loadPageContents() {
+//   document.getElementById("loginSection").remove();
+//   document.getElementById("loginRegisterToggleBtn").remove();
+//   document.getElementById("title_page").style.backgroundColor = "white"
+
+//   setTimeout(() => {
+//     document.getElementById("title_page").remove()
+//   }, 1000);
+
+//   // await document.getElementsByTagName("body").append(
+//   createShoppingListSection();
+//   createRecipesContainer();
+
+//   fetchShoppingList();
+//   createRecipeWindow();
+//   createRecipeContent();
+
+// }
 
 // document.getElementById("load_page").addEventListener("click", loadPageContents)
-loadPageContents();
+// loadPageContents();
 
 function handleShoppingListContainerClick() {
   const shoppingListContainer = document.getElementById(
@@ -249,6 +354,7 @@ async function postNewIngredient(item, qty) {
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
+          Authorization: token,
         },
         body: JSON.stringify(newIngredient),
       });
@@ -290,6 +396,7 @@ async function postNewRecipe(newRecipeInformation) {
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
+          Authorization: token,
         },
         body: JSON.stringify(newRecipe),
       });
@@ -337,6 +444,7 @@ async function checkForExistingRecipeIngredient(item) {
     mode: "cors",
     headers: new Headers({
       "Content-Type": "application/json",
+      Authorization: token,
     }),
     body: JSON.stringify(ingredientQuery),
   };
@@ -362,6 +470,7 @@ async function checkForExistingRecipe(item) {
     mode: "cors",
     headers: new Headers({
       "Content-Type": "application/json",
+      Authorization: token,
     }),
     body: JSON.stringify(ingredientQuery),
   };
@@ -371,17 +480,6 @@ async function checkForExistingRecipe(item) {
     const data = await res.json();
     return data.message;
   } catch (error) {}
-}
-
-function checkForToken() {
-  if (sessionStorage.token) {
-    loginWelcomeSection.style.display = `none`;
-    switchBtn.style.display = "none";
-    loginBtn.style.display = "none";
-    loadPageContents();
-  } else {
-    return;
-  }
 }
 
 function displayLoginError() {
@@ -442,6 +540,7 @@ async function fetchShoppingList() {
       mode: "cors",
       headers: {
         "Content-Type": "application/json",
+        Authorization: token,
       },
     });
     const data = await res.json();
@@ -457,7 +556,7 @@ function populateShoppingList(items) {
   const shoppingListTableBody = document.getElementById(
     "shoppingListTableBody"
   );
-  shoppingListTableBody.innerHTML = "";
+  // shoppingListTableBody.innerHTML = "";
 
   const headers = document.createElement("tr");
   headers.id = "headers";
@@ -477,7 +576,7 @@ function populateShoppingList(items) {
   qtyHeader.textContent = "Quantity";
   headers.append(qtyHeader);
 
-  shoppingListTableBody.append(headers);
+  shoppingListTableBody?.append(headers);
 
   for (let ingredient of items) {
     const shoppingListItems = document.createElement("tr");
@@ -507,10 +606,10 @@ function populateShoppingList(items) {
     }
     const itemQuantity = document.createElement("td");
     itemQuantity.className = "qty";
-    itemQuantity.addEventListener("change", handleUpdatingItemQuantity)
+    itemQuantity.addEventListener("change", handleUpdatingItemQuantity);
 
     async function handleUpdatingItemQuantity() {
-      const URL = `${serverURL}/ingredient/updateIngredient`
+      const URL = `${serverURL}/ingredient/updateIngredient`;
     }
 
     const qtyInput = document.createElement("input");
@@ -523,7 +622,7 @@ function populateShoppingList(items) {
 
     shoppingListItems.append(check, item, itemQuantity);
 
-    shoppingListTableBody.append(shoppingListItems);
+    shoppingListTableBody?.append(shoppingListItems);
   }
 }
 
@@ -571,15 +670,17 @@ function addShoppingListInput() {
   removeSelectedItemsBtn.id = "removeSelectedItems";
   removeSelectedItemsBtn.textContent = "Remove";
   removeSelectedItems.append(removeSelectedItemsBtn);
-  
+
   shoppingListTableInputLine.append(removeSelectedItems, item, addNewItemBtn);
 
-  shoppingListTableBody.append(shoppingListTableInputLine);
+  if (shoppingListTableBody) {
+    shoppingListTableBody.append(shoppingListTableInputLine);
+  }
 }
 
 function handlePostNewItem() {
   const item = document.getElementById("itemInput").value;
-  const qty = 1
+  const qty = 1;
   if (item.length > 0) {
     postNewIngredient(item, qty);
   }
@@ -612,6 +713,7 @@ async function handleRemovingShoppingListItems() {
           mode: "cors",
           headers: {
             "Content-Type": "application/json",
+            Authorization: token,
           },
           body: JSON.stringify(delItem),
         });
@@ -635,6 +737,7 @@ async function fetchRecipeList() {
       mode: "cors",
       headers: {
         "Content-Type": "application/json",
+        Authorization: token,
       },
     });
     const data = await res.json();
@@ -648,11 +751,10 @@ async function populateRecipeList() {
   const recipes = await fetchRecipeList();
 
   const selections = document.getElementById("selections");
-  selections.innerHTML = "";
+  // selections.innerHTML = "";
 
   const recipeListTable = document.createElement("table");
   recipeListTable.id = "recipeListTable";
-  selections.append(recipeListTable);
 
   const recipeListTableBody = document.createElement("tbody");
   recipeListTableBody.id = "recipeListTableBody";
@@ -666,7 +768,10 @@ async function populateRecipeList() {
   addRecipeBtn.className = "button";
   addRecipeBtn.textContent = "New Recipe";
 
-  selections.append(addRecipeContainer);
+  if (selections) {
+    selections.append(recipeListTable, addRecipeContainer);
+  }
+  // selections.append(addRecipeContainer);
   addRecipeContainer.append(addRecipeBtn);
   addRecipeBtn.addEventListener("click", handleNewRecipeClick);
 
@@ -695,6 +800,7 @@ async function populateRecipeList() {
             mode: "cors",
             headers: {
               "Content-Type": "application/json",
+              Authorization: token,
             },
             body: JSON.stringify(delItem),
           });
@@ -712,20 +818,19 @@ async function populateRecipeList() {
   }
 
   async function handleNewRecipeClick() {
-
     // createRecipeContent()
     // if (document.getElementById("newIngredientGrid")) {
     //   return;
     // }
 
-    const mainContent = document.getElementsByClassName("mainContent")
+    const mainContent = document.getElementsByClassName("mainContent");
 
     for (let i = mainContent.length; i > 0; i--) {
       // console.log(mainContent[i-1])
-      mainContent[i -1].remove()
+      mainContent[i - 1].remove();
     }
 
-    document.getElementById("addRecipeIngredientsToShoppingListBtn")?.remove()
+    document.getElementById("addRecipeIngredientsToShoppingListBtn")?.remove();
     // if (document.getElementById("addRecipeIngredientsToShoppingListBtn")) {
     //   document.getElementById("addRecipeIngredientsToShoppingListBtn").remove();
     // }
@@ -734,7 +839,7 @@ async function populateRecipeList() {
     // document.getElementById("recipeTableBody")?.remove()
     // const recipeTableBody = document.getElementById("recipeTableBody");
     // recipeTableBody.innerHTML = "";
-    removeNewRecipeInputFields()
+    removeNewRecipeInputFields();
 
     const ingredientInputForm = document.createElement("div");
     ingredientInputForm.id = "ingredientInputForm";
@@ -833,6 +938,7 @@ async function populateRecipeList() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(ingredientObject),
+            Authorization: token,
           });
           const data = await res.json();
           if (data.message === "Success! RecipeIngredient Saved!") {
@@ -1130,8 +1236,6 @@ async function populateRecipeList() {
     newIngredientContainer.id = "newIngredientContainer";
     newIngredientContainer.className = "newIngredientContainers";
 
-
-
     newIngredientGrid.append(
       newIngredientInput,
       newIngredientAmtInputs,
@@ -1152,9 +1256,11 @@ async function populateRecipeList() {
       numOfServingsRow
     );
 
-            // createRecipeContent()
+    // createRecipeContent()
 
-    document.getElementById("recipeTableBody").append(ingredientInputForm, timeAndTemp);
+    document
+      .getElementById("recipeTableBody")
+      .append(ingredientInputForm, timeAndTemp);
   }
 
   recipes.map((recipe) => {
@@ -1185,7 +1291,7 @@ async function populateRecipeList() {
     recipeListTableBody.append(recipeGroup);
 
     async function handleShowRecipeClick() {
-      removeNewRecipeInputFields()
+      removeNewRecipeInputFields();
 
       // ingredientInputForm.innerHTML = "";
       // document.getElementById("recipeItem").innerHTML = "";
@@ -1201,6 +1307,7 @@ async function populateRecipeList() {
           mode: "cors",
           headers: new Headers({
             "Content-Type": "application/json",
+            Authorization: token,
           }),
           body: JSON.stringify(recipeQuery),
         };
@@ -1215,7 +1322,7 @@ async function populateRecipeList() {
       const recipeInfo = await data();
 
       const recipeWindow = document.getElementById("recipeWindow");
-      recipeWindow.style.display = "block"
+      recipeWindow.style.display = "block";
       const recipeWindowContent = document.getElementById(
         "recipeWindowContent"
       );
@@ -1398,7 +1505,7 @@ async function populateRecipeList() {
       // recipeWindowContent.style.height = "0";
       // recipeWindowContent.style.width = "0";
       // recipeWindowContent.style.visibility = "hidden";
-      recipeWindow.style.display = "none"
+      recipeWindow.style.display = "none";
     }
 
     function handleRecipeCheckboxClick() {
@@ -1410,15 +1517,14 @@ async function populateRecipeList() {
     }
 
     function handleRecipeClick() {
-      const recipeTableBody = document.getElementById("recipeTableBody");
-      recipeTableBody.innerHTML = "";
+      // const recipeTableBody = document.getElementById("recipeListTableBody");
+      // const recipeTableBody = document.getElementById("recipeTableBody");
 
-      const mainContent = document.getElementsByClassName("mainContent")
+      //   if (recipeTableBody) {
+      //   recipeTableBody.innerHTML = "";
+      // }
 
-      for (const item of mainContent) {
-        item.remove()
-      }
-      
+      removeRecipeIngredients()
       document.getElementById("recipeInstructionsInputField")?.remove();
       document.getElementById("newIngredientGrid")?.remove();
       document
@@ -1452,6 +1558,7 @@ async function populateRecipeList() {
 
         const check = document.createElement("td");
         check.className = "ingredientCheck";
+
         const checkBox = document.createElement("input");
         checkBox.type = "checkbox";
         checkBox.checked = "true";
@@ -1461,9 +1568,10 @@ async function populateRecipeList() {
         ingredient.className = "ingredient";
         ingredient.textContent = item.name;
         ingredient.style.textDecoration = "none";
-        mainContent.append(check);
-        mainContent.append(ingredient);
-        recipeTableBody.append(mainContent);
+        mainContent.append(check, ingredient);
+        // mainContent.append(ingredient);
+        document.getElementById("recipesContainer").after(mainContent);
+        // recipeTableBody.append(mainContent);
 
         checkBox.addEventListener("click", handleIngredientListCheckboxClick);
 
@@ -1502,8 +1610,12 @@ async function populateRecipeList() {
           .remove();
       }
       document
-        .getElementById("recipeItem")
-        .append(addRecipeIngredientsToShoppingListBtnContainer);
+        .getElementById("recipeListTableBody")
+        // .getElementById("recipeItem")
+        //todo change this if needed from after to append
+        .after(addRecipeIngredientsToShoppingListBtnContainer);
+
+      // .append(addRecipeIngredientsToShoppingListBtnContainer);
       document
         .getElementById("addRecipeIngredientsToShoppingListBtnContainer")
         .append(addRecipeIngredientsToShoppingListBtn);
@@ -1511,18 +1623,30 @@ async function populateRecipeList() {
   });
 }
 
+function removeRecipeIngredients() {
+  const mainContent = document.getElementsByClassName("mainContent");
+
+  if (mainContent.length > 0) {
+    for (let i = mainContent.length; i > 0; i--) {
+      mainContent[i - 1].remove();
+    }
+  }
+}
+
 function removeNewRecipeInputFields() {
-  document.getElementById("ingredientInputForm")?.remove();      
-  document.getElementById("timeAndTemp")?.remove()
-  document.getElementById("addRecipeIngredientsToShoppingListBtnContainer")?.remove()
-  document.getElementById("newIngredientGrid")?.remove()
-  document.getElementById("recipeInstructionsInputField")?.remove()
-  const recipeStepRows = document.getElementsByClassName("recipeStepRows")
+  document.getElementById("ingredientInputForm")?.remove();
+  document.getElementById("timeAndTemp")?.remove();
+  document
+    .getElementById("addRecipeIngredientsToShoppingListBtnContainer")
+    ?.remove();
+  document.getElementById("newIngredientGrid")?.remove();
+  document.getElementById("recipeInstructionsInputField")?.remove();
+  const recipeStepRows = document.getElementsByClassName("recipeStepRows");
 
   for (const row of recipeStepRows) {
-    row?.remove()
+    row?.remove();
   }
-  document.getElementById("newRecipeInputBtn")?.remove()
+  document.getElementById("newRecipeInputBtn")?.remove();
 }
 const getKnownRecipeIngredients = async (ingredientInputForm) => {
   const URL = `${serverURL}/recipeingredient/`;
@@ -1532,6 +1656,7 @@ const getKnownRecipeIngredients = async (ingredientInputForm) => {
     mode: "cors",
     headers: {
       "Content-Type": "application/json",
+      Authorization: token,
     },
   });
 
