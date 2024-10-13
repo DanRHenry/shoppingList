@@ -8,6 +8,10 @@ const server = require("http").createServer(app);
 // const PORT = 3300;
 const PORT = process.env.PORT;
 
+// Middleware:
+
+const requireValidation = require("./middleware/validate-session");
+
 // const wss = new WebSocket.Server({ server: server });
 
 // wss.on("connection", function connection(ws) {
@@ -105,6 +109,9 @@ app.options("*", (req, res) => {
 });
 
 app.use("/api/shoppinglist/user", userController)
+
+
+app.use(requireValidation)
 app.use("/api/shoppinglist/ingredient", ingredientController)
 app.use("/api/shoppinglist/recipe", recipeController)
 app.use("/api/shoppinglist/recipeingredient", recipeIngredientController)
@@ -112,9 +119,9 @@ app.use("/api/shoppinglist/recipeingredient", recipeIngredientController)
 // app.use("/api/jeopardy/questions", questions);
 // app.use("/api/jeopardy/gameplay", gameplay);
 
-app.get("/", (req, res) => {
-  res.send("it's ALIVE");
-});
+// app.get("/", (req, res) => {
+//   res.send("it's ALIVE");
+// });
 
 // app.listen(PORT, () =>
   // console.log(`The jeopardyServer is running on Port: ${PORT}`)
