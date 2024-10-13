@@ -40,10 +40,9 @@ function checkForToken() {
 
 function loadShoppingList() {
   removeRecipeIngredients();
-  if (document.getElementById("addRecipeIngredientsToShoppingListBtnContainer")) {
-    document.getElementById("addRecipeIngredientsToShoppingListBtnContainer").remove()
-  }
+  document.getElementById("addRecipeIngredientsToShoppingListBtnContainer")?.remove()
   document.getElementById("newIngredientSection")?.remove()
+
   createShoppingListSection();
   fetchShoppingList();
 }
@@ -138,16 +137,9 @@ function createShoppingListSection() {
   const shoppingListTableBody = document.createElement("tbody");
   shoppingListTableBody.id = "shoppingListTableBody";
 
-  // const br = document.createElement("br");
-
-  // shoppingListTableBody.append(br);
-
   shoppingListTable.append(shoppingListTableBody);
 
   shoppingListContainer.append(shoppingListTable);
-
-  // return document.getElementsByTagName("body")[0].append(shoppingListContainer);
-  // return(shoppingListContainer)
 
   removeExistingMenus();
 
@@ -236,42 +228,6 @@ function toggleLoginRegister() {
 
 document.getElementById("loginSection")?.addEventListener("submit", login);
 
-// function loadPageContents() {
-//   document.getElementById("loginSection").remove();
-//   document.getElementById("loginRegisterToggleBtn").remove();
-//   document.getElementById("title_page").style.backgroundColor = "white"
-
-//   setTimeout(() => {
-//     document.getElementById("title_page").remove()
-//   }, 1000);
-
-//   // await document.getElementsByTagName("body").append(
-//   createShoppingListSection();
-//   createRecipesContainer();
-
-//   fetchShoppingList();
-//   createRecipeWindow();
-//   createRecipeContent();
-
-// }
-
-// document.getElementById("load_page").addEventListener("click", loadPageContents)
-// loadPageContents();
-
-// function handleShoppingListContainerClick() {
-//   const shoppingListContainer = document.getElementById(
-//     "shoppingListContainer"
-//   );
-//   const recipeContent = document.getElementById("recipeContent");
-//   const recipesContainer = document.getElementById("recipesContainer");
-
-//   recipeContent.style.height = "0";
-
-//   recipesContainer.style.height = "0";
-
-//   shoppingListContainer.style.height = "100vh";
-// }
-
 async function handleNewRecipeSubmit(e) {
   await e.preventDefault();
 
@@ -332,17 +288,10 @@ async function handleNewRecipeSubmit(e) {
 }
 
 async function postNewIngredient(item, qty) {
-  // console.log("item:", item);
-  // console.log("token: ",token)
   const URL = `${serverURL}/ingredient/storeIngredient`;
-
-  // console.log(await checkForExistingIngredient(item));
-
 
   if ((await checkForExistingIngredient(item)) === "Found!") 
     {
-      console.log(await checkForExistingIngredient(item))
-      console.log("found")
     return;
   } 
   else 
@@ -368,8 +317,6 @@ async function postNewIngredient(item, qty) {
     }
   }
   await fetchShoppingList();
-  // loadShoppingList()
-
 }
 
 async function postNewRecipe(newRecipeInformation) {
@@ -415,7 +362,6 @@ async function postNewRecipe(newRecipeInformation) {
 }
 
 async function checkForExistingIngredient(item) {
-  // console.log("checking for ", item)
   const URL = `${serverURL}/ingredient/find`;
 
   const ingredientQuery = {
@@ -460,8 +406,6 @@ async function checkForExistingRecipeIngredient(item) {
   };
 
   try {
-    //todo if the ingredient is found, populate the information on unit and calories, which can then be converted to the actual units and quantities used
-
     const res = await fetch(URL, reqOptions);
     const data = await res.json();
     return data;
@@ -571,7 +515,6 @@ async function fetchShoppingList() {
 }
 
 function populateShoppingList(items) {
-  console.log("populateShoppingList function running...")
   const shoppingListTableBody = document.getElementById(
     "shoppingListTableBody"
   );
@@ -588,6 +531,7 @@ function populateShoppingList(items) {
 
   const headers = document.createElement("tr");
   headers.id = "headers";
+
   const checkboxHeader = document.createElement("th");
   checkboxHeader.id = "checkboxHeader";
   checkboxHeader.textContent = "Select All";
@@ -604,8 +548,15 @@ function populateShoppingList(items) {
   qtyHeader.textContent = "Quantity";
   headers.append(qtyHeader);
 
+  const shoppingListTitle = document.createElement("div")
+  shoppingListTitle.textContent = "Shopping List"
+  shoppingListTitle.id = "shoppingListTitle"
+
   shoppingListTableBody?.append(headers);
 
+  if (!document.getElementById("shoppingListTitle")) {
+    document.getElementById("shoppingListTable").before(shoppingListTitle)
+  }
   for (let ingredient of items) {
     const shoppingListItems = document.createElement("tr");
     shoppingListItems.className = "shoppingListItems";
@@ -779,13 +730,14 @@ async function fetchRecipeList() {
 
 async function populateRecipeList() {
   // document.getElementById("selections")?.removeChild()
-  console.log("here")
 
   const recipes = await fetchRecipeList();
 
   const selections = document.getElementById("selections");
 
-  selections.innerHTML = "";
+  if (selections) {
+    selections.innerHTML = "";
+  }
 
   const recipeListTable = document.createElement("table");
   recipeListTable.id = "recipeListTable";
@@ -860,7 +812,7 @@ async function populateRecipeList() {
           document.getElementById("addRecipeIngredientsToShoppingListBtn")?.remove();
           document.getElementById("newIngredientSection")?.remove()
           const ingredientsInformation = [];
-          removeNewRecipeInputFields();
+          // removeNewRecipeInputFields();
       
           const ingredientInputForm = document.createElement("div");
           ingredientInputForm.id = "ingredientInputForm";
@@ -1319,7 +1271,7 @@ async function populateRecipeList() {
     async function handleShowRecipeClick() {
 
       //todo either addRecipeIngredientsToShoppingListBtnContainer or addRecipeIngredientsToShoppingListBtn are being removed by this click
-      removeNewRecipeInputFields();
+      // removeNewRecipeInputFields();
 
       const data = async () => {
         const URL = `${serverURL}/recipe/find`;
@@ -1656,21 +1608,23 @@ function removeRecipeIngredients() {
   }
 }
 
-function removeNewRecipeInputFields() {
-  document.getElementById("ingredientInputForm")?.remove();
-  document.getElementById("timeAndTemp")?.remove();
-  document
-    .getElementById("addRecipeIngredientsToShoppingListBtnContainer")
-    ?.remove();
-  document.getElementById("newIngredientGrid")?.remove();
-  document.getElementById("recipeInstructionsInputField")?.remove();
-  const recipeStepRows = document.getElementsByClassName("recipeStepRows");
+// function removeNewRecipeInputFields() {
+//   document.getElementById("ingredientInputForm")?.remove();
+//   document.getElementById("timeAndTemp")?.remove();
+//   document
+//     .getElementById("addRecipeIngredientsToShoppingListBtnContainer")
+//     ?.remove();
+//   document.getElementById("newIngredientGrid")?.remove();
+//   document.getElementById("recipeInstructionsInputField")?.remove();
+//   const recipeStepRows = document.getElementsByClassName("recipeStepRows");
 
-  for (const row of recipeStepRows) {
-    row?.remove();
-  }
-  document.getElementById("newRecipeInputBtn")?.remove();
-}
+//   for (const row of recipeStepRows) {
+//     row?.remove();
+//   }
+//   document.getElementById("newRecipeInputBtn")?.remove();
+// }
+
+
 const getKnownRecipeIngredients = async (ingredientInputForm) => {
   const URL = `${serverURL}/recipeingredient/`;
 
@@ -1731,6 +1685,7 @@ async function handleAddRecipeIngredientsToShoppingList() {
   await fetchShoppingList();
 
   // }, 500);
+  loadShoppingList()
 }
 
 switchBtn?.addEventListener("click", toggleSignup);

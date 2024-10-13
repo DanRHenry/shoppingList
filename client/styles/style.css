@@ -38,7 +38,7 @@ body {
 
 #menuPage {
     position: absolute;
-    /* background-color: red; */
+    background-color: rgb(147, 192, 147);
     min-width: 100%;
     min-height: 100%;
 }
@@ -52,7 +52,7 @@ body {
     border-bottom: 2px solid black;
     border-bottom-left-radius: 1em;
     border-bottom-right-radius: 1em;
-    /* background-color: blue; */
+    background-color: rgb(146, 146, 192);
 }
 
 #navbar > button {
@@ -63,17 +63,35 @@ body {
 }
 
 #navbar > button:hover {
-    /* background-color: ; */
     color: rgb(212, 212, 212);
 }
 
 #shoppingListContainer{
     display: flex;
     flex-direction: column;
-    background-color: rgb(182, 182, 182);
+    /* background-color: rgb(182, 182, 182); */
     overflow-y: auto;
-    border-bottom: 3px solid gray;
+    /* border-bottom: 3px solid gray; */
     min-height: 100%;
+}
+
+#shoppingListTitle, .headers {
+    /* align-content: center; */
+    /* display: flex;
+    flex-direction: column;
+    align-items: center;
+     */
+     padding-top: 3px;
+    font-weight: bolder;
+    padding-left: 1em;
+    text-align: center;
+    min-width: fit-content;
+    background-color: gray;
+    height: 2em;
+    border-bottom: 2px solid black;
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
+    margin-top: 2px;
 }
 
 #recipeIngredients,  #recipesContainer {
@@ -123,21 +141,15 @@ body {
 }
 
 #headers, .headers {
-    /* position: sticky; */
-    /* position: relative; */
     top: 0;
     width: 100%;
-    background-color: gray;
+    background-color: rgb(141, 141, 141);
     text-align: center;
-    height: 3em;
 }
+
 
 .headers {
     text-indent: 1.5em;
-    height: 3em;
-    /* position: sticky; */
-    top: 0;
-    padding-top: 1em;
 }
 
 #checkboxHeader {
@@ -156,6 +168,16 @@ body {
     user-select: none;
 }
 
+.mainContent {
+    background-color: rgb(223, 223, 223);
+
+}
+
+.mainContent:nth-child(odd) {
+    background-color: rgb(255, 255, 212);
+
+}
+
 .recipeGroup {
     background-color: rgb(211, 211, 211);
     /* background-color: red; */
@@ -165,7 +187,7 @@ body {
     background-color: white;
 }
 
-.mainContent:nth-child(odd),.shoppingListTableInputLine:nth-child(odd), .shoppingListItems:nth-child(odd) {
+.shoppingListTableInputLine:nth-child(odd), .shoppingListItems:nth-child(odd) {
     background-color: white;
 }
 
@@ -204,7 +226,7 @@ body {
     width: 5.5em;
 } */
 
-.qty, #qtyInput, .qty > input, #addNewItem {
+.qty, #qtyInput, .qty > input, #addNewItem, #qtyHeader {
     width: 3em;
 }
 
