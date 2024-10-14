@@ -48,7 +48,7 @@ function loadShoppingList() {
 function loadRecipesList() {
   removeRecipeIngredients();
   createRecipesContainer();
-  createRecipeWindow();
+  // createRecipeWindow();
   fetchShoppingList();
 }
 
@@ -75,366 +75,573 @@ function createMenuPage() {
     handleCalorieCountingBtnClick
   );
 
-  const mealPlanningMenuBtn = document.createElement("button")
-  mealPlanningMenuBtn.textContent = "Meal Planning"
-  mealPlanningMenuBtn.addEventListener("click", handleMealPlanningBtnClick)
+  const mealPlanningMenuBtn = document.createElement("button");
+  mealPlanningMenuBtn.textContent = "Meal Planning";
+  mealPlanningMenuBtn.addEventListener("click", handleMealPlanningBtnClick);
 
-  navbar.append(shoppingMenuBtn, recipesMenuBtn, mealPlanningMenuBtn,calorieCountingMenuBtn);
+  navbar.append(
+    shoppingMenuBtn,
+    recipesMenuBtn,
+    mealPlanningMenuBtn,
+    calorieCountingMenuBtn
+  );
   document.querySelector("body").append(menuPage);
 }
 
-function handleMealPlanningBtnClick () {
+function handleMealPlanningBtnClick() {
   removeExistingMenus();
   const mealPlanningWindow = document.createElement("div");
   mealPlanningWindow.id = "mealPlanningWindow";
   document.getElementById("navbar").after(mealPlanningWindow);
 
-  createMealPlanningPage()
+  createMealPlanningPage();
 }
 
 async function createMealPlanningPage() {
-  const weektable = document.createElement("table")
-  weektable.id = "weektable"
-  const weektablebody = document.createElement("tbody")
+  const weektable = document.createElement("table");
+  weektable.id = "weektable";
+  const weektablebody = document.createElement("tbody");
 
-  weektable.append(weektablebody)
+  weektable.append(weektablebody);
 
-  const monday = document.createElement("tr")
-  monday.className = "weektabledays"
-  // monday.textContent = "Mon"
+  const monday = document.createElement("tr");
+  monday.className = "weektabledays";
 
-  const tuesday = document.createElement("tr")
-  tuesday.className = "weektabledays"
-  // tuesday.textContent = "Tues"
+  const tuesday = document.createElement("tr");
+  tuesday.className = "weektabledays";
 
-  const wednesday = document.createElement("tr")
-  wednesday.className = "weektabledays"
-  // wednesday.textContent = "Wed"
+  const wednesday = document.createElement("tr");
+  wednesday.className = "weektabledays";
 
-  const thursday = document.createElement("tr")
-  thursday.className = "weektabledays"
-  // thursday.textContent = "Thurs"
+  const thursday = document.createElement("tr");
+  thursday.className = "weektabledays";
 
-  const friday = document.createElement("tr")
-  friday.className = "weektabledays"
-  // friday.textContent = "Fri"
+  const friday = document.createElement("tr");
+  friday.className = "weektabledays";
 
-  const saturday = document.createElement("tr")
-  saturday.className = "weektabledays"
-  // saturday.textContent = "Sat"
+  const saturday = document.createElement("tr");
+  saturday.className = "weektabledays";
 
-  const sunday = document.createElement("tr")
-  sunday.className = "weektabledays"
-  // sunday.textContent = "Sun"
+  const sunday = document.createElement("tr");
+  sunday.className = "weektabledays";
 
+  weektablebody.append(
+    monday,
+    tuesday,
+    wednesday,
+    thursday,
+    friday,
+    saturday,
+    sunday
+  );
 
-  
-  weektablebody.append(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
+  const daysarray = ["Mon", "Tue", "Wed", "Thurs", "Fri", "Sat", "Sun"];
 
-  const daysarray = ["Mon", "Tue", "Wed", "Thurs", "Fri", "Sat", "Sun"]
+  document.getElementById("mealPlanningWindow").append(weektable);
 
-  document.getElementById("mealPlanningWindow").append(weektable)
+  const weekdays = document.getElementsByClassName("weektabledays");
 
-  const weekdays = document.getElementsByClassName("weektabledays")
+  const headerslabelsarray = [
+    "Day",
+    "Breakfast",
+    "Lunch",
+    "Dinner",
+    "Snacks",
+    "Calories",
+  ];
 
-      const headerslabelsarray = ["Day", "Breakfast", "Lunch", "Dinner", "Snacks", "Calories"]
+  const headers = document.createElement("th");
+  const headersrow = document.createElement("tr");
 
-      const headers = document.createElement("th")
-      const headersrow = document.createElement("tr")
-    
-      for (let i = 0; i < headerslabelsarray.length; i++) {
-        const headersrowlabels = document.createElement("th")
-        headersrowlabels.textContent = headerslabelsarray[i]
-        weekdays[0].append(headersrowlabels)
-      }
-    
-      headers.append(headersrow)
-  
-      // All recipes go to recipes. Use meal lists to prioritize standard meals, then add the rest for, ie. pizza for breakfast
-      const recipes = await fetchAllRecipes()
+  for (let i = 0; i < headerslabelsarray.length; i++) {
+    const headersrowlabels = document.createElement("th");
+    headersrowlabels.textContent = headerslabelsarray[i];
+    weekdays[0].append(headersrowlabels);
+    weekdays[0].id = `weektabledays-0`;
+  }
 
-      async function calculateCalories () {
-        /*
-            async function handleShowRecipeClick() {
-      const data = async () => {
-        const URL = `${serverURL}/recipe/find`;
+  headers.append(headersrow);
 
-        const recipeQuery = {
-          recipeName: recipe.recipeName,
-        };
+  // All recipes go to recipes. Use meal lists to prioritize standard meals, then add the rest for, ie. pizza for breakfast
+  const recipes = await fetchAllRecipes();
 
-        const reqOptions = {
-          method: "POST",
-          mode: "cors",
-          headers: new Headers({
-            "Content-Type": "application/json",
-            Authorization: token,
-          }),
-          body: JSON.stringify(recipeQuery),
-        };
+  //   async function calculateCalories () {
+  //     /*
+  //         async function handleShowRecipeClick() {
+  //   const data = async () => {
+  //     const URL = `${serverURL}/recipe/find`;
 
-        try {
-          const res = await fetch(URL, reqOptions);
-          const data = await res.json();
-          return data.findRecipe;
-        } catch (error) {}
-      };
+  //     const recipeQuery = {
+  //       recipeName: recipe.recipeName,
+  //     };
 
-      const recipeInfo = await data();
+  //     const reqOptions = {
+  //       method: "POST",
+  //       mode: "cors",
+  //       headers: new Headers({
+  //         "Content-Type": "application/json",
+  //         Authorization: token,
+  //       }),
+  //       body: JSON.stringify(recipeQuery),
+  //     };
 
-      const recipeWindow = document.getElementById("recipeWindow");
-      recipeWindow.style.display = "block";
-      const recipeWindowContent = document.getElementById(
-        "recipeWindowContent"
-      );
-      const recipeButtonContainer = document.createElement("div");
-      recipeButtonContainer.id = "recipeButtonContainer";
+  //     try {
+  //       const res = await fetch(URL, reqOptions);
+  //       const data = await res.json();
+  //       return data.findRecipe;
+  //     } catch (error) {}
+  //   };
 
-      const closeRecipeWindowBtn = document.createElement("button");
-      closeRecipeWindowBtn.id = "closeRecipeWindowBtn";
-      closeRecipeWindowBtn.textContent = "Close";
+  //   const recipeInfo = await data();
 
-      closeRecipeWindowBtn.addEventListener("click", handleCloseRecipeWindow);
+  //   const recipeWindow = document.getElementById("recipeWindow");
+  //   recipeWindow.style.display = "block";
+  //   const recipeWindowContent = document.getElementById(
+  //     "recipeWindowContent"
+  //   );
+  //   const recipeButtonContainer = document.createElement("div");
+  //   recipeButtonContainer.id = "recipeButtonContainer";
 
-      recipeButtonContainer.append(closeRecipeWindowBtn);
+  //   const closeRecipeWindowBtn = document.createElement("button");
+  //   closeRecipeWindowBtn.id = "closeRecipeWindowBtn";
+  //   closeRecipeWindowBtn.textContent = "Close";
 
-      // recipeWindow.style.width = "95vw";
+  //   closeRecipeWindowBtn.addEventListener("click", handleCloseRecipeWindow);
 
-      recipeWindowContent.style.height = "fit-content";
-      recipeWindowContent.style.minHeight = "95vh";
-      recipeWindowContent.style.width = "93vw";
-      recipeWindowContent.style.visibility = "visible";
+  //   recipeButtonContainer.append(closeRecipeWindowBtn);
 
-      const recipeText = document.getElementById("recipeText");
-      recipeText.innerHTML = "";
+  //   // recipeWindow.style.width = "95vw";
 
-      const recipeName = document.createElement("h2");
-      recipeName.textContent = recipeInfo.recipeName;
+  //   recipeWindowContent.style.height = "fit-content";
+  //   recipeWindowContent.style.minHeight = "95vh";
+  //   recipeWindowContent.style.width = "93vw";
+  //   recipeWindowContent.style.visibility = "visible";
 
-      const temp = document.createElement("li");
-      temp.textContent = `Temp: ${recipeInfo.temperature}`;
-      temp.className = "temperatureDivs";
+  //   const recipeText = document.getElementById("recipeText");
+  //   recipeText.innerHTML = "";
 
-      const time = document.createElement("li");
-      time.textContent = `Time: ${recipeInfo.time}`;
-      time.className = "timeDivs";
+  //   const recipeName = document.createElement("h2");
+  //   recipeName.textContent = recipeInfo.recipeName;
 
-      const listContainer = document.createElement("div");
-      listContainer.id = "listContainer";
+  //   const temp = document.createElement("li");
+  //   temp.textContent = `Temp: ${recipeInfo.temperature}`;
+  //   temp.className = "temperatureDivs";
 
-      const column_one = document.createElement("div");
-      column_one.className = "recipeIngredientsColumns";
-      column_one.id = "recipeIngredientsColumn_1";
+  //   const time = document.createElement("li");
+  //   time.textContent = `Time: ${recipeInfo.time}`;
+  //   time.className = "timeDivs";
 
-      const column_two = document.createElement("div");
-      column_two.className = "recipeIngredientsColumns";
-      column_two.id = "recipeIngredientsColumn_2";
+  //   const listContainer = document.createElement("div");
+  //   listContainer.id = "listContainer";
 
-      const ingredients = recipeInfo.ingredients;
+  //   const column_one = document.createElement("div");
+  //   column_one.className = "recipeIngredientsColumns";
+  //   column_one.id = "recipeIngredientsColumn_1";
 
-      for (let i = 0; i < ingredients.length; i += 2) {
-        const firstDiv = document.createElement("div");
-        firstDiv.textContent = `${ingredients[i].amount} ${ingredients[i].measurementUnit} ${ingredients[i].name}`;
+  //   const column_two = document.createElement("div");
+  //   column_two.className = "recipeIngredientsColumns";
+  //   column_two.id = "recipeIngredientsColumn_2";
 
-        const secondDiv = document.createElement("div");
-        secondDiv.textContent = `${ingredients[i + 1]?.amount} ${
-          ingredients[i + 1]?.measurementUnit
-        } ${ingredients[i + 1]?.name}`;
+  //   const ingredients = recipeInfo.ingredients;
 
-        column_one.append(firstDiv);
-        if (ingredients[i + 1]) {
-          column_two.append(secondDiv);
-        }
-      }
-      listContainer.append(column_one, column_two);
+  //   for (let i = 0; i < ingredients.length; i += 2) {
+  //     const firstDiv = document.createElement("div");
+  //     firstDiv.textContent = `${ingredients[i].amount} ${ingredients[i].measurementUnit} ${ingredients[i].name}`;
 
-      const instructionsContainer = document.createElement("div");
-      instructionsContainer.id = "instructionsContainer";
+  //     const secondDiv = document.createElement("div");
+  //     secondDiv.textContent = `${ingredients[i + 1]?.amount} ${
+  //       ingredients[i + 1]?.measurementUnit
+  //     } ${ingredients[i + 1]?.name}`;
 
-      const currentRecipeInstructions = recipeInfo.instructions;
+  //     column_one.append(firstDiv);
+  //     if (ingredients[i + 1]) {
+  //       column_two.append(secondDiv);
+  //     }
+  //   }
+  //   listContainer.append(column_one, column_two);
 
-      const currentRecipeDescription = recipeInfo.instructions[0];
+  //   const instructionsContainer = document.createElement("div");
+  //   instructionsContainer.id = "instructionsContainer";
 
-      const instructions = document.createElement("div");
-      instructions.className = "instructionsText";
-      instructions.id = "currentRecipeDescription";
-      instructions.textContent = currentRecipeDescription;
-      instructionsContainer.append(instructions);
+  //   const currentRecipeInstructions = recipeInfo.instructions;
 
-      for (let i = 1; i < currentRecipeInstructions.length; i++) {
-        const instructionsRow = document.createElement("div");
-        instructionsRow.className = "instructionsRows";
+  //   const currentRecipeDescription = recipeInfo.instructions[0];
 
-        const instructionsCheckbox = document.createElement("input");
-        instructionsCheckbox.type = "checkbox";
-        instructionsCheckbox.className = "instructionsCheckboxes";
-        instructionsCheckbox.addEventListener(
-          "click",
-          handleInstructionsStepClick
-        );
+  //   const instructions = document.createElement("div");
+  //   instructions.className = "instructionsText";
+  //   instructions.id = "currentRecipeDescription";
+  //   instructions.textContent = currentRecipeDescription;
+  //   instructionsContainer.append(instructions);
 
-        const instructions = document.createElement("div");
-        instructions.className = "instructionsText";
-        instructions.textContent = `Step ${i}: ${currentRecipeInstructions[i]}`;
-        instructions.style.textDecoration = "none";
-        instructionsRow.append(instructionsCheckbox, instructions);
+  //   for (let i = 1; i < currentRecipeInstructions.length; i++) {
+  //     const instructionsRow = document.createElement("div");
+  //     instructionsRow.className = "instructionsRows";
 
-        instructionsContainer.append(instructionsRow);
+  //     const instructionsCheckbox = document.createElement("input");
+  //     instructionsCheckbox.type = "checkbox";
+  //     instructionsCheckbox.className = "instructionsCheckboxes";
+  //     instructionsCheckbox.addEventListener(
+  //       "click",
+  //       handleInstructionsStepClick
+  //     );
 
-        function handleInstructionsStepClick() {
-          if (instructions.style.textDecoration === "line-through") {
-            instructions.style.textDecoration = "none";
-            instructions.style.color = "white";
-          } else if (instructions.style.textDecoration === "none") {
-            instructions.style.textDecoration = "line-through";
-            instructions.style.color = "black";
-          }
-        }
-      }
+  //     const instructions = document.createElement("div");
+  //     instructions.className = "instructionsText";
+  //     instructions.textContent = `Step ${i}: ${currentRecipeInstructions[i]}`;
+  //     instructions.style.textDecoration = "none";
+  //     instructionsRow.append(instructionsCheckbox, instructions);
 
-      // console.log("ingredients: ", ingredients);
+  //     instructionsContainer.append(instructionsRow);
 
-      let totalCaloriesAmt = 0;
+  //     function handleInstructionsStepClick() {
+  //       if (instructions.style.textDecoration === "line-through") {
+  //         instructions.style.textDecoration = "none";
+  //         instructions.style.color = "white";
+  //       } else if (instructions.style.textDecoration === "none") {
+  //         instructions.style.textDecoration = "line-through";
+  //         instructions.style.color = "black";
+  //       }
+  //     }
+  //   }
 
-      for (let i = 0; i < ingredients.length; i++) {
-        totalCaloriesAmt += Number(ingredients[i].newIngredientCalorieInput);
-      }
+  //   // console.log("ingredients: ", ingredients);
 
-      // console.log("totalCalories: ",totalCaloriesAmt)
+  //   let totalCaloriesAmt = 0;
 
-      const totalCalories = document.createElement("li");
-      totalCalories.id = "totalCalories";
-      totalCalories.textContent = `Total Calories: ${totalCaloriesAmt.toLocaleString()}`;
+  //   for (let i = 0; i < ingredients.length; i++) {
+  //     totalCaloriesAmt += Number(ingredients[i].newIngredientCalorieInput);
+  //   }
 
-      const noOfServingsInput = document.createElement("input");
-      noOfServingsInput.id = "noOfServingsInput";
-      noOfServingsInput.value = recipeInfo.numberOfServings;
-      noOfServingsInput.type = "number";
-      noOfServingsInput.min = "1";
-      noOfServingsInput.addEventListener("change", handleNoOfServingsChange);
+  //   // console.log("totalCalories: ",totalCaloriesAmt)
 
-      function handleNoOfServingsChange() {
-        if (noOfServingsInput.value < 1) {
-          noOfServingsInput.value = 1;
-          return;
-        }
-        const calsPerServing = (
-          totalCaloriesAmt / noOfServingsInput.value
-        ).toFixed(0);
-        document.getElementById(
-          "caloriesPerServing"
-        ).textContent = `Calories Per Serving: ${calsPerServing}`;
-      }
+  //   const totalCalories = document.createElement("li");
+  //   totalCalories.id = "totalCalories";
+  //   totalCalories.textContent = `Total Calories: ${totalCaloriesAmt.toLocaleString()}`;
 
-      const caloriesPerServing = document.createElement("li");
-      caloriesPerServing.id = "caloriesPerServing";
+  //   const noOfServingsInput = document.createElement("input");
+  //   noOfServingsInput.id = "noOfServingsInput";
+  //   noOfServingsInput.value = recipeInfo.numberOfServings;
+  //   noOfServingsInput.type = "number";
+  //   noOfServingsInput.min = "1";
+  //   noOfServingsInput.addEventListener("change", handleNoOfServingsChange);
 
-      const calsPerServing = (
-        totalCaloriesAmt / noOfServingsInput.value
-      ).toFixed(0);
-      caloriesPerServing.textContent = `Calories Per Serving: ${calsPerServing}`;
+  //   function handleNoOfServingsChange() {
+  //     if (noOfServingsInput.value < 1) {
+  //       noOfServingsInput.value = 1;
+  //       return;
+  //     }
+  //     const calsPerServing = (
+  //       totalCaloriesAmt / noOfServingsInput.value
+  //     ).toFixed(0);
+  //     document.getElementById(
+  //       "caloriesPerServing"
+  //     ).textContent = `Calories Per Serving: ${calsPerServing}`;
+  //   }
 
-      const numberOfServings = document.createElement("li");
-      numberOfServings.id = "numberOfServings";
-      numberOfServings.textContent = "Number of servings: ";
-      numberOfServings.append(noOfServingsInput);
+  //   const caloriesPerServing = document.createElement("li");
+  //   caloriesPerServing.id = "caloriesPerServing";
 
-      const generalRecipeInfo = document.createElement("ul");
-      generalRecipeInfo.id = "generalRecipeInfo";
-      generalRecipeInfo.append(
-        temp,
-        time,
-        totalCalories,
-        numberOfServings,
-        caloriesPerServing
-      );
+  //   const calsPerServing = (
+  //     totalCaloriesAmt / noOfServingsInput.value
+  //   ).toFixed(0);
+  //   caloriesPerServing.textContent = `Calories Per Serving: ${calsPerServing}`;
 
-      instructionsContainer.append(recipeButtonContainer);
-      recipeText.append(recipeName, generalRecipeInfo, listContainer);
-      document
-        .getElementById("recipeWindowContent")
-        .append(instructionsContainer);
-    }
-        */
-      }
+  //   const numberOfServings = document.createElement("li");
+  //   numberOfServings.id = "numberOfServings";
+  //   numberOfServings.textContent = "Number of servings: ";
+  //   numberOfServings.append(noOfServingsInput);
 
-      const breakfastRecipesList = recipes
-      const lunchRecipesList = recipes
-      const dinnerRecipesList = recipes
-      const snacksRecipesList = recipes
+  //   const generalRecipeInfo = document.createElement("ul");
+  //   generalRecipeInfo.id = "generalRecipeInfo";
+  //   generalRecipeInfo.append(
+  //     temp,
+  //     time,
+  //     totalCalories,
+  //     numberOfServings,
+  //     caloriesPerServing
+  //   );
+
+  //   instructionsContainer.append(recipeButtonContainer);
+  //   recipeText.append(recipeName, generalRecipeInfo, listContainer);
+  //   document
+  //     .getElementById("recipeWindowContent")
+  //     .append(instructionsContainer);
+  // }
+  //     */
+  //   }
+
+  const breakfastRecipesList = recipes;
+  const lunchRecipesList = recipes;
+  const dinnerRecipesList = recipes;
+  const snacksRecipesList = recipes;
+
   for (let i = 1; i < weekdays.length; i++) {
+    const dayheaders = document.createElement("th");
+    dayheaders.textContent = daysarray[i];
 
-    const dayheaders = document.createElement("th")
-    dayheaders.textContent = daysarray[i]
+    const breakfasttd = document.createElement("td");
+    // const breakfast = document.createElement("select");
+    const breakfast = document.createElement("button");
+    breakfast.textContent = "Select";
+    // breakfast.setAttribute("list", "recipesList")
+    breakfast.className = "meals";
+    breakfast.placeholder = "breakfast";
+    breakfast.addEventListener("click", editBreakfast);
+    breakfasttd.append(breakfast);
 
-    const breakfasttd = document.createElement("td")
-    const breakfast = document.createElement("select");
-    breakfast.setAttribute("list", "recipesList")
-    breakfast.className = "meals"
-    breakfast.placeholder = "breakfast"
-    breakfasttd.append(breakfast)
-    
-    const lunchtd = document.createElement("td")
-    const lunch = document.createElement("select");
-    lunch.setAttribute("list", "recipesList")
-    lunch.className = "meals"
-    lunch.placeholder = "lunch"
-    lunchtd.append(lunch)
+    const lunchtd = document.createElement("td");
+    // const lunch = document.createElement("select");
+    const lunch = document.createElement("button");
+    lunch.textContent = "Select";
+    // lunch.setAttribute("list", "recipesList")
+    lunch.className = "meals";
+    lunch.placeholder = "lunch";
+    lunch.addEventListener("click", editLunch);
+    lunchtd.append(lunch);
 
-    const dinnertd = document.createElement("td")
-    const dinner = document.createElement("select");
-    dinner.setAttribute("list", "recipesList")
-    dinner.className = "meals"
-    dinner.placeholder = "dinner"
-    dinnertd.append(dinner)
+    const dinnertd = document.createElement("td");
+    // const dinner = document.createElement("select");
+    const dinner = document.createElement("button");
+    dinner.textContent = "Select";
+    // dinner.setAttribute("list", "recipesList")
+    dinner.className = "meals";
+    dinner.placeholder = "dinner";
+    dinner.addEventListener("click", editDinner);
+    dinnertd.append(dinner);
 
-    const snackstd = document.createElement("td")
-    const snacks = document.createElement("select");
-    snacks.setAttribute("list", "recipesList")
-    snacks.className = "meals"
-    snacks.placeholder = "snacks"
-    snackstd.append(snacks)
+    const snackstd = document.createElement("td");
+    // const snacks = document.createElement("select");
+    const snacks = document.createElement("button");
+    snacks.textContent = "Select";
+    // snacks.setAttribute("list", "recipesList")
+    snacks.className = "meals";
+    snacks.placeholder = "snacks";
+    snacks.addEventListener("click", editSnacks);
+    snackstd.append(snacks);
 
-    const calories = document.createElement("td")
-    calories.textContent = 0
+    const calories = document.createElement("td");
+    calories.textContent = 0;
 
-    breakfastRecipesList.map((recipe) => {
-      const option = document.createElement("option");
-      option.value = recipe;
-      option.textContent = recipe;
+    weekdays[i].id = `weektabledays-${i}`;
+    weekdays[i].append(
+      dayheaders,
+      breakfasttd,
+      lunchtd,
+      dinnertd,
+      snackstd,
+      calories
+    );
+  }
 
-      breakfast.append(option);
-    });
+  function editBreakfast() {
+    removeExistingMenus();
 
-    lunchRecipesList.map ((recipe) => {
-      const option = document.createElement("option");
-      option.value = recipe;
-      option.textContent = recipe;
+    const breakfastWindowContent = document.createElement("div");
+    breakfastWindowContent.id = "breakfastWindowContent";
 
-      lunch.append(option);
-    })
+    const breakfastWindow = document.createElement("div");
+    breakfastWindow.id = "breakfastWindow";
 
-    dinnerRecipesList.map ((recipe) => {
-      const option = document.createElement("option");
-      option.value = recipe;
-      option.textContent = recipe;
+    breakfastWindow.append(breakfastWindowContent)
+    document
+      .getElementById("navbar")
+      .append(breakfastWindow);
 
-      dinner.append(option);
-    })
+    const editBreakfastCloseButtonContainer = document.createElement("div");
+    editBreakfastCloseButtonContainer.id = "editBreakfastCloseButtonContainer";
 
-    snacksRecipesList.map ((recipe) => {
-      const option = document.createElement("option")
-      option.value = recipe;
-      option.textContent = recipe;
+    const editBreakfastCloseButton = document.createElement("button");
+    editBreakfastCloseButton.id = "closeRecipeWindowBtn";
+    editBreakfastCloseButton.textContent = "Close";
 
-      snacks.append(option)
-    })
+    editBreakfastCloseButton.addEventListener(
+      "click",
+      handleCloseEditBreakfastWindow
+    );
 
-    weekdays[i -1].id = i
-    weekdays[i].append(dayheaders, breakfasttd, lunchtd, dinnertd, snackstd, calories)
+    editBreakfastCloseButtonContainer.append(editBreakfastCloseButton);
+
+    function handleCloseEditBreakfastWindow() {
+      const breakfastWindowContent = document.getElementById(
+        "breakfastWindowContent"
+      );
+      breakfastWindowContent.remove();
+      document.getElementById("breakfastWindow").remove();
+      handleMealPlanningBtnClick();
+    }
+
+    breakfastWindowContent.style.height = "fit-content";
+    breakfastWindowContent.style.minHeight = "95vh";
+    breakfastWindowContent.style.width = "93vw";
+    breakfastWindowContent.style.visibility = "visible";
+
+    breakfastWindowContent.append(editBreakfastCloseButtonContainer);
+  }
+
+  function editLunch() {
+    // console.log(lunch)
+    removeExistingMenus();
+
+    const lunchWindowContent = document.createElement("div");
+    lunchWindowContent.id = "lunchWindowContent";
+
+    const lunchWindow = document.createElement("div");
+    lunchWindow.id = "lunchWindow";
+
+    lunchWindow.append(lunchWindowContent)
+
+    document.getElementById("navbar").append(lunchWindow);
+
+    const editLunchCloseButtonContainer = document.createElement("div");
+    editLunchCloseButtonContainer.id = "editLunchCloseButtonContainer";
+
+    const editLunchCloseButton = document.createElement("button");
+    editLunchCloseButton.id = "closeLunchWindowBtn";
+    editLunchCloseButton.textContent = "Close";
+
+    editLunchCloseButton.addEventListener("click", handleCloseEditLunchWindow);
+
+    editLunchCloseButtonContainer.append(editLunchCloseButton);
+
+    function handleCloseEditLunchWindow() {
+      const lunchWindowContent = document.getElementById("lunchWindowContent");
+      lunchWindowContent.remove();
+      document.getElementById("lunchWindow").remove();
+      handleMealPlanningBtnClick();
+    }
+
+    lunchWindowContent.style.height = "fit-content";
+    lunchWindowContent.style.minHeight = "95vh";
+    lunchWindowContent.style.width = "93vw";
+    lunchWindowContent.style.visibility = "visible";
+
+    lunchWindowContent.append(editLunchCloseButtonContainer);
+  }
+
+  function editDinner() {
+    // console.log(dinner)
+
+    removeExistingMenus();
+
+    const dinnerWindowContent = document.createElement("div");
+    dinnerWindowContent.id = "dinnerWindowContent";
+
+    const dinnerWindow = document.createElement("div");
+    dinnerWindow.id = "dinnerWindow";
+
+    dinnerWindow.append(dinnerWindowContent)
+
+    document.getElementById("navbar").append(dinnerWindow);
+
+    const editDinnerCloseButtonContainer = document.createElement("div");
+    editDinnerCloseButtonContainer.id = "editDinnerCloseButtonContainer";
+
+    const editDinnerCloseButton = document.createElement("button");
+    editDinnerCloseButton.id = "closeDinnerWindowBtn";
+    editDinnerCloseButton.textContent = "Close";
+
+    editDinnerCloseButton.addEventListener(
+      "click",
+      handleCloseEditDinnerWindow
+    );
+
+    editDinnerCloseButtonContainer.append(editDinnerCloseButton);
+
+    function handleCloseEditDinnerWindow() {
+      const dinnerWindowContent = document.getElementById(
+        "dinnerWindowContent"
+      );
+      dinnerWindowContent.remove();
+      document.getElementById("dinnerWindow").remove();
+      handleMealPlanningBtnClick();
+    }
+
+    dinnerWindowContent.style.height = "fit-content";
+    dinnerWindowContent.style.minHeight = "95vh";
+    dinnerWindowContent.style.width = "93vw";
+    dinnerWindowContent.style.visibility = "visible";
+
+    dinnerWindowContent.append(editDinnerCloseButtonContainer);
+  }
+
+  function editSnacks() {
+    // console.log("here")
+
+    // console.log(snacks)
+    removeExistingMenus();
+
+    const snacksWindowContent = document.createElement("div");
+    snacksWindowContent.id = "snacksWindowContent";
+
+    const snacksWindow = document.createElement("div");
+    snacksWindow.id = "snacksWindow";
+
+    snacksWindow.append(snacksWindowContent)
+
+    document.getElementById("navbar").append(snacksWindow);
+
+    const editSnacksCloseButtonContainer = document.createElement("div");
+    editSnacksCloseButtonContainer.id = "editSnacksCloseButtonContainer";
+
+    const editSnacksCloseButton = document.createElement("button");
+    editSnacksCloseButton.id = "closeSnacksWindowBtn";
+    editSnacksCloseButton.textContent = "Close";
+
+    editSnacksCloseButton.addEventListener(
+      "click",
+      handleCloseEditSnacksWindow
+    );
+
+    editSnacksCloseButtonContainer.append(editSnacksCloseButton);
+
+    function handleCloseEditSnacksWindow() {
+      const snacksWindowContent = document.getElementById(
+        "snacksWindowContent"
+      );
+      snacksWindowContent.remove();
+      document.getElementById("snacksWindow").remove();
+      handleMealPlanningBtnClick();
+    }
+
+    snacksWindowContent.style.height = "fit-content";
+    snacksWindowContent.style.minHeight = "95vh";
+    snacksWindowContent.style.width = "93vw";
+    snacksWindowContent.style.visibility = "visible";
+
+    snacksWindowContent.append(editSnacksCloseButtonContainer);
+    // breakfastRecipesList.map((recipe) => {
+    //   const option = document.createElement("option");
+    //   option.value = recipe;
+    //   option.textContent = recipe;
+
+    //   breakfast.append(option);
+    // });
+
+    // lunchRecipesList.map ((recipe) => {
+    //   const option = document.createElement("option");
+    //   option.value = recipe;
+    //   option.textContent = recipe;
+
+    //   lunch.append(option);
+    // })
+
+    // dinnerRecipesList.map ((recipe) => {
+    //   const option = document.createElement("option");
+    //   option.value = recipe;
+    //   option.textContent = recipe;
+
+    //   dinner.append(option);
+    // })
+
+    // snacksRecipesList.map ((recipe) => {
+    //   const option = document.createElement("option")
+    //   option.value = recipe;
+    //   option.textContent = recipe;
+
+    //   snacks.append(option)
+    // })
   }
 }
-
 
 function handleCalorieCountingBtnClick() {
   removeExistingMenus();
@@ -495,6 +702,14 @@ function removeExistingMenus() {
   document.getElementById("calorieCountingWindow")?.remove();
 
   document.getElementById("mealPlanningWindow")?.remove();
+
+  document.getElementById("breakfastWindow")?.remove();
+
+  document.getElementById("lunchWindow")?.remove();
+
+  document.getElementById("dinnerWindow")?.remove();
+
+  document.getElementById("snacksWindow")?.remove();
 
   const mainContent = document.getElementsByClassName("mainContent");
   for (let i = mainContent.length - 1; i >= 0; i--) {
@@ -1614,6 +1829,8 @@ async function populateRecipeList() {
     recipeListTableBody.append(recipeGroup);
 
     async function handleShowRecipeClick() {
+        createRecipeWindow();
+
       const data = async () => {
         const URL = `${serverURL}/recipe/find`;
 
@@ -1818,7 +2035,10 @@ async function populateRecipeList() {
 
     function handleCloseRecipeWindow() {
       document.getElementById("instructionsContainer")?.remove();
-      recipeWindow.style.display = "none";
+      // recipeWindow.style.display = "none";
+      recipeWindow.remove()
+      recipesContainer.remove()
+      loadRecipesList()
     }
 
     function handleRecipeCheckboxClick() {
@@ -1921,32 +2141,30 @@ async function populateRecipeList() {
   });
 }
 
-
-        async function fetchAllRecipes () {
-          const output = []
-        const URL = `${serverURL}/recipe/`;
-        try {
-          const res = await fetch(URL, {
-            method: "GET",
-            mode: "cors",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: token,
-            },
-          });
-          const data = await res.json();
-          for (let i = 0; i < data.getAllRecipes.length; i++) {
-            output.push(data.getAllRecipes[i].recipeName)
-            console.log(data.getAllRecipes[i])
-          }
-          return output
-        } catch (error) {
-          output.push("no recipes")
-          console.log(error);
-          return output
-        }
-      }
-
+async function fetchAllRecipes() {
+  const output = [];
+  const URL = `${serverURL}/recipe/`;
+  try {
+    const res = await fetch(URL, {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    });
+    const data = await res.json();
+    for (let i = 0; i < data.getAllRecipes.length; i++) {
+      output.push(data.getAllRecipes[i].recipeName);
+      // console.log(data.getAllRecipes[i])
+    }
+    return output;
+  } catch (error) {
+    output.push("no recipes");
+    console.log(error);
+    return output;
+  }
+}
 
 function removeRecipeIngredients() {
   const mainContent = document.getElementsByClassName("mainContent");
