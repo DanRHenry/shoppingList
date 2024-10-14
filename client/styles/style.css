@@ -511,6 +511,9 @@ width: 100%;
 }
 
 #mealPlanningWindow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     height: 100vh;
     width: 100vw;
     background-color: rgb(124, 124, 146);
@@ -522,6 +525,11 @@ width: 100%;
     background-color: green;
 }
 
+#weektable {
+    width: 80%;
+
+}
+
 .weektabledays {
-    background-color: red;
+    /* background-color: red; */
 }
