@@ -88,6 +88,60 @@ function handleMealPlanningBtnClick () {
   const mealPlanningWindow = document.createElement("div");
   mealPlanningWindow.id = "mealPlanningWindow";
   document.getElementById("navbar").after(mealPlanningWindow);
+
+  createMealPlanningPage()
+}
+
+function createMealPlanningPage() {
+  const weektable = document.createElement("table")
+  weektable.id = "weektable"
+  const weektablebody = document.createElement("tbody")
+
+  weektable.append(weektablebody)
+
+  const monday = document.createElement("tr")
+  monday.className = "weektabledays"
+
+  const tuesday = document.createElement("tr")
+  tuesday.className = "weektabledays"
+
+  const wednesday = document.createElement("tr")
+  wednesday.className = "weektabledays"
+
+  const thursday = document.createElement("tr")
+  thursday.className = "weektabledays"
+
+  const friday = document.createElement("tr")
+  friday.className = "weektabledays"
+
+  const saturday = document.createElement("tr")
+  saturday.className = "weektabledays"
+
+  const sunday = document.createElement("tr")
+  sunday.className = "weektabledays"
+
+  weektablebody.append(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
+
+  document.getElementById("mealPlanningWindow").append(weektable)
+
+  const weekdays = document.getElementsByClassName("weektabledays")
+
+  for (let i = 0; i < weekdays.length; i++) {
+    const daycontent = document.createElement("td")
+    daycontent.textContent = "day"
+
+    weekdays[i].id = i
+    weekdays[i].append(daycontent)
+    console.log(weekdays[i])
+  }
+  // weekdays.map((day) => {
+
+  //   day.id = number
+  //   day.append(daycontent)
+  //   number ++
+  // })
+
+  console.log(weekdays[0])
 }
 
 function handleCalorieCountingBtnClick() {
