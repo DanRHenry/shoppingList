@@ -5,26 +5,26 @@ const RecipeSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    ingredients: {
-        type: Object,
+    time: {
+        type: String,
         required: true
     },
-    // ingredientName: {
-    //     type: String,
-    //     required: true
-    // },
-    // quantity: {
-    //     type: Object,
-    //     required: true
-    // },
-    // unit: {
-    //     type: Object,
-    //     required: true
-    // },
-    // calories: {
-    //     type: Object,
-    //     required: true
-    // }
+    temperature: {
+        type: String,
+        required: true
+    },
+    ingredients: {
+        type: Array,
+        required: true
+    },
+    instructions: {
+        type: Array,
+        required: true
+    },
+    numberOfServings: {
+        type: Number,
+        required: true
+    }
 })
 
 module.exports = mongoose.model("Recipe", RecipeSchema);

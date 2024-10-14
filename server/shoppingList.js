@@ -8,6 +8,10 @@ const server = require("http").createServer(app);
 // const PORT = 3300;
 const PORT = process.env.PORT;
 
+// Middleware:
+
+const requireValidation = require("./middleware/validate-session");
+
 // const wss = new WebSocket.Server({ server: server });
 
 // wss.on("connection", function connection(ws) {
@@ -30,9 +34,9 @@ const PORT = process.env.PORT;
 
 // ---------------------- Controllers: -------------------
 const userController = require("./controllers/user.controller");
-const ingrientController = require ("./controllers/ingredient.controller")
+const ingredientController = require ("./controllers/ingredient.controller")
 const recipeController = require("./controllers/recipe.controller")
-
+const recipeIngredientController = require ("./controllers/recipeIngredient.controller")
 // Adding cors() to handle the preflight request for us (something Postman did for us), this is part of our server middleware required and called in the app.js
 const cors = require("cors");
 
@@ -105,15 +109,19 @@ app.options("*", (req, res) => {
 });
 
 app.use("/api/shoppinglist/user", userController)
-app.use("/api/shoppinglist/ingredient", ingrientController)
+
+
+app.use(requireValidation)
+app.use("/api/shoppinglist/ingredient", ingredientController)
 app.use("/api/shoppinglist/recipe", recipeController)
+app.use("/api/shoppinglist/recipeingredient", recipeIngredientController)
 // app.use("/api/jeopardy/user", user);
 // app.use("/api/jeopardy/questions", questions);
 // app.use("/api/jeopardy/gameplay", gameplay);
 
-app.get("/", (req, res) => {
-  res.send("it's ALIVE");
-});
+// app.get("/", (req, res) => {
+//   res.send("it's ALIVE");
+// });
 
 // app.listen(PORT, () =>
   // console.log(`The jeopardyServer is running on Port: ${PORT}`)

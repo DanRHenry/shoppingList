@@ -12,6 +12,7 @@ const validateSession = async (req, res, next) => {
     //1. Take token provided by request object (headers.authorization)
     // Good idea to just check with a console.log that it's working.
     const token = req.headers.authorization;
+    // console.log("token: ", token)
     // console.log(token);
 
     //2. Check the status of token. (expired?)
