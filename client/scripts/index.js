@@ -75,10 +75,20 @@ function createMenuPage() {
 
   const calorieCountingMenuBtn = document.createElement("button");
   calorieCountingMenuBtn.textContent = "Calorie Counting";
+  calorieCountingMenuBtn.addEventListener("click", handleCalorieCountingBtnClick)
 
   navbar.append(shoppingMenuBtn, recipesMenuBtn, calorieCountingMenuBtn);
   document.querySelector("body").append(menuPage);
 }
+
+function handleCalorieCountingBtnClick () {
+  
+  removeExistingMenus()
+  const calorieCountingWindow = document.createElement("div")
+  calorieCountingWindow.id = "calorieCountingWindow"
+    document.getElementById("navbar").after(calorieCountingWindow)
+}
+
 async function login(e) {
   e.preventDefault();
 
@@ -129,6 +139,17 @@ function removeExistingMenus() {
   document.getElementById("recipeWindow")?.remove();
 
   document.getElementById("recipeContent")?.remove();
+
+  document.getElementById("calorieCountingWindow")?.remove();
+
+  const mainContent = document.getElementsByClassName("mainContent")
+  for (let i = mainContent.length -1; i >= 0; i--) {
+    mainContent[i].remove()
+  }
+
+  document.getElementById("addRecipeIngredientsToShoppingListBtnContainer")?.remove()
+
+  document.getElementById("newIngredientSection")?.remove()
 }
 
 function createShoppingListSection() {
@@ -578,9 +599,6 @@ function populateShoppingList(items) {
     checkBox.addEventListener("click", handleShoppingListCheckboxClick);
 
     function handleShoppingListCheckboxClick() {
-      console.log("click");
-      // console.log(item)
-      // console.log(item.style.textDecoration)
       if (item.style.textDecoration === "line-through") {
         item.style.textDecoration = "none";
       } else if (item.style.textDecoration === "none") {
