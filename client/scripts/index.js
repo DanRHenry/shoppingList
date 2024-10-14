@@ -139,6 +139,14 @@ async function createMealPlanningPage() {
 
   document.getElementById("mealPlanningWindow").append(weektable);
 
+  const mealPlanningTitle = document.createElement("div");
+  mealPlanningTitle.textContent = "Meal Planning";
+  mealPlanningTitle.id = "mealPlanningTitle";
+
+  if (!document.getElementById("mealPlanningTitle")) {
+    document.getElementById("weektable").before(mealPlanningTitle);
+  }
+
   const weekdays = document.getElementsByClassName("weektabledays");
 
   const headerslabelsarray = [
