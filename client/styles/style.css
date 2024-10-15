@@ -548,6 +548,7 @@ width: 100%;
 
 }
 
-.weektabledays {
+.calories, .dayHeaders {
+    text-align: center;
     /* background-color: red; */
 }
