@@ -158,9 +158,6 @@ async function createMealPlanningPage() {
     "Calories",
   ];
 
-//todo to fix the meal planning headers coming in wrong, add the table to where they were added, and then after the table has been added, add the headers before the table
-
-
   // All recipes go to recipes. Use meal lists to prioritize standard meals, then add the rest for, ie. pizza for breakfast
   const recipes = await fetchAllRecipes();
 
