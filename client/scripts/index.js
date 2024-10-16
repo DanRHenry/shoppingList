@@ -169,12 +169,12 @@ async function createMealPlanningPage() {
   for (let i = 0; i < weekdays.length; i++) {
     const dayheaders = document.createElement("th");
     dayheaders.textContent = daysarray[i];
-    dayheaders.className = "dayHeaders"
+    dayheaders.className = "dayHeaders";
 
     const breakfasttd = document.createElement("td");
     // const breakfast = document.createElement("select");
     const breakfast = document.createElement("button");
-    breakfast.textContent = "Select";
+    breakfast.textContent = "View";
     // breakfast.setAttribute("list", "recipesList")
     breakfast.className = "meals";
     breakfast.placeholder = "breakfast";
@@ -184,7 +184,7 @@ async function createMealPlanningPage() {
     const lunchtd = document.createElement("td");
     // const lunch = document.createElement("select");
     const lunch = document.createElement("button");
-    lunch.textContent = "Select";
+    lunch.textContent = "View";
     // lunch.setAttribute("list", "recipesList")
     lunch.className = "meals";
     lunch.placeholder = "lunch";
@@ -194,7 +194,7 @@ async function createMealPlanningPage() {
     const dinnertd = document.createElement("td");
     // const dinner = document.createElement("select");
     const dinner = document.createElement("button");
-    dinner.textContent = "Select";
+    dinner.textContent = "View";
     // dinner.setAttribute("list", "recipesList")
     dinner.className = "meals";
     dinner.placeholder = "dinner";
@@ -204,7 +204,7 @@ async function createMealPlanningPage() {
     const snackstd = document.createElement("td");
     // const snacks = document.createElement("select");
     const snacks = document.createElement("button");
-    snacks.textContent = "Select";
+    snacks.textContent = "View";
     // snacks.setAttribute("list", "recipesList")
     snacks.className = "meals";
     snacks.placeholder = "snacks";
@@ -213,7 +213,7 @@ async function createMealPlanningPage() {
 
     const calories = document.createElement("td");
     calories.textContent = 0;
-    calories.className = "calories"
+    calories.className = "calories";
 
     weekdays[i].id = `weektabledays-${i}`;
     weekdays[i].after(
@@ -233,7 +233,6 @@ async function createMealPlanningPage() {
     weekdays[0].id = `weektabledays-0`;
   }
 
-
   function editBreakfast() {
     // removeExistingMenus();
 
@@ -243,10 +242,8 @@ async function createMealPlanningPage() {
     const breakfastWindow = document.createElement("div");
     breakfastWindow.id = "breakfastWindow";
 
-    breakfastWindow.append(breakfastWindowContent)
-    document
-      .getElementById("navbar")
-      .append(breakfastWindow);
+    breakfastWindow.append(breakfastWindowContent);
+    document.getElementById("navbar").append(breakfastWindow);
 
     const editBreakfastCloseButtonContainer = document.createElement("div");
     editBreakfastCloseButtonContainer.id = "editBreakfastCloseButtonContainer";
@@ -276,6 +273,14 @@ async function createMealPlanningPage() {
     breakfastWindowContent.style.width = "93vw";
     breakfastWindowContent.style.visibility = "visible";
 
+    /* 
+    - dropdown menus with known breakfast recipes first, then others listed
+    - number of servings or parts thereof
+    - calories consumed
+    - on submit, create a new database entry with the date and the items in the meal, and hard-coded calories from the day (to prevent future changes to recipes from changing the calories from the past)
+    
+    */
+
     breakfastWindowContent.append(editBreakfastCloseButtonContainer);
   }
 
@@ -288,7 +293,7 @@ async function createMealPlanningPage() {
     const lunchWindow = document.createElement("div");
     lunchWindow.id = "lunchWindow";
 
-    lunchWindow.append(lunchWindowContent)
+    lunchWindow.append(lunchWindowContent);
 
     document.getElementById("navbar").append(lunchWindow);
 
@@ -327,7 +332,7 @@ async function createMealPlanningPage() {
     const dinnerWindow = document.createElement("div");
     dinnerWindow.id = "dinnerWindow";
 
-    dinnerWindow.append(dinnerWindowContent)
+    dinnerWindow.append(dinnerWindowContent);
 
     document.getElementById("navbar").append(dinnerWindow);
 
@@ -371,7 +376,7 @@ async function createMealPlanningPage() {
     const snacksWindow = document.createElement("div");
     snacksWindow.id = "snacksWindow";
 
-    snacksWindow.append(snacksWindowContent)
+    snacksWindow.append(snacksWindowContent);
 
     document.getElementById("navbar").append(snacksWindow);
 
@@ -1593,7 +1598,7 @@ async function populateRecipeList() {
     recipeListTableBody.append(recipeGroup);
 
     async function handleShowRecipeClick() {
-        createRecipeWindow();
+      createRecipeWindow();
 
       const data = async () => {
         const URL = `${serverURL}/recipe/find`;
@@ -1800,8 +1805,8 @@ async function populateRecipeList() {
     function handleCloseRecipeWindow() {
       document.getElementById("instructionsContainer")?.remove();
       // recipeWindow.style.display = "none";
-      document.getElementById("recipeWindowContent")?.remove()
-      recipeWindow.remove()
+      document.getElementById("recipeWindowContent")?.remove();
+      recipeWindow.remove();
       // recipesContainer.remove()
       // loadRecipesList()
     }

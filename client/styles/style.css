@@ -70,6 +70,7 @@ body {
 .meals {
     align-self: center;
     width: 100%;
+    min-width: 5em;
 }
 
 .meals:hover {
