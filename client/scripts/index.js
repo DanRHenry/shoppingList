@@ -158,17 +158,8 @@ async function createMealPlanningPage() {
     "Calories",
   ];
 
-  const headers = document.createElement("th");
-  const headersrow = document.createElement("tr");
+//todo to fix the meal planning headers coming in wrong, add the table to where they were added, and then after the table has been added, add the headers before the table
 
-  for (let i = 0; i < headerslabelsarray.length; i++) {
-    const headersrowlabels = document.createElement("th");
-    headersrowlabels.textContent = headerslabelsarray[i];
-    weekdays[0].append(headersrowlabels);
-    weekdays[0].id = `weektabledays-0`;
-  }
-
-  headers.append(headersrow);
 
   // All recipes go to recipes. Use meal lists to prioritize standard meals, then add the rest for, ie. pizza for breakfast
   const recipes = await fetchAllRecipes();
@@ -237,6 +228,14 @@ async function createMealPlanningPage() {
       calories
     );
   }
+
+  for (let i = 0; i < headerslabelsarray.length; i++) {
+    const headersrowlabels = document.createElement("th");
+    headersrowlabels.textContent = headerslabelsarray[i];
+    weekdays[0].append(headersrowlabels);
+    weekdays[0].id = `weektabledays-0`;
+  }
+
 
   function editBreakfast() {
     // removeExistingMenus();
