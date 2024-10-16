@@ -68,8 +68,9 @@ body {
 }
 
 .meals {
-    align-self: center;
+    /* align-self: center; */
     width: 100%;
+    max-width: fit-content;
     /* min-width: 5em; */
 }
 
@@ -547,6 +548,10 @@ width: 100%;
 #weektable {
     width: 80%;
 
+}
+
+#weektable > tbody > td {
+    text-align: center;
 }
 
 .calories, .dayHeaders {
