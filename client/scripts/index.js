@@ -98,34 +98,35 @@ function handleMealPlanningBtnClick() {
 }
 
 async function createMealPlanningPage() {
-  const weektable = document.createElement("table");
+  const weektable = document.createElement("div");
   weektable.id = "weektable";
-  const weektablebody = document.createElement("tbody");
+  // const weektablebody = document.createElement("tbody");
 
-  weektable.append(weektablebody);
+  // weektable.append(weektablebody);
 
-  const monday = document.createElement("tr");
+  const monday = document.createElement("div");
   monday.className = "weektabledays";
 
-  const tuesday = document.createElement("tr");
+  const tuesday = document.createElement("div");
   tuesday.className = "weektabledays";
 
-  const wednesday = document.createElement("tr");
+  const wednesday = document.createElement("div");
   wednesday.className = "weektabledays";
 
-  const thursday = document.createElement("tr");
+  const thursday = document.createElement("div");
   thursday.className = "weektabledays";
 
-  const friday = document.createElement("tr");
+  const friday = document.createElement("div");
   friday.className = "weektabledays";
 
-  const saturday = document.createElement("tr");
+  const saturday = document.createElement("div");
   saturday.className = "weektabledays";
 
-  const sunday = document.createElement("tr");
+  const sunday = document.createElement("div");
   sunday.className = "weektabledays";
 
-  weektablebody.append(
+  // weektablebody.append(
+  weektable.append(
     monday,
     tuesday,
     wednesday,
@@ -167,11 +168,11 @@ async function createMealPlanningPage() {
   const snacksRecipesList = recipes;
 
   for (let i = 0; i < weekdays.length; i++) {
-    const dayheaders = document.createElement("th");
+    const dayheaders = document.createElement("div");
     dayheaders.textContent = daysarray[i];
     dayheaders.className = "dayHeaders";
 
-    const breakfasttd = document.createElement("td");
+    const breakfasttd = document.createElement("div");
     // const breakfast = document.createElement("select");
     const breakfast = document.createElement("button");
     breakfast.textContent = "View";
@@ -181,7 +182,7 @@ async function createMealPlanningPage() {
     breakfast.addEventListener("click", editBreakfast);
     breakfasttd.append(breakfast);
 
-    const lunchtd = document.createElement("td");
+    const lunchtd = document.createElement("div");
     // const lunch = document.createElement("select");
     const lunch = document.createElement("button");
     lunch.textContent = "View";
@@ -191,7 +192,7 @@ async function createMealPlanningPage() {
     lunch.addEventListener("click", editLunch);
     lunchtd.append(lunch);
 
-    const dinnertd = document.createElement("td");
+    const dinnertd = document.createElement("div");
     // const dinner = document.createElement("select");
     const dinner = document.createElement("button");
     dinner.textContent = "View";
@@ -201,7 +202,7 @@ async function createMealPlanningPage() {
     dinner.addEventListener("click", editDinner);
     dinnertd.append(dinner);
 
-    const snackstd = document.createElement("td");
+    const snackstd = document.createElement("div");
     // const snacks = document.createElement("select");
     const snacks = document.createElement("button");
     snacks.textContent = "View";
@@ -211,7 +212,7 @@ async function createMealPlanningPage() {
     snacks.addEventListener("click", editSnacks);
     snackstd.append(snacks);
 
-    const calories = document.createElement("td");
+    const calories = document.createElement("div");
     calories.textContent = 0;
     calories.className = "calories";
 
@@ -227,10 +228,11 @@ async function createMealPlanningPage() {
   }
 
   for (let i = 0; i < headerslabelsarray.length; i++) {
-    const headersrowlabels = document.createElement("th");
+    const headersrowlabels = document.createElement("div");
     headersrowlabels.textContent = headerslabelsarray[i];
-    weekdays[0].append(headersrowlabels);
+    weekdays[0].before(headersrowlabels);
     weekdays[0].id = `weektabledays-0`;
+    
   }
 
   function editBreakfast() {

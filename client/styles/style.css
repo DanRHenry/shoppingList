@@ -81,6 +81,8 @@ body {
 
 .weektabledays {
     text-align: center;
+    /* display: grid; */
+    /* grid-template-columns: auto; */
 }
 
 #shoppingListContainer{
@@ -546,10 +548,22 @@ width: 100%;
 }
 
 #weektable {
-    width: 80%;
-
+    /* width: 100%; */
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
 }
 
+#weektable > div {
+    font-weight: bolder;
+    min-width: fit-content;
+    /* width: (100/2%); */
+    /* width: 4.25em; */
+}
+
+#weektable > div > button {
+    min-width: 100%;
+}
 #weektable > tbody > td {
     text-align: center;
 }
