@@ -15,19 +15,4 @@ const RecipeIngredientSchema = new mongoose.Schema({
     }
 })
 
-/* 
-    quantity: {
-        type: Object,
-        required: true
-    },
-    unit: {
-        type: Object,
-        required: true
-    },
-    calories: {
-        type: Object,
-        required: true
-    }
-*/
-
 module.exports = mongoose.model("RecipeIngredient", RecipeIngredientSchema);

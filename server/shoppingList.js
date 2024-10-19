@@ -37,6 +37,7 @@ const userController = require("./controllers/user.controller");
 const ingredientController = require ("./controllers/ingredient.controller")
 const recipeController = require("./controllers/recipe.controller")
 const recipeIngredientController = require ("./controllers/recipeIngredient.controller")
+const weeklyPlanningController = require("./controllers/weeklyPlanning.controller")
 // Adding cors() to handle the preflight request for us (something Postman did for us), this is part of our server middleware required and called in the app.js
 const cors = require("cors");
 
@@ -115,6 +116,7 @@ app.use(requireValidation)
 app.use("/api/shoppinglist/ingredient", ingredientController)
 app.use("/api/shoppinglist/recipe", recipeController)
 app.use("/api/shoppinglist/recipeingredient", recipeIngredientController)
+app.use("/api/shoppinglist/weeklyplanning", weeklyPlanningController)
 // app.use("/api/jeopardy/user", user);
 // app.use("/api/jeopardy/questions", questions);
 // app.use("/api/jeopardy/gameplay", gameplay);
