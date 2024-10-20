@@ -128,6 +128,10 @@ async function createMealPlanningPage() {
     breakfastWindow.append(breakfastWindowContent);
     document.getElementById("navbar").append(breakfastWindow);
 
+    const breakfastHeader = document.createElement("h1")
+    breakfastHeader.textContent = "Breakfast"
+    breakfastWindowContent.append(breakfastHeader)
+
     const editBreakfastCloseButtonContainer = document.createElement("div");
     editBreakfastCloseButtonContainer.id = "editBreakfastCloseButtonContainer";
 
@@ -180,6 +184,10 @@ async function createMealPlanningPage() {
 
     document.getElementById("navbar").append(lunchWindow);
 
+    const lunchHeader = document.createElement("h1")
+    lunchHeader.textContent = "Lunch"
+    lunchWindowContent.append(lunchHeader)
+
     const editLunchCloseButtonContainer = document.createElement("div");
     editLunchCloseButtonContainer.id = "editLunchCloseButtonContainer";
 
@@ -218,6 +226,10 @@ async function createMealPlanningPage() {
     dinnerWindow.append(dinnerWindowContent);
 
     document.getElementById("navbar").append(dinnerWindow);
+
+    const dinnerHeader = document.createElement("h1")
+    dinnerHeader.textContent = "Dinner"
+    dinnerWindowContent.append(dinnerHeader)
 
     const editDinnerCloseButtonContainer = document.createElement("div");
     editDinnerCloseButtonContainer.id = "editDinnerCloseButtonContainer";
@@ -262,6 +274,10 @@ async function createMealPlanningPage() {
     snacksWindow.append(snacksWindowContent);
 
     document.getElementById("navbar").append(snacksWindow);
+
+    const snacksHeader = document.createElement("h1")
+    snacksHeader.textContent = "Snacks"
+    snacksWindowContent.append(snacksHeader)
 
     const editSnacksCloseButtonContainer = document.createElement("div");
     editSnacksCloseButtonContainer.id = "editSnacksCloseButtonContainer";
@@ -319,7 +335,7 @@ async function createMealPlanningPage() {
       }
       const button = document.createElement("button")
       button.textContent = "view"
-      button.className = `edit_${headerslabelsarray[i]}_button`
+      button.className = `edit_${headerslabelsarray[i]}_button, mealButtons`
       button.addEventListener("click", editMealsFunctions[i])
       daysOfTheWeekLabels[daysOfTheWeekLabels.length -1].after(button)
     }
@@ -335,8 +351,6 @@ async function createMealPlanningPage() {
   const lunchRecipesList = recipes;
   const dinnerRecipesList = recipes;
   const snacksRecipesList = recipes;
-
-  console.log(recipes)
 }
 
 

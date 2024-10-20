@@ -554,15 +554,6 @@ width: 100%;
     text-align: center;
 }
 
-#mealPlanningGrid > div {
-    /* background-color: red; */
-    /* font-weight: bolder; */
-    /* min-width: fit-content; */
-    /* width: 100%; */
-    /* min-width: 1fr; */
-    /* text-overflow: clip; */
-}
-
 #mealPlanningGrid > div > button {
     min-width: 100%;
 }
@@ -570,7 +561,6 @@ width: 100%;
     text-align: center;
 }
 
-.calories, .dayHeaders {
-    text-align: center;
-    /* background-color: red; */
+.mealButtons {
+    /* background-color: rebeccapurple; */
 }
