@@ -547,24 +547,26 @@ width: 100%;
     background-color: green;
 }
 
-#weektable {
+#mealPlanningGrid {
     /* width: 100%; */
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(8, 1fr);
     text-align: center;
 }
 
-#weektable > div {
-    font-weight: bolder;
-    min-width: fit-content;
-    /* width: (100/2%); */
-    /* width: 4.25em; */
+#mealPlanningGrid > div {
+    /* background-color: red; */
+    /* font-weight: bolder; */
+    /* min-width: fit-content; */
+    /* width: 100%; */
+    /* min-width: 1fr; */
+    /* text-overflow: clip; */
 }
 
-#weektable > div > button {
+#mealPlanningGrid > div > button {
     min-width: 100%;
 }
-#weektable > tbody > td {
+#mealPlanningGrid > tbody > td {
     text-align: center;
 }
 

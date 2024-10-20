@@ -98,60 +98,16 @@ function handleMealPlanningBtnClick() {
 }
 
 async function createMealPlanningPage() {
-  const weektable = document.createElement("div");
-  weektable.id = "weektable";
-  // const weektablebody = document.createElement("tbody");
 
-  // weektable.append(weektablebody);
+  const mealPlanningGrid = document.createElement("div")
+  mealPlanningGrid.id = "mealPlanningGrid"
+  document.getElementById("mealPlanningWindow").append(mealPlanningGrid);
 
-  const monday = document.createElement("div");
-  monday.className = "weektabledays";
+  const daysarray = ["","Mon", "Tue", "Wed", "Thurs", "Fri", "Sat", "Sun"];
 
-  const tuesday = document.createElement("div");
-  tuesday.className = "weektabledays";
-
-  const wednesday = document.createElement("div");
-  wednesday.className = "weektabledays";
-
-  const thursday = document.createElement("div");
-  thursday.className = "weektabledays";
-
-  const friday = document.createElement("div");
-  friday.className = "weektabledays";
-
-  const saturday = document.createElement("div");
-  saturday.className = "weektabledays";
-
-  const sunday = document.createElement("div");
-  sunday.className = "weektabledays";
-
-  // weektablebody.append(
-  weektable.append(
-    monday,
-    tuesday,
-    wednesday,
-    thursday,
-    friday,
-    saturday,
-    sunday
-  );
-
-  const daysarray = ["Mon", "Tue", "Wed", "Thurs", "Fri", "Sat", "Sun"];
-
-  document.getElementById("mealPlanningWindow").append(weektable);
-
-  const mealPlanningTitle = document.createElement("div");
-  mealPlanningTitle.textContent = "Meal Planning";
-  mealPlanningTitle.id = "mealPlanningTitle";
-
-  if (!document.getElementById("mealPlanningTitle")) {
-    document.getElementById("weektable").before(mealPlanningTitle);
-  }
-
-  const weekdays = document.getElementsByClassName("weektabledays");
 
   const headerslabelsarray = [
-    "Day",
+    // "Day",
     "Breakfast",
     "Lunch",
     "Dinner",
@@ -159,83 +115,8 @@ async function createMealPlanningPage() {
     "Calories",
   ];
 
-  // All recipes go to recipes. Use meal lists to prioritize standard meals, then add the rest for, ie. pizza for breakfast
-  const recipes = await fetchAllRecipes();
-
-  const breakfastRecipesList = recipes;
-  const lunchRecipesList = recipes;
-  const dinnerRecipesList = recipes;
-  const snacksRecipesList = recipes;
-
-  for (let i = 0; i < weekdays.length; i++) {
-    const dayheaders = document.createElement("div");
-    dayheaders.textContent = daysarray[i];
-    dayheaders.className = "dayHeaders";
-
-    const breakfasttd = document.createElement("div");
-    // const breakfast = document.createElement("select");
-    const breakfast = document.createElement("button");
-    breakfast.textContent = "View";
-    // breakfast.setAttribute("list", "recipesList")
-    breakfast.className = "meals";
-    breakfast.placeholder = "breakfast";
-    breakfast.addEventListener("click", editBreakfast);
-    breakfasttd.append(breakfast);
-
-    const lunchtd = document.createElement("div");
-    // const lunch = document.createElement("select");
-    const lunch = document.createElement("button");
-    lunch.textContent = "View";
-    // lunch.setAttribute("list", "recipesList")
-    lunch.className = "meals";
-    lunch.placeholder = "lunch";
-    lunch.addEventListener("click", editLunch);
-    lunchtd.append(lunch);
-
-    const dinnertd = document.createElement("div");
-    // const dinner = document.createElement("select");
-    const dinner = document.createElement("button");
-    dinner.textContent = "View";
-    // dinner.setAttribute("list", "recipesList")
-    dinner.className = "meals";
-    dinner.placeholder = "dinner";
-    dinner.addEventListener("click", editDinner);
-    dinnertd.append(dinner);
-
-    const snackstd = document.createElement("div");
-    // const snacks = document.createElement("select");
-    const snacks = document.createElement("button");
-    snacks.textContent = "View";
-    // snacks.setAttribute("list", "recipesList")
-    snacks.className = "meals";
-    snacks.placeholder = "snacks";
-    snacks.addEventListener("click", editSnacks);
-    snackstd.append(snacks);
-
-    const calories = document.createElement("div");
-    calories.textContent = 0;
-    calories.className = "calories";
-
-    weekdays[i].id = `weektabledays-${i}`;
-    weekdays[i].after(
-      dayheaders,
-      breakfasttd,
-      lunchtd,
-      dinnertd,
-      snackstd,
-      calories
-    );
-  }
-
-  for (let i = 0; i < headerslabelsarray.length; i++) {
-    const headersrowlabels = document.createElement("div");
-    headersrowlabels.textContent = headerslabelsarray[i];
-    weekdays[0].before(headersrowlabels);
-    weekdays[0].id = `weektabledays-0`;
-    
-  }
-
-  function editBreakfast() {
+  const editMealsFunctions = [
+    function editBreakfast() {
     // removeExistingMenus();
 
     const breakfastWindowContent = document.createElement("div");
@@ -284,7 +165,7 @@ async function createMealPlanningPage() {
     */
 
     breakfastWindowContent.append(editBreakfastCloseButtonContainer);
-  }
+  },
 
   function editLunch() {
     // removeExistingMenus();
@@ -323,7 +204,7 @@ async function createMealPlanningPage() {
     lunchWindowContent.style.visibility = "visible";
 
     lunchWindowContent.append(editLunchCloseButtonContainer);
-  }
+  },
 
   function editDinner() {
     // removeExistingMenus();
@@ -367,7 +248,7 @@ async function createMealPlanningPage() {
     dinnerWindowContent.style.visibility = "visible";
 
     dinnerWindowContent.append(editDinnerCloseButtonContainer);
-  }
+  },
 
   function editSnacks() {
     // removeExistingMenus();
@@ -412,7 +293,52 @@ async function createMealPlanningPage() {
 
     snacksWindowContent.append(editSnacksCloseButtonContainer);
   }
+]
+
+  for (let i = 0; i < daysarray.length; i++) {
+    const day = document.createElement("div")
+    day.className = "day"
+    day.textContent = daysarray[i]
+    mealPlanningGrid.append(day)
+  }
+
+  for (let i = headerslabelsarray.length -1; i >= 0; i--) {
+    const label = document.createElement("div")
+    label.className = `${headerslabelsarray[i]}_row`
+    label.textContent = headerslabelsarray[i]
+
+    const daysOfTheWeekLabels = document.getElementsByClassName("day")
+
+    for (let j = daysarray.length -1; j >= 1; j--) {
+      if (i === 4) {
+        const dailyCalorieTotal = document.createElement("div")
+        dailyCalorieTotal.className = "dailyCalorieTotal"
+        dailyCalorieTotal.textContent = "0"
+        daysOfTheWeekLabels[daysOfTheWeekLabels.length -1].after(dailyCalorieTotal)
+        continue
+      }
+      const button = document.createElement("button")
+      button.textContent = "view"
+      button.className = `edit_${headerslabelsarray[i]}_button`
+      button.addEventListener("click", editMealsFunctions[i])
+      daysOfTheWeekLabels[daysOfTheWeekLabels.length -1].after(button)
+    }
+    
+    daysOfTheWeekLabels[daysOfTheWeekLabels.length -1].after(label)
+    headerslabelsarray[i]
+  }
+
+  // All recipes go to recipes. Use meal lists to prioritize standard meals, then add the rest for, ie. pizza for breakfast
+  const recipes = await fetchAllRecipes();
+
+  const breakfastRecipesList = recipes;
+  const lunchRecipesList = recipes;
+  const dinnerRecipesList = recipes;
+  const snacksRecipesList = recipes;
+
+  console.log(recipes)
 }
+
 
 function handleCalorieCountingBtnClick() {
   removeExistingMenus();
