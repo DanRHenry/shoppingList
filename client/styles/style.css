@@ -53,6 +53,7 @@ body {
     /* border-bottom-left-radius: 1em;
     border-bottom-right-radius: 1em; */
     background-color: rgb(146, 146, 192);
+    font-size: small;
 }
 
 #navbar > button {
@@ -553,11 +554,12 @@ width: 100%;
     grid-template-columns: repeat(8, 1fr);
     text-align: center;
     min-height: 40vh;
+    font-size: small;
     /* background-color: red; */
 }
 
 #mealPlanningGrid > div > button {
-    min-width: 100%;
+    min-width: 90%;
 }
 #mealPlanningGrid > tbody > td {
     text-align: center;
