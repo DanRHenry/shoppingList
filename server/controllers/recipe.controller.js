@@ -15,6 +15,7 @@ router.post("/storeRecipe", async (req, res) => {
   try {
     const recipeInfo = new Recipe({
       recipeName: req.body.recipeName,
+      suggestedMeal: req.body.suggestedMeal,
       ingredients: req.body.ingredients,
       time: req.body.time,
       temperature: req.body.temperature,

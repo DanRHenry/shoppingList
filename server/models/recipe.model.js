@@ -5,6 +5,10 @@ const RecipeSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    suggestedMeal: {
+        type: String,
+        required: true
+    },
     time: {
         type: String,
         required: true

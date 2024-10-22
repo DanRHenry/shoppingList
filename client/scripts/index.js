@@ -98,69 +98,260 @@ function handleMealPlanningBtnClick() {
 }
 
 async function createMealPlanningPage() {
-
-  const mealPlanningGrid = document.createElement("div")
-  mealPlanningGrid.id = "mealPlanningGrid"
+  const mealPlanningGrid = document.createElement("div");
+  mealPlanningGrid.id = "mealPlanningGrid";
   document.getElementById("mealPlanningWindow").append(mealPlanningGrid);
 
-  const daysarray = ["","Mon", "Tue", "Wed", "Thurs", "Fri", "Sat", "Sun"];
-
+  const daysarray = ["", "Mon", "Tue", "Wed", "Thurs", "Fri", "Sat", "Sun"];
 
   const headerslabelsarray = [
-    // "Day",
     "Breakfast",
     "Lunch",
     "Dinner",
     "Snacks",
     "Calories",
   ];
+  // All recipes go to recipes. Use meal lists to prioritize standard meals, then add the rest for, ie. pizza for breakfast
+  const recipes = [];
+  const breakfastRecipesList = [];
+  const lunchRecipesList = [];
+  const dessertRecipesList = [];
+  const dinnerRecipesList = [];
+  const snacksRecipesList = [];
+  const currentWeekMealsObject = {
+    monday: {
+      breakfast: [],
+      lunch: [],
+      dinner: [],
+      snacks: []
+    },
+    tuesday: {
+      breakfast: [],
+      lunch: [],
+      dinner: [],
+      snacks: []
+    },
+    wednesday: {
+      breakfast: [],
+      lunch: [],
+      dinner: [],
+      snacks: []
+    },
+    thursday: {
+      breakfast: [],
+      lunch: [],
+      dinner: [],
+      snacks: []
+    },
+    friday: {
+      breakfast: [],
+      lunch: [],
+      dinner: [],
+      snacks: []
+    },
+    saturday: {
+      breakfast: [],
+      lunch: [],
+      dinner: [],
+      snacks: []
+    },
+    sunday: {
+      breakfast: [],
+      lunch: [],
+      dinner: [],
+      snacks: []
+    }
+  }
+
+  // let nextWeekMealsObject = {
+  //   monday: {
+  //     breakfast: [],
+  //     lunch: [],
+  //     dinner: [],
+  //     snacks: []
+  //   },
+  //   tuesday: {
+  //     breakfast: [],
+  //     lunch: [],
+  //     dinner: [],
+  //     snacks: []
+  //   },
+  //   wednesday: {
+  //     breakfast: [],
+  //     lunch: [],
+  //     dinner: [],
+  //     snacks: []
+  //   },
+  //   thursday: {
+  //     breakfast: [],
+  //     lunch: [],
+  //     dinner: [],
+  //     snacks: []
+  //   },
+  //   friday: {
+  //     breakfast: [],
+  //     lunch: [],
+  //     dinner: [],
+  //     snacks: []
+  //   },
+  //   saturday: {
+  //     breakfast: [],
+  //     lunch: [],
+  //     dinner: [],
+  //     snacks: []
+  //   },
+  //   sunday: {
+  //     breakfast: [],
+  //     lunch: [],
+  //     dinner: [],
+  //     snacks: []
+  //   }
+  // }
+  // let previousWeekMealsObject = {
+  //   monday: {
+  //     breakfast: [],
+  //     lunch: [],
+  //     dinner: [],
+  //     snacks: []
+  //   },
+  //   tuesday: {
+  //     breakfast: [],
+  //     lunch: [],
+  //     dinner: [],
+  //     snacks: []
+  //   },
+  //   wednesday: {
+  //     breakfast: [],
+  //     lunch: [],
+  //     dinner: [],
+  //     snacks: []
+  //   },
+  //   thursday: {
+  //     breakfast: [],
+  //     lunch: [],
+  //     dinner: [],
+  //     snacks: []
+  //   },
+  //   friday: {
+  //     breakfast: [],
+  //     lunch: [],
+  //     dinner: [],
+  //     snacks: []
+  //   },
+  //   saturday: {
+  //     breakfast: [],
+  //     lunch: [],
+  //     dinner: [],
+  //     snacks: []
+  //   },
+  //   sunday: {
+  //     breakfast: [],
+  //     lunch: [],
+  //     dinner: [],
+  //     snacks: []
+  //   }
+  // }
 
   const editMealsFunctions = [
-    function editBreakfast() {
-    // removeExistingMenus();
+    async function editBreakfast(ID) {
+      const recipes = [];
+      const fetchedRecipes = await fetchAllRecipes();
+      console.log(ID[1])
+      for (let i = 0; i < fetchedRecipes.length; i++) {
+        recipes.push(fetchedRecipes[i]);
+      }
 
-    const breakfastWindowContent = document.createElement("div");
-    breakfastWindowContent.id = "breakfastWindowContent";
+      console.log("recipes",recipes)
+      console.log("breakfastRecipesList", breakfastRecipesList)
 
-    const breakfastWindow = document.createElement("div");
-    breakfastWindow.id = "breakfastWindow";
+      for (let i = 0; i < breakfastRecipesList.length; i++) {
+        console.log(breakfastRecipesList[i])
+        recipes.splice([recipes.indexOf(breakfastRecipesList[i].recipeName)], 1)
+      }
 
-    breakfastWindow.append(breakfastWindowContent);
-    document.getElementById("navbar").append(breakfastWindow);
+      const breakfastWindowContent = document.createElement("div");
+      breakfastWindowContent.id = "breakfastWindowContent";
 
-    const breakfastHeader = document.createElement("h1")
-    breakfastHeader.textContent = "Breakfast"
-    breakfastWindowContent.append(breakfastHeader)
+      const breakfastWindow = document.createElement("div");
+      breakfastWindow.id = "breakfastWindow";
 
-    const editBreakfastCloseButtonContainer = document.createElement("div");
-    editBreakfastCloseButtonContainer.id = "editBreakfastCloseButtonContainer";
+      breakfastWindow.append(breakfastWindowContent);
+      document.getElementById("navbar").append(breakfastWindow);
 
-    const editBreakfastCloseButton = document.createElement("button");
-    editBreakfastCloseButton.id = "closeRecipeWindowBtn";
-    editBreakfastCloseButton.textContent = "Close";
+      const breakfastHeader = document.createElement("h1");
+      breakfastHeader.textContent = "Breakfast";
 
-    editBreakfastCloseButton.addEventListener(
-      "click",
-      handleCloseEditBreakfastWindow
-    );
+      breakfastWindowContent.append(breakfastHeader);
 
-    editBreakfastCloseButtonContainer.append(editBreakfastCloseButton);
+      const breakfastAddRow = document.createElement("div")
+      breakfastAddRow.id = "breakfastAddRow"
 
-    function handleCloseEditBreakfastWindow() {
-      const breakfastWindowContent = document.getElementById(
-        "breakfastWindowContent"
+      const breakfastSelections = document.createElement("select");
+      breakfastSelections.id = "breakfastSelections"
+      const breakfastAndAllRecipes = breakfastRecipesList.concat(recipes);
+
+      const addBreakfastItemBtn = document.createElement("button")
+      addBreakfastItemBtn.textContent = "+"
+      addBreakfastItemBtn.id = "addBreakfastItemBtn"
+      addBreakfastItemBtn.addEventListener("click", handleAddBreakfastItem)
+
+      const breakfastGrid = document.createElement("div")
+      breakfastGrid.id = "breakfastGrid"
+
+      function handleAddBreakfastItem() {
+        const breakfastItemName = document.createElement("div")
+        breakfastItemName.id = "breakfastItemName"
+        breakfastItemName.class = "breakfastItems"
+        breakfastItemName.textContent = breakfastSelections.value
+
+        breakfastGrid.append(breakfastItemName)
+      }
+      // console.log(
+      //   "breakfast",breakfastRecipesList,
+      //   "recipes",recipes,
+      //   "breakall",breakfastAndAllRecipes)
+
+      for (let i = 0; i < breakfastAndAllRecipes.length; i++) {
+        const breakfastOption = document.createElement("option");
+        // console.log(breakfastAndAllRecipes[i].recipeName)
+        breakfastOption.value = breakfastAndAllRecipes[i].recipeName;
+        breakfastOption.textContent = breakfastAndAllRecipes[i].recipeName;
+        breakfastSelections.append(breakfastOption);
+      }
+
+      breakfastAddRow.append(breakfastSelections, addBreakfastItemBtn, breakfastGrid)
+      breakfastHeader.after(breakfastAddRow);
+
+      const editBreakfastCloseButtonContainer = document.createElement("div");
+      editBreakfastCloseButtonContainer.id =
+        "editBreakfastCloseButtonContainer";
+
+      const editBreakfastCloseButton = document.createElement("button");
+      editBreakfastCloseButton.id = "closeRecipeWindowBtn";
+      editBreakfastCloseButton.textContent = "Close";
+
+      editBreakfastCloseButton.addEventListener(
+        "click",
+        handleCloseEditBreakfastWindow
       );
-      breakfastWindowContent.remove();
-      document.getElementById("breakfastWindow").remove();
-      // handleMealPlanningBtnClick();
-    }
 
-    breakfastWindowContent.style.height = "fit-content";
-    breakfastWindowContent.style.minHeight = "95vh";
-    breakfastWindowContent.style.width = "93vw";
-    breakfastWindowContent.style.visibility = "visible";
+      editBreakfastCloseButtonContainer.append(editBreakfastCloseButton);
 
-    /* 
+      function handleCloseEditBreakfastWindow() {
+        const breakfastWindowContent = document.getElementById(
+          "breakfastWindowContent"
+        );
+        breakfastWindowContent.remove();
+        document.getElementById("breakfastWindow").remove();
+        // handleMealPlanningBtnClick();
+      }
+
+      breakfastWindowContent.style.height = "fit-content";
+      breakfastWindowContent.style.minHeight = "95vh";
+      breakfastWindowContent.style.width = "93vw";
+      breakfastWindowContent.style.visibility = "visible";
+
+      /* 
     - dropdown menus with known breakfast recipes first, then others listed
     - number of servings or parts thereof
     - calories consumed
@@ -168,191 +359,333 @@ async function createMealPlanningPage() {
     
     */
 
-    breakfastWindowContent.append(editBreakfastCloseButtonContainer);
-  },
+      breakfastWindowContent.append(editBreakfastCloseButtonContainer);
+      const url = `${serverURL}/weeklyplanning/storeWeeklyData`
+      const mealObject = {
+        date: "12",
+        breakfast: {
+          mealNames: [["meal 1 name", "calories"],["meal 2 name", "calories"]]
+        }
+      }
 
-  function editLunch() {
-    // removeExistingMenus();
-
-    const lunchWindowContent = document.createElement("div");
-    lunchWindowContent.id = "lunchWindowContent";
-
-    const lunchWindow = document.createElement("div");
-    lunchWindow.id = "lunchWindow";
-
-    lunchWindow.append(lunchWindowContent);
-
-    document.getElementById("navbar").append(lunchWindow);
-
-    const lunchHeader = document.createElement("h1")
-    lunchHeader.textContent = "Lunch"
-    lunchWindowContent.append(lunchHeader)
-
-    const editLunchCloseButtonContainer = document.createElement("div");
-    editLunchCloseButtonContainer.id = "editLunchCloseButtonContainer";
-
-    const editLunchCloseButton = document.createElement("button");
-    editLunchCloseButton.id = "closeLunchWindowBtn";
-    editLunchCloseButton.textContent = "Close";
-
-    editLunchCloseButton.addEventListener("click", handleCloseEditLunchWindow);
-
-    editLunchCloseButtonContainer.append(editLunchCloseButton);
-
-    function handleCloseEditLunchWindow() {
-      const lunchWindowContent = document.getElementById("lunchWindowContent");
-      lunchWindowContent.remove();
-      document.getElementById("lunchWindow").remove();
-      // handleMealPlanningBtnClick();
-    }
-
-    lunchWindowContent.style.height = "fit-content";
-    lunchWindowContent.style.minHeight = "95vh";
-    lunchWindowContent.style.width = "93vw";
-    lunchWindowContent.style.visibility = "visible";
-
-    lunchWindowContent.append(editLunchCloseButtonContainer);
-  },
-
-  function editDinner() {
-    // removeExistingMenus();
-
-    const dinnerWindowContent = document.createElement("div");
-    dinnerWindowContent.id = "dinnerWindowContent";
-
-    const dinnerWindow = document.createElement("div");
-    dinnerWindow.id = "dinnerWindow";
-
-    dinnerWindow.append(dinnerWindowContent);
-
-    document.getElementById("navbar").append(dinnerWindow);
-
-    const dinnerHeader = document.createElement("h1")
-    dinnerHeader.textContent = "Dinner"
-    dinnerWindowContent.append(dinnerHeader)
-
-    const editDinnerCloseButtonContainer = document.createElement("div");
-    editDinnerCloseButtonContainer.id = "editDinnerCloseButtonContainer";
-
-    const editDinnerCloseButton = document.createElement("button");
-    editDinnerCloseButton.id = "closeDinnerWindowBtn";
-    editDinnerCloseButton.textContent = "Close";
-
-    editDinnerCloseButton.addEventListener(
-      "click",
-      handleCloseEditDinnerWindow
-    );
-
-    editDinnerCloseButtonContainer.append(editDinnerCloseButton);
-
-    function handleCloseEditDinnerWindow() {
-      const dinnerWindowContent = document.getElementById(
-        "dinnerWindowContent"
-      );
-      dinnerWindowContent.remove();
-      document.getElementById("dinnerWindow").remove();
-      // handleMealPlanningBtnClick();
-    }
-
-    dinnerWindowContent.style.height = "fit-content";
-    dinnerWindowContent.style.minHeight = "95vh";
-    dinnerWindowContent.style.width = "93vw";
-    dinnerWindowContent.style.visibility = "visible";
-
-    dinnerWindowContent.append(editDinnerCloseButtonContainer);
-  },
-
-  function editSnacks() {
-    // removeExistingMenus();
-
-    const snacksWindowContent = document.createElement("div");
-    snacksWindowContent.id = "snacksWindowContent";
-
-    const snacksWindow = document.createElement("div");
-    snacksWindow.id = "snacksWindow";
-
-    snacksWindow.append(snacksWindowContent);
-
-    document.getElementById("navbar").append(snacksWindow);
-
-    const snacksHeader = document.createElement("h1")
-    snacksHeader.textContent = "Snacks"
-    snacksWindowContent.append(snacksHeader)
-
-    const editSnacksCloseButtonContainer = document.createElement("div");
-    editSnacksCloseButtonContainer.id = "editSnacksCloseButtonContainer";
-
-    const editSnacksCloseButton = document.createElement("button");
-    editSnacksCloseButton.id = "closeSnacksWindowBtn";
-    editSnacksCloseButton.textContent = "Close";
-
-    editSnacksCloseButton.addEventListener(
-      "click",
-      handleCloseEditSnacksWindow
-    );
-
-    editSnacksCloseButtonContainer.append(editSnacksCloseButton);
-
-    function handleCloseEditSnacksWindow() {
-      const snacksWindowContent = document.getElementById(
-        "snacksWindowContent"
-      );
-      snacksWindowContent.remove();
-      document.getElementById("snacksWindow").remove();
-      // handleMealPlanningBtnClick();
-    }
-
-    snacksWindowContent.style.height = "fit-content";
-    snacksWindowContent.style.minHeight = "95vh";
-    snacksWindowContent.style.width = "93vw";
-    snacksWindowContent.style.visibility = "visible";
-
-    snacksWindowContent.append(editSnacksCloseButtonContainer);
+        try {
+    const res = await fetch(url, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify(mealObject),
+    });
+    const data = await res.json();
+    console.log("data:", data)
+    // if (data.message === "Login successful!") {
+      // sessionStorage.token = data.token;
+      // token = data.token;
+      // checkForToken();
+    // }
+  } catch (error) {
+    console.log(error);
   }
-]
+    },
+
+    async function editLunch(ID) {
+      const recipes = [];
+      const fetchedRecipes = await fetchAllRecipes();
+      console.log(ID[1])
+
+      for (let i = 0; i < fetchedRecipes.length; i++) {
+        recipes.push(fetchedRecipes[i].recipeName);
+      }
+
+      for (let i = 0; i < lunchRecipesList.length; i++) {
+        console.log(lunchRecipesList[i])
+        recipes.splice([recipes.indexOf(lunchRecipesList[i].recipeName)], 1)
+      }
+
+      const lunchWindowContent = document.createElement("div");
+      lunchWindowContent.id = "lunchWindowContent";
+
+      const lunchWindow = document.createElement("div");
+      lunchWindow.id = "lunchWindow";
+
+      lunchWindow.append(lunchWindowContent);
+
+      document.getElementById("navbar").append(lunchWindow);
+
+      const lunchHeader = document.createElement("h1");
+      lunchHeader.textContent = "Lunch";
+      lunchWindowContent.append(lunchHeader);
+
+      const lunchSelections = document.createElement("select");
+
+      const lunchAndAllRecipes = lunchRecipesList.concat(recipes);
+
+      for (let i = 0; i < lunchAndAllRecipes.length; i++) {
+        const lunchOption = document.createElement("option");
+        lunchOption.value = lunchAndAllRecipes[i];
+        lunchOption.textContent = lunchAndAllRecipes[i];
+        lunchSelections.append(lunchOption);
+      }
+
+      lunchHeader.after(lunchSelections);
+
+      const editLunchCloseButtonContainer = document.createElement("div");
+      editLunchCloseButtonContainer.id = "editLunchCloseButtonContainer";
+
+      const editLunchCloseButton = document.createElement("button");
+      editLunchCloseButton.id = "closeLunchWindowBtn";
+      editLunchCloseButton.textContent = "Close";
+
+      editLunchCloseButton.addEventListener(
+        "click",
+        handleCloseEditLunchWindow
+      );
+
+      editLunchCloseButtonContainer.append(editLunchCloseButton);
+
+      function handleCloseEditLunchWindow() {
+        const lunchWindowContent =
+          document.getElementById("lunchWindowContent");
+        lunchWindowContent.remove();
+        document.getElementById("lunchWindow").remove();
+        // handleMealPlanningBtnClick();
+      }
+
+      lunchWindowContent.style.height = "fit-content";
+      lunchWindowContent.style.minHeight = "95vh";
+      lunchWindowContent.style.width = "93vw";
+      lunchWindowContent.style.visibility = "visible";
+
+      lunchWindowContent.append(editLunchCloseButtonContainer);
+    },
+
+    async function editDinner(ID) {
+      const recipes = [];
+      const fetchedRecipes = await fetchAllRecipes();
+      console.log(ID[1])
+
+      for (let i = 0; i < fetchedRecipes.length; i++) {
+        recipes.push(fetchedRecipes[i].recipeName);
+      }
+      console.log("recipes",recipes)
+      console.log("dinnerRecipesList", dinnerRecipesList)
+      // removeExistingMenus();
+      
+      for (let i = 0; i < dinnerRecipesList.length; i++) {
+        console.log(dinnerRecipesList[i])
+        recipes.splice([recipes.indexOf(dinnerRecipesList[i].recipeName)], 1)
+      }
+
+      // console.log("recipes",recipes)
+
+
+      const dinnerWindowContent = document.createElement("div");
+      dinnerWindowContent.id = "dinnerWindowContent";
+
+      const dinnerWindow = document.createElement("div");
+      dinnerWindow.id = "dinnerWindow";
+
+      dinnerWindow.append(dinnerWindowContent);
+
+      document.getElementById("navbar").append(dinnerWindow);
+
+      const dinnerHeader = document.createElement("h1");
+      dinnerHeader.textContent = "Dinner";
+      dinnerWindowContent.append(dinnerHeader);
+
+      const dinnerSelections = document.createElement("select");
+
+      const dinnerAndAllRecipes = lunchRecipesList.concat(recipes);
+
+      for (let i = 0; i < dinnerAndAllRecipes.length; i++) {
+        const dinnerOption = document.createElement("option");
+        dinnerOption.value = dinnerAndAllRecipes[i];
+        dinnerOption.textContent = dinnerAndAllRecipes[i];
+        dinnerSelections.append(dinnerOption);
+      }
+
+      dinnerHeader.after(dinnerSelections);
+
+      const editDinnerCloseButtonContainer = document.createElement("div");
+      editDinnerCloseButtonContainer.id = "editDinnerCloseButtonContainer";
+
+      const editDinnerCloseButton = document.createElement("button");
+      editDinnerCloseButton.id = "closeDinnerWindowBtn";
+      editDinnerCloseButton.textContent = "Close";
+
+      editDinnerCloseButton.addEventListener(
+        "click",
+        handleCloseEditDinnerWindow
+      );
+
+      editDinnerCloseButtonContainer.append(editDinnerCloseButton);
+
+      function handleCloseEditDinnerWindow() {
+        const dinnerWindowContent = document.getElementById(
+          "dinnerWindowContent"
+        );
+        dinnerWindowContent.remove();
+        document.getElementById("dinnerWindow").remove();
+        // handleMealPlanningBtnClick();
+      }
+
+      dinnerWindowContent.style.height = "fit-content";
+      dinnerWindowContent.style.minHeight = "95vh";
+      dinnerWindowContent.style.width = "93vw";
+      dinnerWindowContent.style.visibility = "visible";
+
+      dinnerWindowContent.append(editDinnerCloseButtonContainer);
+    },
+
+    async function editSnacks(ID) {
+      const recipes = [];
+      const fetchedRecipes = await fetchAllRecipes();
+      console.log(ID[1])
+
+      for (let i = 0; i < fetchedRecipes.length; i++) {
+        recipes.push(fetchedRecipes[i].recipeName);
+      }
+
+      console.log("recipes",recipes)
+      console.log("snacksRecipesList", snacksRecipesList)
+      console.log("dessertRecipesList", dessertRecipesList)
+      const temp = []
+      for (let i = 0; i < snacksRecipesList.length; i++) {
+        console.log(snacksRecipesList[i])
+        recipes.splice([recipes.indexOf(snacksRecipesList[i].recipeName)], 1)
+      }
+
+      // removeExistingMenus();
+
+      const snacksWindowContent = document.createElement("div");
+      snacksWindowContent.id = "snacksWindowContent";
+
+      const snacksWindow = document.createElement("div");
+      snacksWindow.id = "snacksWindow";
+
+      snacksWindow.append(snacksWindowContent);
+
+      document.getElementById("navbar").append(snacksWindow);
+
+      const snacksHeader = document.createElement("h1");
+      snacksHeader.textContent = "Snacks";
+      snacksWindowContent.append(snacksHeader);
+
+      const snacksSelections = document.createElement("select");
+
+      const snacksAndAllRecipes = snacksRecipesList.concat(temp);
+
+      for (let i = 0; i < snacksAndAllRecipes.length; i++) {
+        const snacksOption = document.createElement("option");
+        snacksOption.value = snacksAndAllRecipes[i];
+        snacksOption.textContent = snacksAndAllRecipes[i];
+        snacksSelections.append(snacksOption);
+      }
+
+      snacksHeader.after(snacksSelections);
+
+      const editSnacksCloseButtonContainer = document.createElement("div");
+      editSnacksCloseButtonContainer.id = "editSnacksCloseButtonContainer";
+
+      const editSnacksCloseButton = document.createElement("button");
+      editSnacksCloseButton.id = "closeSnacksWindowBtn";
+      editSnacksCloseButton.textContent = "Close";
+
+      editSnacksCloseButton.addEventListener(
+        "click",
+        handleCloseEditSnacksWindow
+      );
+
+      editSnacksCloseButtonContainer.append(editSnacksCloseButton);
+
+      function handleCloseEditSnacksWindow() {
+        const snacksWindowContent = document.getElementById(
+          "snacksWindowContent"
+        );
+        snacksWindowContent.remove();
+        document.getElementById("snacksWindow").remove();
+        // handleMealPlanningBtnClick();
+      }
+
+      snacksWindowContent.style.height = "fit-content";
+      snacksWindowContent.style.minHeight = "95vh";
+      snacksWindowContent.style.width = "93vw";
+      snacksWindowContent.style.visibility = "visible";
+
+      snacksWindowContent.append(editSnacksCloseButtonContainer);
+    },
+  ];
 
   for (let i = 0; i < daysarray.length; i++) {
-    const day = document.createElement("div")
-    day.className = "day"
-    day.textContent = daysarray[i]
-    mealPlanningGrid.append(day)
+    const day = document.createElement("div");
+    day.className = "day";
+    day.textContent = daysarray[i];
+    mealPlanningGrid.append(day);
   }
 
-  for (let i = headerslabelsarray.length -1; i >= 0; i--) {
-    const label = document.createElement("div")
-    label.className = `${headerslabelsarray[i]}_row`
-    label.textContent = headerslabelsarray[i]
+  for (let i = headerslabelsarray.length - 1; i >= 0; i--) {
+    const label = document.createElement("div");
+    label.className = `${headerslabelsarray[i]}_row`;
+    label.textContent = headerslabelsarray[i];
 
-    const daysOfTheWeekLabels = document.getElementsByClassName("day")
+    const daysOfTheWeekLabels = document.getElementsByClassName("day");
 
-    for (let j = daysarray.length -1; j >= 1; j--) {
+    for (let j = daysarray.length - 1; j >= 1; j--) {
       if (i === 4) {
-        const dailyCalorieTotal = document.createElement("div")
-        dailyCalorieTotal.className = "dailyCalorieTotal"
-        dailyCalorieTotal.textContent = "0"
-        daysOfTheWeekLabels[daysOfTheWeekLabels.length -1].after(dailyCalorieTotal)
-        continue
+        const dailyCalorieTotal = document.createElement("div");
+        dailyCalorieTotal.className = "dailyCalorieTotal";
+        dailyCalorieTotal.textContent = "0";
+        daysOfTheWeekLabels[daysOfTheWeekLabels.length - 1].after(
+          dailyCalorieTotal
+        );
+        continue;
       }
-      const button = document.createElement("button")
-      button.textContent = "view"
-      button.className = `edit_${headerslabelsarray[i]}_button, mealButtons`
-      button.addEventListener("click", editMealsFunctions[i])
-      daysOfTheWeekLabels[daysOfTheWeekLabels.length -1].after(button)
+
+      const daysObject = {
+        1: "monday",
+        2: "tuesday",
+        3: "wednesday",
+        4: "thursday",
+        5: "friday"
+      }
+
+      const mealsObject = {
+        0: "breakfast",
+        1: "lunch",
+        2: "dinner",
+        3: "snacks"
+      }
+      const button = document.createElement("button");
+      button.textContent = "view";
+      button.className = `edit_${headerslabelsarray[i]}_button, ${mealsObject[i]}_${j}`;
+      button.addEventListener("click", () => editMealsFunctions[i](button.classList));
+      daysOfTheWeekLabels[daysOfTheWeekLabels.length - 1].after(button);
     }
-    
-    daysOfTheWeekLabels[daysOfTheWeekLabels.length -1].after(label)
-    headerslabelsarray[i]
+
+    daysOfTheWeekLabels[daysOfTheWeekLabels.length - 1].after(label);
+    headerslabelsarray[i];
   }
+  //!moving the fetch let the meal planning window load without delay
+  const fetchedRecipes = await fetchAllRecipes();
 
-  // All recipes go to recipes. Use meal lists to prioritize standard meals, then add the rest for, ie. pizza for breakfast
-  const recipes = await fetchAllRecipes();
 
-  const breakfastRecipesList = recipes;
-  const lunchRecipesList = recipes;
-  const dinnerRecipesList = recipes;
-  const snacksRecipesList = recipes;
+  for (let i = 0; i < fetchedRecipes.length; i++) {
+    recipes.push(fetchedRecipes[i].recipeName);
+    if (fetchedRecipes[i].suggestedMeal === "Breakfast") {
+      breakfastRecipesList.push(fetchedRecipes[i].recipeName);
+    } else if (fetchedRecipes[i].suggestedMeal === "Lunch") {
+      lunchRecipesList.push(fetchedRecipes[i].recipeName);
+    } else if (fetchedRecipes[i].suggestedMeal === "Dinner") {
+      dinnerRecipesList.push(fetchedRecipes[i].recipeName);
+    } else if (fetchedRecipes[i].suggestedMeal === "Dessert"){
+      dessertRecipesList.push(fetchedRecipes[i].recipeName)
+    } else if (fetchedRecipes[i].suggestedMeal === "Snack") {
+      snacksRecipesList.push(fetchedRecipes[i].recipeName);
+    }
+  }
 }
-
 
 function handleCalorieCountingBtnClick() {
   removeExistingMenus();
@@ -509,6 +842,7 @@ async function handleNewRecipeSubmit(e) {
   await e.preventDefault();
 
   const nameInput = document.getElementById("newRecipeNameInput").value;
+  const suggestedMealInput = document.getElementById("suggestedMeal").value;
   const timeInput = document.getElementById("recipeCookTimeInputField").value;
   const temperatureInput = document.getElementById(
     "recipeTempInputField"
@@ -533,6 +867,7 @@ async function handleNewRecipeSubmit(e) {
   let newRecipe = {};
 
   newRecipe.recipeName = nameInput;
+  newRecipe.suggestedMeal = suggestedMealInput;
   newRecipe.time = timeInput;
   newRecipe.temperature = temperatureInput;
   newRecipe.ingredients = [];
@@ -598,6 +933,7 @@ async function postNewRecipe(newRecipeInformation) {
     ingredients,
     instructions,
     recipeName,
+    suggestedMeal,
     temperature,
     time,
     numberOfServings,
@@ -612,6 +948,7 @@ async function postNewRecipe(newRecipeInformation) {
     try {
       const newRecipe = {
         recipeName: recipeName,
+        suggestedMeal: suggestedMeal,
         time: time,
         temperature: temperature,
         ingredients: ingredients,
@@ -1506,9 +1843,37 @@ async function populateRecipeList() {
         numOfServingsRow
       );
 
+      const suggestedMeal = document.createElement("select");
+      suggestedMeal.id = "suggestedMeal";
+
+      const breakfastOption = document.createElement("option");
+      breakfastOption.value = "Breakfast";
+      breakfastOption.textContent = "Breakfast";
+
+      const lunchOption = document.createElement("option");
+      lunchOption.value = "Lunch";
+      lunchOption.textContent = "Lunch";
+
+      const dinnerOption = document.createElement("option");
+      dinnerOption.value = "Dinner";
+      dinnerOption.textContent = "Dinner";
+
+      const snackOption = document.createElement("option");
+      snackOption.value = "Snack";
+      snackOption.textContent = "Snack";
+
+      suggestedMeal.append(
+        breakfastOption,
+        lunchOption,
+        dinnerOption,
+        snackOption
+      );
+
+      console.log(suggestedMeal);
+
       document
         .getElementById("newIngredientGrid")
-        .before(ingredientInputForm, timeAndTemp);
+        .before(ingredientInputForm, suggestedMeal, timeAndTemp);
     }
   }
 
@@ -1867,7 +2232,7 @@ async function fetchAllRecipes() {
     });
     const data = await res.json();
     for (let i = 0; i < data.getAllRecipes.length; i++) {
-      output.push(data.getAllRecipes[i].recipeName);
+      output.push(data.getAllRecipes[i]);
       // console.log(data.getAllRecipes[i])
     }
     return output;
