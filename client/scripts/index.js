@@ -87,8 +87,118 @@ function createMenuPage() {
   );
   document.querySelector("body").append(menuPage);
 }
+const months = {
+  0: "jan",
+  1: "feb",
+  2: "mar",
+  3: "apr",
+  4: "may",
+  5: "jun",
+  6: "jul",
+  7: "aug",
+  8: "sep",
+  9: "oct",
+  10: "nov",
+  11: "dec"
+}
+// const day = new Date().getDate()
+let currentMonth = new Date().getMonth()
+let currentYear = new Date().getFullYear()
+let currentDay = new Date().getDate()
+
+const calendar = {
+  1: 31,
+  2: 28,
+  3: 31,
+  4: 30,
+  5: 31,
+  6: 30,
+  7: 31,
+  8: 31,
+  9: 30,
+  10: 31,
+  11: 30,
+  12: 31,
+  leapMonth: 29,
+};
+
+let prevDay = () => {
+  if (currentDay > 1) {
+    //* If the day of the month is not the 1st...
+    // setDay(currentDay - 1); //* Subtract a day
+    currentDay--
+  } else {
+    //* If the day of the month IS the 1st...
+    if (currentMonth > 1); //* If the current month is not January...
+    {
+      if (currentYear % 4 === 0 && currentMonth === 3) {
+        //* If it IS a leap year, and it was March...
+        // setMonth(currentMonth - 1);
+        currentMonth--
+        // setDay(calendar["leapMonth"]);
+        currentDay = calendar["leapMonth"]
+      } else {
+        //* If it's not a leap year...
+        // setMonth(currentMonth - 1);
+        currentMonth--
+        let tempMonth = (currentMonth - 1).toString();
+        // setDay(calendar[`${tempMonth}`]);
+        currentDay = calendar[`${tempMonth}`]
+      }
+      if (currentMonth === 1) {
+        //* If it IS January
+        // setYear(currentYear - 1); //* Subtract a year
+        currentYear--
+        // setMonth(12); //* Set the month to December
+        currentMonth = 12
+        // setDay(calendar[`${currentMonth}`]); //* Set the day to the end of december
+        currentDay = calendar[`${currentMonth}`]
+      }
+      getFoodInformation();
+    }
+  }
+  console.log(currentDay, currentMonth, currentYear)
+};
+
+let nextDay = () => {
+  //* If it is December, and the day is the last of the month...
+  if (currentMonth === 12 && currentDay === calendar[`${currentMonth}`]) {
+    setYear(currentYear + 1); //* Add a year
+    setMonth(1); //* Set the month to January
+    setDay(1); //* Set the day to the start of January
+  }
+  //* If the current month is not December...
+  else if (currentMonth < 12);
+  {
+    //* If it IS a leap year, and it is February...
+    if (currentYear % 4 === 0 && currentMonth === 2) {
+      //* If the day is not the last of the leap month...
+      if (currentDay < 29) {
+        setDay(currentDay + 1);
+      }
+      //* If the day is the last of the leap month...
+      else {
+        setDay(1);
+        setMonth(currentMonth + 1);
+      }
+    }
+    //* If it is not December, and the current day is the last of the month...
+    else if (
+      currentDay === calendar[`${currentMonth}`] &&
+      currentMonth !== 12
+    ) {
+      setDay(1);
+      setMonth(currentMonth + 1);
+    } else if (currentDay < calendar[`${currentMonth}`]) {
+      setDay(currentDay + 1);
+    }
+  }
+  getFoodInformation();
+};
 
 function handleMealPlanningBtnClick() {
+
+
   removeExistingMenus();
   const mealPlanningWindow = document.createElement("div");
   mealPlanningWindow.id = "mealPlanningWindow";
@@ -254,6 +364,7 @@ async function createMealPlanningPage() {
 
   const editMealsFunctions = [
     async function editBreakfast(ID) {
+      prevDay()
       const recipes = [];
       const fetchedRecipes = await fetchAllRecipes();
       console.log(ID[1])
