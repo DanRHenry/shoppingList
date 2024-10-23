@@ -48,6 +48,28 @@ router.post("/storeWeeklyData", async (req, res) => {
 
 // ------------------------- Find One -----------------------
 
+router.get("/findday", async (req, res) => {
+  try {
+    const date = req.body.date;
+    console.log("date", date);
+    const findWeeklyPlanningDayInformation = await WeeklyPlanning.findOne({
+      date: date,
+    });
+
+    findWeeklyPlanningDayInformation
+      ? res.status(200).json({
+          message: "Found!",
+          findWeeklyPlanningDayInformation,
+        })
+      : res.status(404).json({
+          message: `Can't Find the WeeklyPlanning Entry.`,
+        });
+  } catch (err) {
+    serverError(res, err);
+  }
+});
+
+/* 
 router.post("/find", async (req, res) => {
   try {
     const date = req.body.date;
@@ -68,6 +90,7 @@ router.post("/find", async (req, res) => {
     serverError(res, err);
   }
 });
+*/
 
 // --------------------------Get All ---------------------
 router.get("/", async (req, res) => {
@@ -109,6 +132,44 @@ router.delete("/delete/", async (req, res) => {
   } catch (err) {
     console.log("oops");
     serverError(res, err);
+  }
+});
+
+/* ------------------------- Patch WeeklyPlanning Endpoint -------------------*/
+// validateSession
+router.patch("/updateday/:id",async (req, res) => {
+  try {
+    //1. Pull value from parameter
+    // const { id } = req.params; // Commented out
+    // Create a filter to check both id from req.params & owner_id against id from the token
+    const filter = {
+      _id: req.params.id,
+      owner_id: req.user._id
+    };
+
+
+    //2. Pull data from the body.
+    const info = req.body;
+    // const { title, genre, rating } = req.body;
+    
+    //3. Use method to locate document based off ID and pass in new information.
+    const returnOption = {new: true}// 
+    // const updatedOption = {new: true};
+
+    //* findOneAndUpdate(query, document, options)
+    // returnOptions allows us to view the updated document
+    const updatedDay = await Movie.findOneAndUpdate(filter, info, returnOption);
+    // const updatedDay = await Movie.findOneAndUpdate({_id: id}, info, returnOption);
+    // const update = await Movie.findOneAndUpdate({_id: id,});
+    // const update = await Movie.findOneAndUpdate({id: _id});
+    // if (!update) throw new Error ("ID Not Found!");
+    //4. Respond to client.
+    res.status(200).json({
+      message: `${updatedDay} has been updated successfully!`,
+      updatedDay,
+    });
+  } catch (err) {
+    errorResponse(res, err);
   }
 });
 
